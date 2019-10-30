@@ -1,7 +1,7 @@
 resource "aws_cognito_user_pool" "pool" {
   name = var.user_pool_name
 
-
+  alias_attributes           = var.alias_attributes
   email_verification_message = var.email_verification_message
 
   # admin_create_user_config

@@ -46,3 +46,9 @@ variable "admin_create_user_config_sms_message" {
   type        = string
   default     = "Your username is {username} and temporary password is {####}."
 }
+
+variable "alias_attributes" {
+  description = "Attributes supported as an alias for this user pool. Possible values: phone_number, email, or preferred_username. Conflicts with `username_attributes`"
+  type        = list
+  default     = []
+}
