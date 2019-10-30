@@ -2,6 +2,7 @@ resource "aws_cognito_user_pool" "pool" {
   name = var.user_pool_name
 
   alias_attributes           = var.alias_attributes
+  auto_verified_attributes   = var.auto_verified_attributes
   email_verification_message = var.email_verification_message
 
   # admin_create_user_config
@@ -21,6 +22,15 @@ resource "aws_cognito_user_pool" "pool" {
       }
     }
   }
+
+  # sms_configuration
+  dynamic "sms_configuration" {
+    for_each = local.sms_configuration
+    content {
+      external_id    = lookup(sms_configuration.value, "external_id")
+      sns_caller_arn = lookup(sms_configuration.value, "sns_caller_arn")
+    }
+  }
 }
 
 locals {
@@ -36,4 +46,12 @@ locals {
   }
 
   admin_create_user_config = [local.admin_create_user_config_default]
+
+  # sms_configuration
+  sms_configuration_default = {
+    external_id    = lookup(var.sms_configuration, "external_id", null) == null ? var.sms_configuration_external_id : lookup(var.sms_configuration, "external_id")
+    sns_caller_arn = lookup(var.sms_configuration, "sns_caller_arn", null) == null ? var.sms_configuration_sns_caller_arn : lookup(var.sms_configuration, "sns_caller_arn")
+  }
+
+  sms_configuration = lookup(local.sms_configuration_default, "external_id") == "" || lookup(local.sms_configuration_default, "sns_caller_arn") == "" ? [] : [local.sms_configuration_default]
 }

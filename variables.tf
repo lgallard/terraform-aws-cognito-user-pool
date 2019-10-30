@@ -52,3 +52,28 @@ variable "alias_attributes" {
   type        = list
   default     = []
 }
+
+variable "auto_verified_attributes" {
+  description = "The attributes to be auto-verified. Possible values: email, phone_number"
+  type        = list
+  default     = []
+}
+
+# sms_configuration
+variable "sms_configuration" {
+  description = "The SMS Configuration"
+  type        = map
+  default     = {}
+}
+
+variable "sms_configuration_external_id" {
+  description = "The external ID used in IAM role trust relationships"
+  type        = string
+  default     = ""
+}
+
+variable "sms_configuration_sns_caller_arn" {
+  description = "The ARN of the Amazon SNS caller. This is usually the IAM role that you've given Cognito permission to assume"
+  type        = string
+  default     = ""
+}
