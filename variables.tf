@@ -6,7 +6,13 @@ variable "user_pool_name" {
 variable "email_verification_message" {
   description = "A string representing the email verification message. Conflicts with `verification_message_template` configuration block `email_message` argument"
   type        = string
-  default     = null
+  default     = ""
+}
+
+variable "email_verification_subject" {
+  description = "A string representing the email verification subject. Conflicts with `verification_message_template` configuration block `email_subject` argument"
+  type        = string
+  default     = ""
 }
 
 # admin_create_user_config

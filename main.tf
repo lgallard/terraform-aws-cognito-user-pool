@@ -3,7 +3,8 @@ resource "aws_cognito_user_pool" "pool" {
 
   alias_attributes           = var.alias_attributes
   auto_verified_attributes   = var.auto_verified_attributes
-  email_verification_message = var.email_verification_message
+  email_verification_message = var.email_verification_message == "" ? var.admin_create_user_config_email_message : var.email_verification_message
+  email_verification_subject = var.email_verification_subject == "" ? var.admin_create_user_config_email_subject : var.email_verification_subject
 
   # admin_create_user_config
   dynamic "admin_create_user_config" {
@@ -60,8 +61,8 @@ locals {
   admin_create_user_config_default = {
     allow_admin_create_user_only = lookup(var.admin_create_user_config, "allow_admin_create_user_only", null) == null ? var.admin_create_user_config_allow_admin_create_user_only : lookup(var.admin_create_user_config, "allow_admin_create_user_only")
     unused_account_validity_days = lookup(var.admin_create_user_config, "unused_account_validity_days", null) == null ? var.admin_create_user_config_unused_account_validity_days : lookup(var.admin_create_user_config, "unused_account_validity_days")
-    email_message                = lookup(var.admin_create_user_config, "email_message", null) == null ? var.admin_create_user_config_email_message : lookup(var.admin_create_user_config, "email_message")
-    email_subject                = lookup(var.admin_create_user_config, "email_subject", null) == null ? var.admin_create_user_config_email_subject : lookup(var.admin_create_user_config, "email_subject")
+    email_message                = lookup(var.admin_create_user_config, "email_message", null) == null ? (var.email_verification_message == "" ? var.admin_create_user_config_email_message : var.email_verification_message) : lookup(var.admin_create_user_config, "email_message")
+    email_subject                = lookup(var.admin_create_user_config, "email_subject", null) == null ? (var.email_verification_subject == "" ? var.admin_create_user_config_email_subject : var.email_verification_subject) : lookup(var.admin_create_user_config, "email_subject")
     sms_message                  = lookup(var.admin_create_user_config, "sms_message", null) == null ? var.admin_create_user_config_sms_message : lookup(var.admin_create_user_config, "sms_message")
 
   }
