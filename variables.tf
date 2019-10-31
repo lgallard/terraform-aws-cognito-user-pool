@@ -77,3 +77,22 @@ variable "sms_configuration_sns_caller_arn" {
   type        = string
   default     = ""
 }
+
+# device_configuration
+variable "device_configuration" {
+  description = "The configuration for the user pool's device tracking"
+  type        = map
+  default     = {}
+}
+
+variable "device_configuration_challenge_required_on_new_device" {
+  description = "Indicates whether a challenge is required on a new device. Only applicable to a new device"
+  type        = bool
+  default     = false
+}
+
+variable "device_configuration_device_only_remembered_on_user_prompt" {
+  description = "If true, a device is only remembered on user prompt"
+  type        = bool
+  default     = false
+}

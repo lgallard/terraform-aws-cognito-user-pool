@@ -31,9 +31,19 @@ resource "aws_cognito_user_pool" "pool" {
       sns_caller_arn = lookup(sms_configuration.value, "sns_caller_arn")
     }
   }
+  # device_configuration
+  dynamic "device_configuration" {
+    for_each = local.device_configuration
+    content {
+      challenge_required_on_new_device      = lookup(device_configuration.value, "challenge_required_on_new_device")
+      device_only_remembered_on_user_prompt = lookup(device_configuration.value, "device_only_remembered_on_user_prompt")
+    }
+  }
+
 }
 
 locals {
+
   # admin_create_user_config
   # If no admin_create_user_config list is provided, build a admin_create_user_config using the default values
   admin_create_user_config_default = {
@@ -48,10 +58,20 @@ locals {
   admin_create_user_config = [local.admin_create_user_config_default]
 
   # sms_configuration
+  # If no sms_configuration list is provided, build a sms_configuration using the default values
   sms_configuration_default = {
     external_id    = lookup(var.sms_configuration, "external_id", null) == null ? var.sms_configuration_external_id : lookup(var.sms_configuration, "external_id")
     sns_caller_arn = lookup(var.sms_configuration, "sns_caller_arn", null) == null ? var.sms_configuration_sns_caller_arn : lookup(var.sms_configuration, "sns_caller_arn")
   }
 
   sms_configuration = lookup(local.sms_configuration_default, "external_id") == "" || lookup(local.sms_configuration_default, "sns_caller_arn") == "" ? [] : [local.sms_configuration_default]
+
+  # device_configuration
+  # If no device_configuration list is provided, build a device_configuration using the default values
+  device_configuration_default = {
+    challenge_required_on_new_device      = lookup(var.device_configuration, "challenge_required_on_new_device", null) == null ? var.device_configuration_challenge_required_on_new_device : lookup(var.device_configuration, "challenge_required_on_new_device")
+    device_only_remembered_on_user_prompt = lookup(var.device_configuration, "device_only_remembered_on_user_prompt", null) == null ? var.device_configuration_device_only_remembered_on_user_prompt : lookup(var.device_configuration, "device_only_remembered_on_user_prompt")
+  }
+
+  device_configuration = lookup(local.device_configuration_default, "challenge_required_on_new_device") == false && lookup(local.device_configuration_default, "device_only_remembered_on_user_prompt") == false ? [] : [local.device_configuration_default]
 }
