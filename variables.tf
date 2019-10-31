@@ -96,3 +96,28 @@ variable "device_configuration_device_only_remembered_on_user_prompt" {
   type        = bool
   default     = false
 }
+
+# 
+variable "email_configuration" {
+  description = "The Email Configuration"
+  type        = map
+  default     = {}
+}
+
+variable "email_configuration_reply_to_email_address" {
+  description = "The REPLY-TO email address"
+  type        = string
+  default     = ""
+}
+
+variable "email_configuration_source_arn" {
+  description = "The ARN of the email source"
+  type        = string
+  default     = ""
+}
+
+variable "email_configuration_email_sending_account" {
+  description = "Instruct Cognito to either use its built-in functional or Amazon SES to send out emails. Allowed values: `COGNITO_DEFAULT` or `DEVELOPER`"
+  type        = string
+  default     = "COGNITO_DEFAULT"
+}

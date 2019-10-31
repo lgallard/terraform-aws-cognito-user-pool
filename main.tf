@@ -31,12 +31,23 @@ resource "aws_cognito_user_pool" "pool" {
       sns_caller_arn = lookup(sms_configuration.value, "sns_caller_arn")
     }
   }
+
   # device_configuration
   dynamic "device_configuration" {
     for_each = local.device_configuration
     content {
       challenge_required_on_new_device      = lookup(device_configuration.value, "challenge_required_on_new_device")
       device_only_remembered_on_user_prompt = lookup(device_configuration.value, "device_only_remembered_on_user_prompt")
+    }
+  }
+
+  # email_configuration
+  dynamic "email_configuration" {
+    for_each = local.email_configuration
+    content {
+      reply_to_email_address = lookup(email_configuration.value, "reply_to_email_address")
+      source_arn             = lookup(email_configuration.value, "source_arn")
+      email_sending_account  = lookup(email_configuration.value, "email_sending_account")
     }
   }
 
@@ -74,4 +85,14 @@ locals {
   }
 
   device_configuration = lookup(local.device_configuration_default, "challenge_required_on_new_device") == false && lookup(local.device_configuration_default, "device_only_remembered_on_user_prompt") == false ? [] : [local.device_configuration_default]
+
+  # email_configuration
+  # If no email_configuration list is provided, build a email_configuration using the default values
+  email_configuration_default = {
+    reply_to_email_address = lookup(var.email_configuration, "reply_to_email_address", null) == null ? var.email_configuration_reply_to_email_address : lookup(var.email_configuration, "reply_to_email_address")
+    source_arn             = lookup(var.email_configuration, "source_arn", null) == null ? var.email_configuration_source_arn : lookup(var.email_configuration, "source_arn")
+    email_sending_account  = lookup(var.email_configuration, "email_sending_account", null) == null ? var.email_configuration_email_sending_account : lookup(var.email_configuration, "email_sending_account")
+  }
+
+  email_configuration = lookup(local.email_configuration_default, "reply_to_email_address") == "" && lookup(local.email_configuration_default, "source_arn") == "" && lookup(local.email_configuration_default, "email_sending_account") == "" ? [] : [local.email_configuration_default]
 }
