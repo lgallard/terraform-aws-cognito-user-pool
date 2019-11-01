@@ -153,7 +153,7 @@ variable "lambda_config_define_auth_challenge" {
   default     = ""
 }
 
-variable "lambda_config_post_authentication " {
+variable "lambda_config_post_authentication" {
   description = "A post-authentication AWS Lambda trigger"
   type        = string
   default     = ""
@@ -165,6 +165,11 @@ variable "lambda_config_post_confirmation" {
   default     = ""
 }
 
+variable "lambda_config_pre_authentication" {
+  description = "A pre-authentication AWS Lambda trigger"
+  type        = string
+  default     = ""
+}
 variable "lambda_config_pre_sign_up" {
   description = "A pre-registration AWS Lambda trigger"
   type        = string

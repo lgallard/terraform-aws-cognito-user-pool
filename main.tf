@@ -113,20 +113,25 @@ locals {
     email_sending_account  = lookup(var.email_configuration, "email_sending_account", null) == null ? var.email_configuration_email_sending_account : lookup(var.email_configuration, "email_sending_account")
   }
 
-  email_configuration = lookup(local.email_configuration_default, "reply_to_email_address") == "" && lookup(local.email_configuration_default, "source_arn") == "" && lookup(local.email_configuration_default, "email_sending_account") == "" ? [] : [local.email_configuration_default]
-}
+  #email_configuration = length(join("", values(local.email_configuration_default))) == 0 ? [] : [local.email_configuration_default]
+  email_configuration = [local.email_configuration_default]
 
-# lambda_config
-# If no lambda_config list is provided, build a lambda_config using the default values
-lambda_config_default = {
+  # lambda_config
+  # If no lambda_config list is provided, build a lambda_config using the default values
+  lambda_config_default = {
 
-  create_auth_challenge          = lookup(var.lambda_config, "create_auth_challenge", null) == null ? var.lambda_config_create_auth_challenge : lookup(var.lambda_config, "create_auth_challenge")
-  custom_message                 = lookup(var.lambda_config, "custom_message", null) == null ? var.lambda_config_custom_message : lookup(var.lambda_config, "custom_message")
-  define_auth_challenge          = lookup(var.lambda_config, "define_auth_challenge", null) == null ? var.lambda_config_define_auth_challenge : lookup(var.lambda_config, "define_auth_challenge")
-  post_authentication            = lookup(var.lambda_config, "post_authentication", null) == null ? var.lambda_confi_post_authentication : lookup(var.lambda_config, "post_authentication")
-  post_confirmation              = lookup(var.lambda_config, "post_confirmation", null) == null ? var.lambda_config_post_confirmation : lookup(var.lambda_config, "post_confirmation")
-  pre_sign_up                    = lookup(var.lambda_config, "pre_sign_up", null) == null ? var.lambda_config_pre_sign_up : lookup(var.lambda_config, "pre_sign_up")
-  pre_token_generation           = lookup(var.lambda_config, "pre_token_generation", null) == null ? var.lambda_config : lookup(var.lambda_config, "pre_token_generation")
-  user_migration                 = lookup(var.lambda_config, "user_migration", null) == null ? var.lambda_config_user_migration : lookup(var.lambda_config, "user_migration")
-  verify_auth_challenge_response = lookup(var.lambda_config, "verify_auth_challenge_response", null) == null ? var.lambda_config_verify_auth_challenge_response : lookup(var.lambda_config, "verify_auth_challenge_response")
+    create_auth_challenge          = lookup(var.lambda_config, "create_auth_challenge", null) == null ? var.lambda_config_create_auth_challenge : lookup(var.lambda_config, "create_auth_challenge")
+    custom_message                 = lookup(var.lambda_config, "custom_message", null) == null ? var.lambda_config_custom_message : lookup(var.lambda_config, "custom_message")
+    define_auth_challenge          = lookup(var.lambda_config, "define_auth_challenge", null) == null ? var.lambda_config_define_auth_challenge : lookup(var.lambda_config, "define_auth_challenge")
+    post_authentication            = lookup(var.lambda_config, "post_authentication", null) == null ? var.lambda_config_post_authentication : lookup(var.lambda_config, "post_authentication")
+    post_confirmation              = lookup(var.lambda_config, "post_confirmation", null) == null ? var.lambda_config_post_confirmation : lookup(var.lambda_config, "post_confirmation")
+    pre_authentication             = lookup(var.lambda_config, "pre_authentication", null) == null ? var.lambda_config_pre_authentication : lookup(var.lambda_config, "pre_authentication")
+    pre_sign_up                    = lookup(var.lambda_config, "pre_sign_up", null) == null ? var.lambda_config_pre_sign_up : lookup(var.lambda_config, "pre_sign_up")
+    pre_token_generation           = lookup(var.lambda_config, "pre_token_generation", null) == null ? var.lambda_config_pre_token_generation : lookup(var.lambda_config, "pre_token_generation")
+    user_migration                 = lookup(var.lambda_config, "user_migration", null) == null ? var.lambda_config_user_migration : lookup(var.lambda_config, "user_migration")
+    verify_auth_challenge_response = lookup(var.lambda_config, "verify_auth_challenge_response", null) == null ? var.lambda_config_verify_auth_challenge_response : lookup(var.lambda_config, "verify_auth_challenge_response")
+  }
+
+  #lambda_config = coalesce(values(local.lambda_config_default)...) == "none" ? [{}] : ((length(join("", values(local.lambda_config_default))) == 0 ? [] : [local.lambda_config_default]))
+  lambda_config = [local.lambda_config_default]
 }
