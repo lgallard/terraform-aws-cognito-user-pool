@@ -1,10 +1,10 @@
 resource "aws_cognito_user_pool" "pool" {
-  name = var.user_pool_name
 
   alias_attributes           = var.alias_attributes
   auto_verified_attributes   = var.auto_verified_attributes
-  email_verification_message = var.email_verification_message == "" ? var.admin_create_user_config_email_message : var.email_verification_message
+  name                       = var.user_pool_name
   email_verification_subject = var.email_verification_subject == "" ? var.admin_create_user_config_email_subject : var.email_verification_subject
+  email_verification_message = var.email_verification_message == "" ? var.admin_create_user_config_email_message : var.email_verification_message
 
   # admin_create_user_config
   dynamic "admin_create_user_config" {
@@ -21,15 +21,6 @@ resource "aws_cognito_user_pool" "pool" {
           sms_message   = lookup(admin_create_user_config.value, "sms_message")
         }
       }
-    }
-  }
-
-  # sms_configuration
-  dynamic "sms_configuration" {
-    for_each = local.sms_configuration
-    content {
-      external_id    = lookup(sms_configuration.value, "external_id")
-      sns_caller_arn = lookup(sms_configuration.value, "sns_caller_arn")
     }
   }
 
@@ -51,6 +42,33 @@ resource "aws_cognito_user_pool" "pool" {
       email_sending_account  = lookup(email_configuration.value, "email_sending_account")
     }
   }
+
+  # lambda_config
+  dynamic "lambda_config" {
+    for_each = local.lambda_config
+    content {
+      create_auth_challenge          = lookup(lambda_config.value, "create_auth_challenge")
+      custom_message                 = lookup(lambda_config.value, "custom_message")
+      define_auth_challenge          = lookup(lambda_config.value, "define_auth_challenge")
+      post_authentication            = lookup(lambda_config.value, "post_authentication")
+      post_confirmation              = lookup(lambda_config.value, "post_confirmation")
+      pre_authentication             = lookup(lambda_config.value, "pre_authentication")
+      pre_sign_up                    = lookup(lambda_config.value, "pre_sign_up")
+      pre_token_generation           = lookup(lambda_config.value, "pre_token_generation")
+      user_migration                 = lookup(lambda_config.value, "user_migration")
+      verify_auth_challenge_response = lookup(lambda_config.value, "verify_auth_challenge_response")
+    }
+  }
+
+  # sms_configuration
+  dynamic "sms_configuration" {
+    for_each = local.sms_configuration
+    content {
+      external_id    = lookup(sms_configuration.value, "external_id")
+      sns_caller_arn = lookup(sms_configuration.value, "sns_caller_arn")
+    }
+  }
+
 
 }
 
@@ -96,4 +114,19 @@ locals {
   }
 
   email_configuration = lookup(local.email_configuration_default, "reply_to_email_address") == "" && lookup(local.email_configuration_default, "source_arn") == "" && lookup(local.email_configuration_default, "email_sending_account") == "" ? [] : [local.email_configuration_default]
+}
+
+# lambda_config
+# If no lambda_config list is provided, build a lambda_config using the default values
+lambda_config_default = {
+
+  create_auth_challenge          = lookup(var.lambda_config, "create_auth_challenge", null) == null ? var.lambda_config_create_auth_challenge : lookup(var.lambda_config, "create_auth_challenge")
+  custom_message                 = lookup(var.lambda_config, "custom_message", null) == null ? var.lambda_config_custom_message : lookup(var.lambda_config, "custom_message")
+  define_auth_challenge          = lookup(var.lambda_config, "define_auth_challenge", null) == null ? var.lambda_config_define_auth_challenge : lookup(var.lambda_config, "define_auth_challenge")
+  post_authentication            = lookup(var.lambda_config, "post_authentication", null) == null ? var.lambda_confi_post_authentication : lookup(var.lambda_config, "post_authentication")
+  post_confirmation              = lookup(var.lambda_config, "post_confirmation", null) == null ? var.lambda_config_post_confirmation : lookup(var.lambda_config, "post_confirmation")
+  pre_sign_up                    = lookup(var.lambda_config, "pre_sign_up", null) == null ? var.lambda_config_pre_sign_up : lookup(var.lambda_config, "pre_sign_up")
+  pre_token_generation           = lookup(var.lambda_config, "pre_token_generation", null) == null ? var.lambda_config : lookup(var.lambda_config, "pre_token_generation")
+  user_migration                 = lookup(var.lambda_config, "user_migration", null) == null ? var.lambda_config_user_migration : lookup(var.lambda_config, "user_migration")
+  verify_auth_challenge_response = lookup(var.lambda_config, "verify_auth_challenge_response", null) == null ? var.lambda_config_verify_auth_challenge_response : lookup(var.lambda_config, "verify_auth_challenge_response")
 }
