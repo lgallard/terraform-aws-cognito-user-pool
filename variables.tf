@@ -103,7 +103,7 @@ variable "device_configuration_device_only_remembered_on_user_prompt" {
   default     = false
 }
 
-# 
+# email_configuration
 variable "email_configuration" {
   description = "The Email Configuration"
   type        = map
@@ -126,4 +126,65 @@ variable "email_configuration_email_sending_account" {
   description = "Instruct Cognito to either use its built-in functional or Amazon SES to send out emails. Allowed values: `COGNITO_DEFAULT` or `DEVELOPER`"
   type        = string
   default     = "COGNITO_DEFAULT"
+}
+
+# lambda_config
+variable "lambda_config" {
+  description = "A container for the AWS Lambda triggers associated with the user pool"
+  type        = map
+  default     = {}
+}
+
+variable "lambda_config_create_auth_challenge" {
+  description = "The ARN of the lambda creating an authentication challenge."
+  type        = string
+  default     = ""
+}
+
+variable "lambda_config_custom_message" {
+  description = "A custom Message AWS Lambda trigger."
+  type        = string
+  default     = ""
+}
+
+variable "lambda_config_define_auth_challenge" {
+  description = "Defines the authentication challenge."
+  type        = string
+  default     = ""
+}
+
+variable "lambda_config_post_authentication " {
+  description = "A post-authentication AWS Lambda trigger"
+  type        = string
+  default     = ""
+}
+
+variable "lambda_config_post_confirmation" {
+  description = "A post-confirmation AWS Lambda trigger"
+  type        = string
+  default     = ""
+}
+
+variable "lambda_config_pre_sign_up" {
+  description = "A pre-registration AWS Lambda trigger"
+  type        = string
+  default     = ""
+}
+
+variable "lambda_config_pre_token_generation" {
+  description = "Allow to customize identity token claims before token generation"
+  type        = string
+  default     = ""
+}
+
+variable "lambda_config_user_migration" {
+  description = "The user migration Lambda config type"
+  type        = string
+  default     = ""
+}
+
+variable "lambda_config_verify_auth_challenge_response" {
+  description = "Verifies the authentication challenge response"
+  type        = string
+  default     = ""
 }
