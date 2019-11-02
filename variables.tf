@@ -132,7 +132,7 @@ variable "email_configuration_email_sending_account" {
 variable "lambda_config" {
   description = "A container for the AWS Lambda triggers associated with the user pool"
   type        = map
-  default     = {}
+  default     = null
 }
 
 variable "lambda_config_create_auth_challenge" {
