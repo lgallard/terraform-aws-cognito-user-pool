@@ -5,6 +5,7 @@ resource "aws_cognito_user_pool" "pool" {
   name                       = var.user_pool_name
   email_verification_subject = var.email_verification_subject == "" ? var.admin_create_user_config_email_subject : var.email_verification_subject
   email_verification_message = var.email_verification_message == "" ? var.admin_create_user_config_email_message : var.email_verification_message
+  mfa_configuration          = var.mfa_configuration
 
   # admin_create_user_config
   dynamic "admin_create_user_config" {

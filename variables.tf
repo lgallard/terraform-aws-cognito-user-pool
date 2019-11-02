@@ -193,3 +193,9 @@ variable "lambda_config_verify_auth_challenge_response" {
   type        = string
   default     = ""
 }
+
+variable "mfa_configuration" {
+  description = "Set to enable multi-factor authentication. Must be one of the following values (ON, OFF, OPTIONAL)"
+  type        = string
+  default     = "OFF"
+}
