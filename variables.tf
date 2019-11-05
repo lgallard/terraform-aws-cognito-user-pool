@@ -199,3 +199,47 @@ variable "mfa_configuration" {
   type        = string
   default     = "OFF"
 }
+
+# password_policy
+variable "password_policy" {
+  description = "A container for information about the user pool password policy"
+  type = object({
+    minimum_length    = number,
+    require_lowercase = bool,
+    require_lowercase = bool,
+    require_numbers   = bool,
+    require_symbols   = bool,
+    require_uppercase = bool
+  })
+  default = null
+}
+
+variable "password_policy_minimum_length" {
+  description = "The minimum length of the password policy that you have set"
+  type        = number
+  default     = 8
+}
+
+variable "password_policy_require_lowercase" {
+  description = "Whether you have required users to use at least one lowercase letter in their password"
+  type        = bool
+  default     = true
+}
+
+variable "password_policy_require_numbers" {
+  description = "Whether you have required users to use at least one number in their password"
+  type        = bool
+  default     = true
+}
+
+variable "password_policy_require_symbols" {
+  description = "Whether you have required users to use at least one symbol in their password"
+  type        = bool
+  default     = true
+}
+
+variable "password_policy_require_uppercase" {
+  description = "Whether you have required users to use at least one uppercase letter in their password"
+  type        = bool
+  default     = true
+}

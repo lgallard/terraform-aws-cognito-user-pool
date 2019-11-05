@@ -71,6 +71,17 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
+  # password_policy
+  dynamic "password_policy" {
+    for_each = local.password_policy
+    content {
+      minimum_length    = lookup(password_policy.value, "minimum_length")
+      require_lowercase = lookup(password_policy.value, "require_lowercase")
+      require_numbers   = lookup(password_policy.value, "require_numbers")
+      require_symbols   = lookup(password_policy.value, "require_symbols")
+      require_uppercase = lookup(password_policy.value, "require_uppercase")
+    }
+  }
 
 }
 
@@ -135,7 +146,6 @@ locals {
     verify_auth_challenge_response = var.lambda_config_verify_auth_challenge_response
   }
 
-
   # If lambda_config is NOT null
   lambda_config_not_null = var.lambda_config == null ? {} : {
 
@@ -153,4 +163,27 @@ locals {
 
   # Return the default values
   lambda_config = var.lambda_config == null ? [local.lambda_config_is_null] : [local.lambda_config_not_null]
+
+  # password_policy
+  # If no password_policy list is provided, build a password_policy using the default values
+  # If lambda_config is null
+  password_policy_is_null = {
+    minimum_length    = var.password_policy_minimum_length
+    require_lowercase = var.password_policy_require_lowercase
+    require_numbers   = var.password_policy_require_numbers
+    require_symbols   = var.password_policy_require_symbols
+    require_uppercase = var.password_policy_require_uppercase
+  }
+
+  password_policy_not_null = var.password_policy == null ? local.password_policy_is_null : {
+    minimum_length    = lookup(var.password_policy, "minimum_length", null) == null ? var.password_policy_minimum_length : lookup(var.password_policy, "minimum_length")
+    require_lowercase = lookup(var.password_policy, "require_lowercase", null) == null ? var.password_policy_require_lowercase : lookup(var.password_policy, "require_lowercase")
+    require_numbers   = lookup(var.password_policy, "require_numbers", null) == null ? var.password_policy_require_numbers : lookup(var.password_policy, "require_numbers")
+    require_symbols   = lookup(var.password_policy, "require_symbols", null) == null ? var.password_policy_require_symbols : lookup(var.password_policy, "require_symbols")
+    require_uppercase = lookup(var.password_policy, "require_uppercase", null) == null ? var.password_policy_require_uppercase : lookup(var.password_policy, "require_uppercase")
+  }
+
+  # Return the default values
+  password_policy = var.password_policy == null ? [local.password_policy_is_null] : [local.password_policy_not_null]
+
 }
