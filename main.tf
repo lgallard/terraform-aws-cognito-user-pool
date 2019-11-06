@@ -82,6 +82,59 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
+  # schema
+  dynamic "schema" {
+    for_each = var.schemas == null ? [] : var.schemas
+    content {
+      attribute_data_type      = lookup(schema.value, "attribute_data_type")
+      developer_only_attribute = lookup(schema.value, "developer_only_attribute")
+      mutable                  = lookup(schema.value, "mutable")
+      name                     = lookup(schema.value, "name")
+      required                 = lookup(schema.value, "required")
+    }
+  }
+
+  # schema (String)
+  dynamic "schema" {
+    for_each = var.string_schemas == null ? [] : var.string_schemas
+    content {
+      attribute_data_type      = lookup(schema.value, "attribute_data_type")
+      developer_only_attribute = lookup(schema.value, "developer_only_attribute")
+      mutable                  = lookup(schema.value, "mutable")
+      name                     = lookup(schema.value, "name")
+      required                 = lookup(schema.value, "required")
+
+      # string_attribute_constraints  
+      dynamic "string_attribute_constraints" {
+        for_each = length(lookup(schema.value, "string_attribute_constraints")) == 0 ? [] : [lookup(schema.value, "string_attribute_constraints", {})]
+        content {
+          min_length = lookup(string_attribute_constraints.value, "min_length", 0)
+          max_length = lookup(string_attribute_constraints.value, "max_length", 0)
+        }
+      }
+    }
+  }
+
+  # schema (Number)
+  dynamic "schema" {
+    for_each = var.number_schemas == null ? [] : var.number_schemas
+    content {
+      attribute_data_type      = lookup(schema.value, "attribute_data_type")
+      developer_only_attribute = lookup(schema.value, "developer_only_attribute")
+      mutable                  = lookup(schema.value, "mutable")
+      name                     = lookup(schema.value, "name")
+      required                 = lookup(schema.value, "required")
+
+      # number_attribute_constraints
+      dynamic "number_attribute_constraints" {
+        for_each = length(lookup(schema.value, "number_attribute_constraints")) == 0 ? [] : [lookup(schema.value, "number_attribute_constraints", {})]
+        content {
+          min_value = lookup(number_attribute_constraints.value, "min_value", 0)
+          max_value = lookup(number_attribute_constraints.value, "max_value", 0)
+        }
+      }
+    }
+  }
 }
 
 locals {
@@ -164,7 +217,7 @@ locals {
   lambda_config = var.lambda_config == null ? [local.lambda_config_is_null] : [local.lambda_config_not_null]
 
   # password_policy
-  # If no password_policy list is provided, build a password_policy using the default values
+  # If no password_policy is provided, build a password_policy using the default values
   # If lambda_config is null
   password_policy_is_null = {
     minimum_length    = var.password_policy_minimum_length

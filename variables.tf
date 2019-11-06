@@ -243,3 +243,20 @@ variable "password_policy_require_uppercase" {
   type        = bool
   default     = true
 }
+
+variable "schemas" {
+  description = "A container with the schema attributes of a user pool. Maximum of 50 attributes"
+  type        = list
+  default     = []
+}
+variable "string_schemas" {
+  description = "A container with the string schema attributes of a user pool. Maximum of 50 attributes"
+  type        = list
+  default     = []
+}
+
+variable "number_schemas" {
+  description = "A container with the number schema attributes of a user pool. Maximum of 50 attributes"
+  type        = list
+  default     = []
+}
