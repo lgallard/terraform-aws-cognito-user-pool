@@ -260,3 +260,9 @@ variable "number_schemas" {
   type        = list
   default     = []
 }
+
+variable "sms_authentication_message" {
+  description = "A string representing the SMS authentication message"
+  type        = string
+  default     = null
+}
