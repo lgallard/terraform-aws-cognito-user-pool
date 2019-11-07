@@ -59,6 +59,12 @@ variable "alias_attributes" {
   default     = []
 }
 
+variable "username_attributes" {
+  description = "Specifies whether email addresses or phone numbers can be specified as usernames when a user signs up. Conflicts with `alias_attributes`"
+  type        = list
+  default     = []
+}
+
 variable "auto_verified_attributes" {
   description = "The attributes to be auto-verified. Possible values: email, phone_number"
   type        = list

@@ -8,6 +8,7 @@ resource "aws_cognito_user_pool" "pool" {
   mfa_configuration          = var.mfa_configuration
   sms_authentication_message = var.sms_authentication_message
   sms_verification_message   = var.sms_verification_message
+  username_attributes        = var.username_attributes
 
   # admin_create_user_config
   dynamic "admin_create_user_config" {
