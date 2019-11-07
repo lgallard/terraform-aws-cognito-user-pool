@@ -287,3 +287,16 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+# user_pool_add_ons
+variable "user_pool_add_ons" {
+  description = "Configuration block for user pool add-ons to enable user pool advanced security mode features"
+  type        = map
+  default     = {}
+}
+
+variable "user_pool_add_ons_advanced_security_mode" {
+  description = "The mode for advanced security, must be one of `OFF`, `AUDIT` or `ENFORCED`"
+  type        = string
+  default     = null
+}

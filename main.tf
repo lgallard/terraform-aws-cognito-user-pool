@@ -139,6 +139,14 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
+  # user_pool_add_ons
+  dynamic "user_pool_add_ons" {
+    for_each = local.user_pool_add_ons
+    content {
+      advanced_security_mode = lookup(user_pool_add_ons.value, "advanced_security_mode")
+    }
+  }
+
   # tags
   tags = var.tags
 }
@@ -177,14 +185,13 @@ locals {
   device_configuration = lookup(local.device_configuration_default, "challenge_required_on_new_device") == false && lookup(local.device_configuration_default, "device_only_remembered_on_user_prompt") == false ? [] : [local.device_configuration_default]
 
   # email_configuration
-  # If no email_configuration list is provided, build a email_configuration using the default values
+  # If no email_configuration is provided, build a email_configuration using the default values
   email_configuration_default = {
     reply_to_email_address = lookup(var.email_configuration, "reply_to_email_address", null) == null ? var.email_configuration_reply_to_email_address : lookup(var.email_configuration, "reply_to_email_address")
     source_arn             = lookup(var.email_configuration, "source_arn", null) == null ? var.email_configuration_source_arn : lookup(var.email_configuration, "source_arn")
     email_sending_account  = lookup(var.email_configuration, "email_sending_account", null) == null ? var.email_configuration_email_sending_account : lookup(var.email_configuration, "email_sending_account")
   }
 
-  #email_configuration = length(join("", values(local.email_configuration_default))) == 0 ? [] : [local.email_configuration_default]
   email_configuration = [local.email_configuration_default]
 
   # lambda_config
@@ -243,5 +250,14 @@ locals {
 
   # Return the default values
   password_policy = var.password_policy == null ? [local.password_policy_is_null] : [local.password_policy_not_null]
+
+  # user_pool_add_ons
+  # If no user_pool_add_ons is provided, build a email_configuration using the default values
+  user_pool_add_ons_default = {
+    advanced_security_mode = lookup(var.user_pool_add_ons, "advanced_security_mode", null) == null ? var.user_pool_add_ons_advanced_security_mode : lookup(var.user_pool_add_ons, "advanced_security_mode")
+  }
+
+  #email_configuration = length(join("", values(local.email_configuration_default))) == 0 ? [] : [local.email_configuration_default]
+  user_pool_add_ons = var.user_pool_add_ons_advanced_security_mode == null && length(var.user_pool_add_ons) == 0 ? [] : [local.user_pool_add_ons_default]
 
 }
