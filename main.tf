@@ -7,6 +7,7 @@ resource "aws_cognito_user_pool" "pool" {
   email_verification_message = var.email_verification_message == "" ? var.admin_create_user_config_email_message : var.email_verification_message
   mfa_configuration          = var.mfa_configuration
   sms_authentication_message = var.sms_authentication_message
+  sms_verification_message   = var.sms_verification_message
 
   # admin_create_user_config
   dynamic "admin_create_user_config" {

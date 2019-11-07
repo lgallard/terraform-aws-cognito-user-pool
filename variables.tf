@@ -266,3 +266,9 @@ variable "sms_authentication_message" {
   type        = string
   default     = null
 }
+
+variable "sms_verification_message" {
+  description = "A string representing the SMS verification message. Conflicts with `verification_message_template` configuration block `sms_message` argument"
+  type        = string
+  default     = null
+}
