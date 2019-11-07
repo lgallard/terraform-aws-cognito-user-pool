@@ -244,6 +244,7 @@ variable "password_policy_require_uppercase" {
   default     = true
 }
 
+# schema
 variable "schemas" {
   description = "A container with the schema attributes of a user pool. Maximum of 50 attributes"
   type        = list
@@ -261,6 +262,7 @@ variable "number_schemas" {
   default     = []
 }
 
+# sms messages
 variable "sms_authentication_message" {
   description = "A string representing the SMS authentication message"
   type        = string
@@ -273,6 +275,7 @@ variable "sms_verification_message" {
   default     = null
 }
 
+# tags
 variable "tags" {
   description = "A mapping of tags to assign to the User Pool"
   type        = map(string)
