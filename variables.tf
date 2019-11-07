@@ -272,3 +272,9 @@ variable "sms_verification_message" {
   type        = string
   default     = null
 }
+
+variable "tags" {
+  description = "A mapping of tags to assign to the User Pool"
+  type        = map(string)
+  default     = {}
+}
