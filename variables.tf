@@ -56,13 +56,13 @@ variable "admin_create_user_config_sms_message" {
 variable "alias_attributes" {
   description = "Attributes supported as an alias for this user pool. Possible values: phone_number, email, or preferred_username. Conflicts with `username_attributes`"
   type        = list
-  default     = []
+  default     = null
 }
 
 variable "username_attributes" {
   description = "Specifies whether email addresses or phone numbers can be specified as usernames when a user signs up. Conflicts with `alias_attributes`"
   type        = list
-  default     = []
+  default     = null
 }
 
 variable "auto_verified_attributes" {
