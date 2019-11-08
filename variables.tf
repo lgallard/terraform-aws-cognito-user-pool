@@ -1,3 +1,6 @@
+#
+# aws_cognito_user_pool
+#
 variable "user_pool_name" {
   description = "The name of the user pool"
   type        = string
@@ -322,6 +325,16 @@ variable "verification_message_template_email_message_by_link" {
 
 variable "verification_message_template_email_subject_by_link" {
   description = "The subject line for the email message template for sending a confirmation link to the user"
+  type        = string
+  default     = null
+}
+
+#
+# aws_cognito_user_pool_domain
+#
+#
+variable "user_pool_domain" {
+  description = "Cognito User Pool domain"
   type        = string
   default     = null
 }
