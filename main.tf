@@ -3,8 +3,8 @@ resource "aws_cognito_user_pool" "pool" {
   alias_attributes           = var.alias_attributes
   auto_verified_attributes   = var.auto_verified_attributes
   name                       = var.user_pool_name
-  email_verification_subject = var.email_verification_subject == "" ? var.admin_create_user_config_email_subject : var.email_verification_subject
-  email_verification_message = var.email_verification_message == "" ? var.admin_create_user_config_email_message : var.email_verification_message
+  email_verification_subject = var.email_verification_subject == "" || var.email_verification_subject == null ? var.admin_create_user_config_email_subject : var.email_verification_subject
+  email_verification_message = var.email_verification_message == "" || var.email_verification_message == null ? var.admin_create_user_config_email_message : var.email_verification_message
   mfa_configuration          = var.mfa_configuration
   sms_authentication_message = var.sms_authentication_message
   sms_verification_message   = var.sms_verification_message
@@ -147,6 +147,16 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
+  # verification_message_template
+  dynamic "verification_message_template" {
+    for_each = local.verification_message_template
+    content {
+      default_email_option  = lookup(verification_message_template.value, "default_email_option")
+      email_message_by_link = lookup(verification_message_template.value, "email_message_by_link")
+      email_subject_by_link = lookup(verification_message_template.value, "email_subject_by_link")
+    }
+  }
+
   # tags
   tags = var.tags
 }
@@ -158,8 +168,8 @@ locals {
   admin_create_user_config_default = {
     allow_admin_create_user_only = lookup(var.admin_create_user_config, "allow_admin_create_user_only", null) == null ? var.admin_create_user_config_allow_admin_create_user_only : lookup(var.admin_create_user_config, "allow_admin_create_user_only")
     unused_account_validity_days = lookup(var.admin_create_user_config, "unused_account_validity_days", null) == null ? var.admin_create_user_config_unused_account_validity_days : lookup(var.admin_create_user_config, "unused_account_validity_days")
-    email_message                = lookup(var.admin_create_user_config, "email_message", null) == null ? (var.email_verification_message == "" ? var.admin_create_user_config_email_message : var.email_verification_message) : lookup(var.admin_create_user_config, "email_message")
-    email_subject                = lookup(var.admin_create_user_config, "email_subject", null) == null ? (var.email_verification_subject == "" ? var.admin_create_user_config_email_subject : var.email_verification_subject) : lookup(var.admin_create_user_config, "email_subject")
+    email_message                = lookup(var.admin_create_user_config, "email_message", null) == null ? (var.email_verification_message == "" || var.email_verification_message == null ? var.admin_create_user_config_email_message : var.email_verification_message) : lookup(var.admin_create_user_config, "email_message")
+    email_subject                = lookup(var.admin_create_user_config, "email_subject", null) == null ? (var.email_verification_subject == "" || var.email_verification_subject == null ? var.admin_create_user_config_email_subject : var.email_verification_subject) : lookup(var.admin_create_user_config, "email_subject")
     sms_message                  = lookup(var.admin_create_user_config, "sms_message", null) == null ? var.admin_create_user_config_sms_message : lookup(var.admin_create_user_config, "sms_message")
 
   }
@@ -257,7 +267,16 @@ locals {
     advanced_security_mode = lookup(var.user_pool_add_ons, "advanced_security_mode", null) == null ? var.user_pool_add_ons_advanced_security_mode : lookup(var.user_pool_add_ons, "advanced_security_mode")
   }
 
-  #email_configuration = length(join("", values(local.email_configuration_default))) == 0 ? [] : [local.email_configuration_default]
   user_pool_add_ons = var.user_pool_add_ons_advanced_security_mode == null && length(var.user_pool_add_ons) == 0 ? [] : [local.user_pool_add_ons_default]
+
+  # verification_message_template
+  # If no verification_message_template is provided, build a email_configuration using the default values
+  verification_message_template_default = {
+    default_email_option  = lookup(var.verification_message_template, "default_email_option", null) == null ? var.verification_message_template_default_email_option : lookup(var.verification_message_template, "default_email_option")
+    email_message_by_link = lookup(var.verification_message_template, "email_message_by_link", null) == null ? var.verification_message_template_email_message_by_link : lookup(var.verification_message_template, "email_message_by_link")
+    email_subject_by_link = lookup(var.verification_message_template, "email_subject_by_link", null) == null ? var.verification_message_template_email_subject_by_link : lookup(var.verification_message_template, "email_subject_by_link")
+  }
+
+  verification_message_template = [local.verification_message_template_default]
 
 }

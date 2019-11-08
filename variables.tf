@@ -4,15 +4,15 @@ variable "user_pool_name" {
 }
 
 variable "email_verification_message" {
-  description = "A string representing the email verification message. Conflicts with `verification_message_template` configuration block `email_message` argument"
+  description = "A string representing the email verification message"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "email_verification_subject" {
-  description = "A string representing the email verification subject. Conflicts with `verification_message_template` configuration block `email_subject` argument"
+  description = "A string representing the email verification subject"
   type        = string
-  default     = ""
+  default     = null
 }
 
 # admin_create_user_config
@@ -35,9 +35,9 @@ variable "admin_create_user_config_unused_account_validity_days" {
 }
 
 variable "admin_create_user_config_email_message" {
-  description = "The message template for email messages. Must contain {username} and {####} placeholders, for username and temporary password, respectively"
+  description = "The message template for email messages. Must contain `{username}` and `{####}` placeholders, for username and temporary password, respectively"
   type        = string
-  default     = "{username}, your verification code is {####}."
+  default     = "{username}, your verification code is `{####}`"
 }
 
 
@@ -48,9 +48,9 @@ variable "admin_create_user_config_email_subject" {
 }
 
 variable "admin_create_user_config_sms_message" {
-  description = "- The message template for SMS messages. Must contain {username} and {####} placeholders, for username and temporary password, respectively"
+  description = "- The message template for SMS messages. Must contain `{username}` and `{####}` placeholders, for username and temporary password, respectively"
   type        = string
-  default     = "Your username is {username} and temporary password is {####}."
+  default     = "Your username is {username} and temporary password is `{####}`"
 }
 
 variable "alias_attributes" {
@@ -276,7 +276,7 @@ variable "sms_authentication_message" {
 }
 
 variable "sms_verification_message" {
-  description = "A string representing the SMS verification message. Conflicts with `verification_message_template` configuration block `sms_message` argument"
+  description = "A string representing the SMS verification message"
   type        = string
   default     = null
 }
@@ -297,6 +297,31 @@ variable "user_pool_add_ons" {
 
 variable "user_pool_add_ons_advanced_security_mode" {
   description = "The mode for advanced security, must be one of `OFF`, `AUDIT` or `ENFORCED`"
+  type        = string
+  default     = null
+}
+
+# verification_message_template
+variable "verification_message_template" {
+  description = "The verification message templates configuration"
+  type        = map
+  default     = {}
+}
+
+variable "verification_message_template_default_email_option" {
+  description = "The default email option. Must be either `CONFIRM_WITH_CODE` or `CONFIRM_WITH_LINK`. Defaults to `CONFIRM_WITH_CODE`"
+  type        = string
+  default     = null
+}
+
+variable "verification_message_template_email_message_by_link" {
+  description = "The email message template for sending a confirmation link to the user, it must contain the `{##Click Here##}` placeholder"
+  type        = string
+  default     = null
+}
+
+variable "verification_message_template_email_subject_by_link" {
+  description = "The subject line for the email message template for sending a confirmation link to the user"
   type        = string
   default     = null
 }
