@@ -332,14 +332,28 @@ variable "verification_message_template_email_subject_by_link" {
 #
 # aws_cognito_user_pool_domain
 #
-variable "user_pool_domain" {
+variable "domain" {
   description = "Cognito User Pool domain"
   type        = string
   default     = null
 }
 
-variable "user_pool_certificate_arn" {
+variable "domain_certificate_arn" {
   description = "The ARN of an ISSUED ACM certificate in us-east-1 for a custom domain"
   type        = string
   default     = null
+}
+#
+# aws_cognito_user_pool_client
+#
+variable "client_name" {
+  description = "The name of the application client"
+  type        = string
+  default     = null
+}
+
+variable "client_allowed_oauth_flows" {
+  description = "The name of the application client"
+  type        = list
+  default     = []
 }
