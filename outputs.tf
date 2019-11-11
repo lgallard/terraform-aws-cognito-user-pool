@@ -22,3 +22,26 @@ output "last_modified_date" {
   description = "The date the user pool was last modified"
   value       = aws_cognito_user_pool.pool.last_modified_date
 }
+
+#
+# aws_cognito_user_pool_domain
+#
+output "domain_aws_account_id" {
+  description = "The AWS account ID for the user pool owner"
+  value       = join("", aws_cognito_user_pool_domain.domain.*.aws_account_id)
+}
+
+output "domain_cloudfront_distribution_arn" {
+  description = "The ARN of the CloudFront distribution"
+  value       = join("", aws_cognito_user_pool_domain.domain.*.cloudfront_distribution_arn)
+}
+
+output "domain_s3_bucket" {
+  description = "The S3 bucket where the static files for this domain are stored"
+  value       = join("", aws_cognito_user_pool_domain.domain.*.s3_bucket)
+}
+
+output "domain_app_version" {
+  description = "The app version"
+  value       = join("", aws_cognito_user_pool_domain.domain.*.version)
+}
