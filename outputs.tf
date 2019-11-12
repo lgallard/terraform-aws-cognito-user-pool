@@ -45,3 +45,16 @@ output "domain_app_version" {
   description = "The app version"
   value       = join("", aws_cognito_user_pool_domain.domain.*.version)
 }
+
+#
+# aws_cognito_user_pool_client
+#
+output "client_ids" {
+  description = "The ids of the user pool clients"
+  value       = aws_cognito_user_pool_client.client.*.id
+}
+
+output "client_secrets" {
+  description = " The client secrets of the user pool clients"
+  value       = aws_cognito_user_pool_client.client.*.client_secret
+}

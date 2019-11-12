@@ -259,6 +259,7 @@ variable "schemas" {
   type        = list
   default     = []
 }
+
 variable "string_schemas" {
   description = "A container with the string schema attributes of a user pool. Maximum of 50 attributes"
   type        = list
@@ -343,17 +344,90 @@ variable "domain_certificate_arn" {
   type        = string
   default     = null
 }
+
 #
 # aws_cognito_user_pool_client
 #
+variable "clients" {
+  description = "A container with the clients definition"
+  type        = list
+  default     = []
+}
+
+variable "client_allowed_oauth_flows" {
+  description = "The name of the application client"
+  type        = list
+  default     = []
+}
+
+variable "client_allowed_oauth_flows_user_pool_client" {
+  description = "Whether the client is allowed to follow the OAuth protocol when interacting with Cognito user pools"
+  type        = bool
+  default     = true
+}
+
+variable "client_allowed_oauth_scopes" {
+  description = "List of allowed OAuth scopes (phone, email, openid, profile, and aws.cognito.signin.user.admin)"
+  type        = list
+  default     = []
+}
+
+variable "client_callback_urls" {
+  description = "List of allowed callback URLs for the identity providers"
+  type        = list
+  default     = []
+}
+
+variable "client_default_redirect_uri" {
+  description = "The default redirect URI. Must be in the list of callback URLs"
+  type        = string
+  default     = ""
+}
+
+variable "client_explicit_auth_flows" {
+  description = "List of authentication flows (ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_PASSWORD_AUTH)"
+  type        = list
+  default     = []
+}
+
+variable "client_generate_secret" {
+  description = "Should an application secret be generated"
+  type        = bool
+  default     = true
+}
+
+variable "client_logout_urls" {
+  description = "List of allowed logout URLs for the identity providers"
+  type        = list
+  default     = []
+}
+
 variable "client_name" {
   description = "The name of the application client"
   type        = string
   default     = null
 }
 
-variable "client_allowed_oauth_flows" {
-  description = "The name of the application client"
+variable "client_read_attribute" {
+  description = "List of user pool attributes the application client can read from"
+  type        = list
+  default     = []
+}
+
+variable "client_refresh_token_validity" {
+  description = "The time limit in days refresh tokens are valid for"
+  type        = number
+  default     = 30
+}
+
+variable "client_supported_identity_providers" {
+  description = "List of provider names for the identity providers that are supported on this client"
+  type        = list
+  default     = []
+}
+
+variable "client_write_attribute" {
+  description = "List of user pool attributes the application client can write to"
   type        = list
   default     = []
 }
