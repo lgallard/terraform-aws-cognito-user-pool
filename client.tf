@@ -10,12 +10,40 @@ resource "aws_cognito_user_pool_client" "client" {
 locals {
   clients_default = [
     {
-      name            = var.client_name
-      generate_secret = var.client_generate_secret
+      allowed_oauth_flows                  = var.client_allowed_oauth_flows
+      allowed_oauth_flows_user_pool_client = var.client_allowed_oauth_flows_user_pool_client
+      allowed_oauth_scopes                 = var.client_allowed_oauth_scopes
+      callback_urls                        = var.client_callback_urls
+      default_redirect_uri                 = var.client_default_redirect_uri
+      explicit_auth_flows                  = var.client_explicit_auth_flows
+      generate_secret                      = var.client_generate_secret
+      logout_urls                          = var.client_logout_urls
+      name                                 = var.client_name
+      read_attribute                       = var.client_read_attribute
+      refresh_token_validity               = var.client_refresh_token_validity
+      supported_identity_providers         = var.client_supported_identity_providers
+      write_attribute                      = var.client_write_attribute
     }
   ]
 
-  clients = length(var.clients) == 0 && (var.client_name == null || var.client_name == "") ? [] : (length(var.clients) > 0 ? var.clients : local.clients_default)
+  # This parses vars.clients which is a list of objects (map), and transforms it to a tupple of elements to avoid conflict with  the ternary and  local.clients_default
+  clients_parsed = [for e in var.clients : {
+    allowed_oauth_flows                  = lookup(e, "allowed_oauth_flows", null)
+    allowed_oauth_flows_user_pool_client = lookup(e, "allowed_oauth_flows_user_pool_client", null)
+    allowed_oauth_scopes                 = lookup(e, "allowed_oauth_scopes", null)
+    callback_urls                        = lookup(e, "callback_urls", null)
+    default_redirect_uri                 = lookup(e, "default_redirect_uri", null)
+    explicit_auth_flows                  = lookup(e, "explicit_auth_flows", null)
+    generate_secret                      = lookup(e, "generate_secret", null)
+    logout_urls                          = lookup(e, "logout_urls", null)
+    name                                 = lookup(e, "name", null)
+    read_attribute                       = lookup(e, "read_attribute", null)
+    refresh_token_validity               = lookup(e, "refresh_token_validity", null)
+    supported_identity_providers         = lookup(e, "supported_identity_providers", null)
+    write_attribute                      = lookup(e, "write_attribute", null)
+    }
+  ]
 
+  clients = length(var.clients) == 0 && (var.client_name == null || var.client_name == "") ? [] : (length(var.clients) > 0 ? local.clients_parsed : local.clients_default)
 
 }
