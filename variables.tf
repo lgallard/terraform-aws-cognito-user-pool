@@ -349,7 +349,7 @@ variable "domain_certificate_arn" {
 # aws_cognito_user_pool_client
 #
 variable "clients" {
-  description = "A container with the clients definition"
+  description = "A container with the clients definitions"
   type        = list
   default     = []
 }
@@ -435,6 +435,11 @@ variable "client_write_attribute" {
 #
 # aws_cognito_user_group
 #
+variable "user_groups" {
+  description = "A container with the user_groups definitions"
+  type        = list
+  default     = []
+}
 variable "user_group_name" {
   description = "The name of the user group"
   type        = string
