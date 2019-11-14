@@ -28,10 +28,10 @@ locals {
       generate_secret                      = var.client_generate_secret
       logout_urls                          = var.client_logout_urls
       name                                 = var.client_name
-      read_attribute                       = var.client_read_attribute
+      read_attributes                      = var.client_read_attributes
       refresh_token_validity               = var.client_refresh_token_validity
       supported_identity_providers         = var.client_supported_identity_providers
-      write_attribute                      = var.client_write_attribute
+      write_attributes                     = var.client_write_attributes
     }
   ]
 
@@ -46,10 +46,10 @@ locals {
     generate_secret                      = lookup(e, "generate_secret", null)
     logout_urls                          = lookup(e, "logout_urls", null)
     name                                 = lookup(e, "name", null)
-    read_attribute                       = lookup(e, "read_attribute", null)
+    read_attributes                      = lookup(e, "read_attributes", null)
     refresh_token_validity               = lookup(e, "refresh_token_validity", null)
     supported_identity_providers         = lookup(e, "supported_identity_providers", null)
-    write_attribute                      = lookup(e, "write_attribute", null)
+    write_attributes                     = lookup(e, "write_attributes", null)
     }
   ]
 

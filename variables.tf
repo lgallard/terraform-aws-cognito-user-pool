@@ -408,7 +408,7 @@ variable "client_name" {
   default     = null
 }
 
-variable "client_read_attribute" {
+variable "client_read_attributes" {
   description = "List of user pool attributes the application client can read from"
   type        = list
   default     = []
@@ -426,7 +426,7 @@ variable "client_supported_identity_providers" {
   default     = []
 }
 
-variable "client_write_attribute" {
+variable "client_write_attributes" {
   description = "List of user pool attributes the application client can write to"
   type        = list
   default     = []
