@@ -3,8 +3,6 @@ resource "aws_cognito_user_pool_client" "client" {
   name            = lookup(element(local.clients, count.index), "name")
   generate_secret = lookup(element(local.clients, count.index), "generate_secret")
   user_pool_id    = aws_cognito_user_pool.pool.id
-
-  #allowed_oauth_flows = var.client_allowed_oauth_flows
 }
 
 locals {
@@ -26,7 +24,7 @@ locals {
     }
   ]
 
-  # This parses vars.clients which is a list of objects (map), and transforms it to a tupple of elements to avoid conflict with  the ternary and  local.clients_default
+  # This parses vars.clients which is a list of objects (map), and transforms it to a tupple of elements to avoid conflict with  the ternary and local.clients_default
   clients_parsed = [for e in var.clients : {
     allowed_oauth_flows                  = lookup(e, "allowed_oauth_flows", null)
     allowed_oauth_flows_user_pool_client = lookup(e, "allowed_oauth_flows_user_pool_client", null)
