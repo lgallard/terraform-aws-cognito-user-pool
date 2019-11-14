@@ -1,8 +1,19 @@
 resource "aws_cognito_user_pool_client" "client" {
-  count           = length(local.clients)
-  name            = lookup(element(local.clients, count.index), "name")
-  generate_secret = lookup(element(local.clients, count.index), "generate_secret")
-  user_pool_id    = aws_cognito_user_pool.pool.id
+  count                                = length(local.clients)
+  allowed_oauth_flows                  = lookup(element(local.clients, count.index), "allowed_oauth_flows", null)
+  allowed_oauth_flows_user_pool_client = lookup(element(local.clients, count.index), "allowed_oauth_flows_user_pool_client", null)
+  allowed_oauth_scopes                 = lookup(element(local.clients, count.index), "allowed_oauth_scopes", null)
+  callback_urls                        = lookup(element(local.clients, count.index), "callback_urls", null)
+  default_redirect_uri                 = lookup(element(local.clients, count.index), "default_redirect_uri", null)
+  explicit_auth_flows                  = lookup(element(local.clients, count.index), "explicit_auth_flows", null)
+  generate_secret                      = lookup(element(local.clients, count.index), "generate_secret", null)
+  logout_urls                          = lookup(element(local.clients, count.index), "logout_urls", null)
+  name                                 = lookup(element(local.clients, count.index), "name", null)
+  read_attributes                      = lookup(element(local.clients, count.index), "read_attributes", null)
+  refresh_token_validity               = lookup(element(local.clients, count.index), "refresh_token_validity", null)
+  supported_identity_providers         = lookup(element(local.clients, count.index), "supported_identity_providers", null)
+  write_attributes                     = lookup(element(local.clients, count.index), "write_attributes", null)
+  user_pool_id                         = aws_cognito_user_pool.pool.id
 }
 
 locals {
