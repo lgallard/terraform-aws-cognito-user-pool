@@ -12,7 +12,7 @@ module "aws_cognito_user_pool_complete_example" {
     unused_account_validity_days = 9
     email_message                = "Dear {username}, your verification code is {####}."
     email_subject                = "Here, your verification code baby"
-    sms_message                  = "Your username is {username} and temporary passwd is {####}."
+    sms_message                  = "Your username is {username} and temporary password is {####}."
   }
 
   device_configuration = {
