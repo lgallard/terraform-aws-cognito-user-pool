@@ -1,8 +1,8 @@
-module "aws_cognito_user_pool_simple_example" {
+module "aws_cognito_user_pool_simple_extended_example" {
 
   source = "../modules/terraform-aws-cognito-user-pool"
 
-  user_pool_name                                     = "mypool_simple"
+  user_pool_name                                     = "simple_extended_pool"
   alias_attributes                                   = ["email", "phone_number"]
   auto_verified_attributes                           = ["email"]
   sms_authentication_message                         = "Your username is {username} and temporary password is {####}."
