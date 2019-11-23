@@ -1,12 +1,12 @@
 # terraform-aws-cognito-user-pool
 
-Terraform module to create [Amazon Cognito User Pools](https://aws.amazon.com/cognito/). Amazon Cognito User Pools provide a secure user directory that scales to hundreds of millions of users. As a fully managed service, User Pools are easy to set up without any worries about standing up server infrastructure.
+Terraform module to create [Amazon Cognito User Pools](https://aws.amazon.com/cognito/), configure its attributes and resources such as  **app clients**, **domain**, **resource servers**. Amazon Cognito User Pools provide a secure user directory that scales to hundreds of millions of users. As a fully managed service, User Pools are easy to set up without any worries about standing up server infrastructure.
 
-## Usage user_pool
+## Usage
 
-You can use this module to create a Cognito User Pool using the default values or use the detailed definition to set every aspect of the Cognito User Poo
+You can use this module to create a Cognito User Pool using the default values or use the detailed definition to set every aspect of the Cognito User Pool
 
-Check the [examples](examples/) for the  **minimal** example using the default values, or the **detailed**  example with a complete example.
+Check the [examples](examples/) where you can see the **simple** example using the default values, the **simple_extended** version which adds  **app clients**, **domain**, **resource servers** resources, or the **complete** version with a detailed example.
 
 ### Example (simple)
 
@@ -97,5 +97,8 @@ module "aws_cognito_user_pool_complete" {
   }
 
 ```
+## Removing all lambda triggers issue
 
-**NOTE:** lambda_config: Default value don't define any value. Set any value for lambda_config\_* variables or define a lambda_config block to define the lambda triggers. To remove all lambda triggers define the lambda_config block with an empty map {}, apply the plan and then comment the lambda_config block or define it as `null`. This is needed because all paramters for lambda_config block are optional and keeping all block attributes empty or null forces to create a lambda_config {} block very time a plan/apply is run.
+If you define lambda triggers using the `lambda_config` block or any `lambda_config\_*` variable and you want to remove all triggers, define the lambda_config block with an empty map `{}` and apply the plan. Then comment the `lambda_config` block or define it as `null` and apply the plan again. 
+
+This is needed because all paramters for the `lambda_config` block are optional and keeping all block attributes empty or null forces to create a `lambda_config {}` block very time a plan/apply is run.
