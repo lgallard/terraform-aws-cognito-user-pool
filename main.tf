@@ -15,7 +15,7 @@ resource "aws_cognito_user_pool" "pool" {
     for_each = local.admin_create_user_config
     content {
       allow_admin_create_user_only = lookup(admin_create_user_config.value, "allow_admin_create_user_only")
-      unused_account_validity_days = lookup(admin_create_user_config.value, "unused_account_validity_days")
+      //unused_account_validity_days = lookup(admin_create_user_config.value, "")
 
       dynamic "invite_message_template" {
         for_each = lookup(admin_create_user_config.value, "email_message", null) == null && lookup(admin_create_user_config.value, "email_subject", null) == null && lookup(admin_create_user_config.value, "sms_message", null) == null ? [] : [1]
@@ -82,6 +82,7 @@ resource "aws_cognito_user_pool" "pool" {
       require_numbers   = lookup(password_policy.value, "require_numbers")
       require_symbols   = lookup(password_policy.value, "require_symbols")
       require_uppercase = lookup(password_policy.value, "require_uppercase")
+      temporary_password_validity_days = lookup(password_policy.value, "temporary_password_validity_days")
     }
   }
 
@@ -167,7 +168,7 @@ locals {
   # If no admin_create_user_config list is provided, build a admin_create_user_config using the default values
   admin_create_user_config_default = {
     allow_admin_create_user_only = lookup(var.admin_create_user_config, "allow_admin_create_user_only", null) == null ? var.admin_create_user_config_allow_admin_create_user_only : lookup(var.admin_create_user_config, "allow_admin_create_user_only")
-    unused_account_validity_days = lookup(var.admin_create_user_config, "unused_account_validity_days", null) == null ? var.admin_create_user_config_unused_account_validity_days : lookup(var.admin_create_user_config, "unused_account_validity_days")
+    //unused_account_validity_days = lookup(var.admin_create_user_config, "unused_account_validity_days", null) == null ? var.admin_create_user_config_unused_account_validity_days : lookup(var.admin_create_user_config, "unused_account_validity_days")
     email_message                = lookup(var.admin_create_user_config, "email_message", null) == null ? (var.email_verification_message == "" || var.email_verification_message == null ? var.admin_create_user_config_email_message : var.email_verification_message) : lookup(var.admin_create_user_config, "email_message")
     email_subject                = lookup(var.admin_create_user_config, "email_subject", null) == null ? (var.email_verification_subject == "" || var.email_verification_subject == null ? var.admin_create_user_config_email_subject : var.email_verification_subject) : lookup(var.admin_create_user_config, "email_subject")
     sms_message                  = lookup(var.admin_create_user_config, "sms_message", null) == null ? var.admin_create_user_config_sms_message : lookup(var.admin_create_user_config, "sms_message")
@@ -248,6 +249,7 @@ locals {
     require_numbers   = var.password_policy_require_numbers
     require_symbols   = var.password_policy_require_symbols
     require_uppercase = var.password_policy_require_uppercase
+    temporary_password_validity_days = var.password_policy_temporary_password_validity_days
   }
 
   password_policy_not_null = var.password_policy == null ? local.password_policy_is_null : {
@@ -256,6 +258,8 @@ locals {
     require_numbers   = lookup(var.password_policy, "require_numbers", null) == null ? var.password_policy_require_numbers : lookup(var.password_policy, "require_numbers")
     require_symbols   = lookup(var.password_policy, "require_symbols", null) == null ? var.password_policy_require_symbols : lookup(var.password_policy, "require_symbols")
     require_uppercase = lookup(var.password_policy, "require_uppercase", null) == null ? var.password_policy_require_uppercase : lookup(var.password_policy, "require_uppercase")
+    temporary_password_validity_days = lookup(var.password_policy, "temporary_password_validity_days", null) == null ? var.password_policy_temporary_password_validity_days : lookup(var.password_policy, "temporary_password_validity_days")
+
   }
 
   # Return the default values

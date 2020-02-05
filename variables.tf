@@ -31,7 +31,7 @@ variable "admin_create_user_config_allow_admin_create_user_only" {
   default     = true
 }
 
-variable "admin_create_user_config_unused_account_validity_days" {
+variable "temporary_password_validity_days" {  
   description = "The user account expiration limit, in days, after which the account is no longer usable"
   type        = number
   default     = 7
@@ -218,7 +218,8 @@ variable "password_policy" {
     require_lowercase = bool,
     require_numbers   = bool,
     require_symbols   = bool,
-    require_uppercase = bool
+    require_uppercase = bool,
+    temporary_password_validity_days = number    
   })
   default = null
 }
@@ -251,6 +252,12 @@ variable "password_policy_require_uppercase" {
   description = "Whether you have required users to use at least one uppercase letter in their password"
   type        = bool
   default     = true
+}
+
+variable "password_policy_temporary_password_validity_days" {
+  description = "The minimum length of the password policy that you have set"
+  type        = number
+  default     = 7
 }
 
 # schema
