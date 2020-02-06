@@ -1,3 +1,9 @@
+## 0.2.1 (February 6, 2020)
+
+BUG FIXES:
+
+* Cognito unused_account_validity_days bug with 2.47:  The aws-provider reports the existence of the `unused_account_validity_days` even if it was never declared, automatically matching the new `temporary_password_validity_day`
+
 ## 0.2.0 (February 5, 2020)
 
 UPDATES:
