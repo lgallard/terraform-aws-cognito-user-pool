@@ -1,3 +1,9 @@
+## 0.2.2 (March 16, 2020)
+
+FIXES:
+
+* Fix typo in comments
+
 ## 0.2.1 (February 6, 2020)
 
 BUG FIXES:
