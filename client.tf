@@ -35,7 +35,7 @@ locals {
     }
   ]
 
-  # This parses vars.clients which is a list of objects (map), and transforms it to a tupple of elements to avoid conflict with  the ternary and local.clients_default
+  # This parses vars.clients which is a list of objects (map), and transforms it to a tuple of elements to avoid conflict with  the ternary and local.clients_default
   clients_parsed = [for e in var.clients : {
     allowed_oauth_flows                  = lookup(e, "allowed_oauth_flows", null)
     allowed_oauth_flows_user_pool_client = lookup(e, "allowed_oauth_flows_user_pool_client", null)
