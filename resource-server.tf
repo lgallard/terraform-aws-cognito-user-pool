@@ -28,7 +28,7 @@ locals {
     }
   ]
 
-  # This parses var.user_groups which is a list of objects (map), and transforms it to a tupple of elements to avoid conflict with  the ternary and local.groups_default
+  # This parses var.user_groups which is a list of objects (map), and transforms it to a tuple of elements to avoid conflict with  the ternary and local.groups_default
   resource_servers_parsed = [for e in var.resource_servers : {
     name       = lookup(e, "name", null)
     identifier = lookup(e, "identifier", null)
