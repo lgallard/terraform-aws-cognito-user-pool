@@ -1,3 +1,13 @@
+## 0.3.0 (April 1, 2020)
+
+ENHANCEMENTS:
+
+* Add `param client_prevent_user_existence_errors` for client
+
+UPDATES:
+
+* Add Terraform logo in README
+
 ## 0.2.2 (March 16, 2020)
 
 FIXES:
