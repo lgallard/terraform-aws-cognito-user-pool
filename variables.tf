@@ -427,13 +427,13 @@ variable "client_refresh_token_validity" {
   default     = 30
 }
 
-variable "client_supported_identity_providers" {
+variable "client_prevent_user_existence_errors" {
   description = "Use this setting to choose which errors and responses are returned by Cognito APIs during authentication, account confirmation, and password recovery when the user does not exist in the user pool"
   type        = string
   default     = ""
 }
 
-variable "client_prevent_user_existence_errors" {
+variable "client_supported_identity_providers" {
   description = "List of provider names for the identity providers that are supported on this client"
   type        = list
   default     = []
