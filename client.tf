@@ -12,6 +12,7 @@ resource "aws_cognito_user_pool_client" "client" {
   read_attributes                      = lookup(element(local.clients, count.index), "read_attributes", null)
   refresh_token_validity               = lookup(element(local.clients, count.index), "refresh_token_validity", null)
   supported_identity_providers         = lookup(element(local.clients, count.index), "supported_identity_providers", null)
+  prevent_user_existence_errors        = lookup(element(local.clients, count.index), "prevent_user_existence_errors", null)
   write_attributes                     = lookup(element(local.clients, count.index), "write_attributes", null)
   user_pool_id                         = aws_cognito_user_pool.pool.id
 }
@@ -31,6 +32,7 @@ locals {
       read_attributes                      = var.client_read_attributes
       refresh_token_validity               = var.client_refresh_token_validity
       supported_identity_providers         = var.client_supported_identity_providers
+      prevent_user_existence_errors        = var.client_prevent_user_existence_errors
       write_attributes                     = var.client_write_attributes
     }
   ]
@@ -49,6 +51,7 @@ locals {
     read_attributes                      = lookup(e, "read_attributes", null)
     refresh_token_validity               = lookup(e, "refresh_token_validity", null)
     supported_identity_providers         = lookup(e, "supported_identity_providers", null)
+    prevent_user_existence_errors        = lookup(e, "prevent_user_existence_errors", null)
     write_attributes                     = lookup(e, "write_attributes", null)
     }
   ]
