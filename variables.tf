@@ -68,6 +68,12 @@ variable "username_attributes" {
   default     = null
 }
 
+variable "case_sensitive" {
+  description = "Specifies whether username case sensitivity will be applied for all users in the user pool through Cognito APIs"
+  type        = bool
+  default     = true
+}
+
 variable "auto_verified_attributes" {
   description = "The attributes to be auto-verified. Possible values: email, phone_number"
   type        = list
