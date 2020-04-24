@@ -4,7 +4,6 @@ ENHANCEMENTS:
 
 * Add `case_sensitive` for aws_cognito_user_pool
 
-
 ## 0.3.0 (April 1, 2020)
 
 ENHANCEMENTS:
