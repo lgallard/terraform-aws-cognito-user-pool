@@ -1,3 +1,9 @@
+## 0.3.3  (April 24, 2020)
+
+FIXES:
+
+* Applies case_sensitive via username_configuration
+
 ## 0.3.2 (April 24, 2020)
 
 UPDATE:
