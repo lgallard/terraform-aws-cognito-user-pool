@@ -9,7 +9,9 @@ resource "aws_cognito_user_pool" "pool" {
   sms_authentication_message = var.sms_authentication_message
   sms_verification_message   = var.sms_verification_message
   username_attributes        = var.username_attributes
-  case_sensitive             = var.case_sensitive
+  username_configuration {
+    case_sensitive = var.case_sensitive
+  }
   lifecycle {
     ignore_changes = [
         admin_create_user_config.0.unused_account_validity_days
