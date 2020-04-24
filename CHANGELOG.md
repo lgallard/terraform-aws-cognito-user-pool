@@ -1,3 +1,9 @@
+## 0.3.2 (April 24, 2020)
+
+UPDATE:
+
+* Update README with `case_sensitive`
+
 ## 0.3.1 (April 24, 2020)
 
 ENHANCEMENTS:
