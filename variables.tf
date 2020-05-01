@@ -215,6 +215,12 @@ variable "mfa_configuration" {
   default     = "OFF"
 }
 
+variable "software_token_mfa_configuration_enabled" {
+  description = "If true multi-factor authentication by software TOTP generator will be enabled"
+  type        = bool
+  default     = false
+}
+
 # password_policy
 variable "password_policy" {
   description = "A container for information about the user pool password policy"

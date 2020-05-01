@@ -169,6 +169,7 @@ module "aws_cognito_user_pool_complete" {
 | resource\_server\_scope\_name | The scope name | `string` | n/a | yes |
 | resource\_servers | A container with the user\_groups definitions | `list` | `[]` | no |
 | schemas | A container with the schema attributes of a user pool. Maximum of 50 attributes | `list` | `[]` | no |
+| software\_token\_mfa\_configuration\_enabled | If true multi-factor authentication by software TOTP generator will be enabled | `bool` | `false` | no |
 | sms\_authentication\_message | A string representing the SMS authentication message | `string` | n/a | yes |
 | sms\_configuration | The SMS Configuration | `map` | `{}` | no |
 | sms\_configuration\_external\_id | The external ID used in IAM role trust relationships | `string` | `""` | no |

@@ -12,6 +12,9 @@ resource "aws_cognito_user_pool" "pool" {
   username_configuration {
     case_sensitive = var.case_sensitive
   }
+  software_token_mfa_configuration {
+    enabled = var.software_token_mfa_configuration_enabled
+  }
   lifecycle {
     ignore_changes = [
         admin_create_user_config.0.unused_account_validity_days
