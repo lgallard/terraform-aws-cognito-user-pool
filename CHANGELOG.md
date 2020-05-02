@@ -1,3 +1,9 @@
+## 0.4.0 (May 2, 2020)
+
+ENHANCEMENTS:
+
+* Add support for `software_token_mfa_configuration`
+
 ## 0.3.3  (April 24, 2020)
 
 FIXES:
