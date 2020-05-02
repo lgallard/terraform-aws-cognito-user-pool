@@ -14,7 +14,7 @@ resource "aws_cognito_user_pool" "pool" {
   }
   lifecycle {
     ignore_changes = [
-        admin_create_user_config.0.unused_account_validity_days
+      admin_create_user_config.0.unused_account_validity_days
     ]
   }
 
@@ -92,11 +92,11 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "password_policy" {
     for_each = local.password_policy
     content {
-      minimum_length    = lookup(password_policy.value, "minimum_length")
-      require_lowercase = lookup(password_policy.value, "require_lowercase")
-      require_numbers   = lookup(password_policy.value, "require_numbers")
-      require_symbols   = lookup(password_policy.value, "require_symbols")
-      require_uppercase = lookup(password_policy.value, "require_uppercase")
+      minimum_length                   = lookup(password_policy.value, "minimum_length")
+      require_lowercase                = lookup(password_policy.value, "require_lowercase")
+      require_numbers                  = lookup(password_policy.value, "require_numbers")
+      require_symbols                  = lookup(password_policy.value, "require_symbols")
+      require_uppercase                = lookup(password_policy.value, "require_uppercase")
       temporary_password_validity_days = lookup(password_policy.value, "temporary_password_validity_days")
     }
   }
@@ -258,20 +258,20 @@ locals {
   # If no password_policy is provided, build a password_policy using the default values
   # If lambda_config is null
   password_policy_is_null = {
-    minimum_length    = var.password_policy_minimum_length
-    require_lowercase = var.password_policy_require_lowercase
-    require_numbers   = var.password_policy_require_numbers
-    require_symbols   = var.password_policy_require_symbols
-    require_uppercase = var.password_policy_require_uppercase
+    minimum_length                   = var.password_policy_minimum_length
+    require_lowercase                = var.password_policy_require_lowercase
+    require_numbers                  = var.password_policy_require_numbers
+    require_symbols                  = var.password_policy_require_symbols
+    require_uppercase                = var.password_policy_require_uppercase
     temporary_password_validity_days = var.password_policy_temporary_password_validity_days
   }
 
   password_policy_not_null = var.password_policy == null ? local.password_policy_is_null : {
-    minimum_length    = lookup(var.password_policy, "minimum_length", null) == null ? var.password_policy_minimum_length : lookup(var.password_policy, "minimum_length")
-    require_lowercase = lookup(var.password_policy, "require_lowercase", null) == null ? var.password_policy_require_lowercase : lookup(var.password_policy, "require_lowercase")
-    require_numbers   = lookup(var.password_policy, "require_numbers", null) == null ? var.password_policy_require_numbers : lookup(var.password_policy, "require_numbers")
-    require_symbols   = lookup(var.password_policy, "require_symbols", null) == null ? var.password_policy_require_symbols : lookup(var.password_policy, "require_symbols")
-    require_uppercase = lookup(var.password_policy, "require_uppercase", null) == null ? var.password_policy_require_uppercase : lookup(var.password_policy, "require_uppercase")
+    minimum_length                   = lookup(var.password_policy, "minimum_length", null) == null ? var.password_policy_minimum_length : lookup(var.password_policy, "minimum_length")
+    require_lowercase                = lookup(var.password_policy, "require_lowercase", null) == null ? var.password_policy_require_lowercase : lookup(var.password_policy, "require_lowercase")
+    require_numbers                  = lookup(var.password_policy, "require_numbers", null) == null ? var.password_policy_require_numbers : lookup(var.password_policy, "require_numbers")
+    require_symbols                  = lookup(var.password_policy, "require_symbols", null) == null ? var.password_policy_require_symbols : lookup(var.password_policy, "require_symbols")
+    require_uppercase                = lookup(var.password_policy, "require_uppercase", null) == null ? var.password_policy_require_uppercase : lookup(var.password_policy, "require_uppercase")
     temporary_password_validity_days = lookup(var.password_policy, "temporary_password_validity_days", null) == null ? var.password_policy_temporary_password_validity_days : lookup(var.password_policy, "temporary_password_validity_days")
 
   }

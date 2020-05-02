@@ -31,7 +31,7 @@ variable "admin_create_user_config_allow_admin_create_user_only" {
   default     = true
 }
 
-variable "temporary_password_validity_days" {  
+variable "temporary_password_validity_days" {
   description = "The user account expiration limit, in days, after which the account is no longer usable"
   type        = number
   default     = 7
@@ -215,6 +215,7 @@ variable "mfa_configuration" {
   default     = "OFF"
 }
 
+# software_token_mfa_configuration
 variable "software_token_mfa_configuration" {
   description = "Configuration block for software token MFA (multifactor-auth). mfa_configuration must also be enabled for this to work"
   type        = map
@@ -231,13 +232,13 @@ variable "software_token_mfa_configuration_enabled" {
 variable "password_policy" {
   description = "A container for information about the user pool password policy"
   type = object({
-    minimum_length    = number,
-    require_lowercase = bool,
-    require_lowercase = bool,
-    require_numbers   = bool,
-    require_symbols   = bool,
-    require_uppercase = bool,
-    temporary_password_validity_days = number    
+    minimum_length                   = number,
+    require_lowercase                = bool,
+    require_lowercase                = bool,
+    require_numbers                  = bool,
+    require_symbols                  = bool,
+    require_uppercase                = bool,
+    temporary_password_validity_days = number
   })
   default = null
 }
