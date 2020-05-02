@@ -212,7 +212,7 @@ module "aws_cognito_user_pool_complete" {
 
 
 ## Know issue
-###removing all lambda triggers
+### Removing all lambda triggers
 
 If you define lambda triggers using the `lambda_config` block or any `lambda_config_*` variable and you want to remove all triggers, define the lambda_config block with an empty map `{}` and apply the plan. Then comment the `lambda_config` block or define it as `null` and apply the plan again. 
 
