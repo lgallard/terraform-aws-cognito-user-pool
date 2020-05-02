@@ -8,7 +8,7 @@ module "aws_cognito_user_pool_complete_example" {
   sms_authentication_message = "Your username is {username} and temporary password is {####}."
   sms_verification_message   = "This is the verification message {####}."
 
-  mfa_configuration                        = "OPTIONAL"
+  mfa_configuration = "OPTIONAL"
   software_token_mfa_configuration = {
     enabled = true
   }
