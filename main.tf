@@ -80,6 +80,14 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
+  # software_token_mfa_configuration
+  dynamic "software_token_mfa_configuration" {
+    for_each = local.software_token_mfa_configuration
+    content {
+      enabled = lookup(software_token_mfa_configuration.value, "enabled")
+    }
+  }
+
   # password_policy
   dynamic "password_policy" {
     for_each = local.password_policy
@@ -289,4 +297,11 @@ locals {
 
   verification_message_template = [local.verification_message_template_default]
 
+  # software_token_mfa_configuration
+  # If no software_token_mfa_configuration is provided, build a software_token_mfa_configuration using the default values
+  software_token_mfa_configuration_default = {
+    enabled = lookup(var.software_token_mfa_configuration, "enabled", null) == null ? var.software_token_mfa_configuration_enabled : lookup(var.software_token_mfa_configuration, "enabled")
+  }
+
+  software_token_mfa_configuration = (length(var.sms_configuration) == 0 || local.sms_configuration == null) && var.mfa_configuration == "OFF" ? [] : [local.software_token_mfa_configuration_default]
 }
