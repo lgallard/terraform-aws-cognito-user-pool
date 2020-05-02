@@ -9,7 +9,9 @@ module "aws_cognito_user_pool_complete_example" {
   sms_verification_message   = "This is the verification message {####}."
 
   mfa_configuration                        = "OPTIONAL"
-  software_token_mfa_configuration_enabled = true
+  software_token_mfa_configuration = {
+    enabled = true
+  }
 
   admin_create_user_config = {
     unused_account_validity_days = 9
