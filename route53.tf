@@ -1,13 +1,16 @@
-locals {
-  domain_parts = split(".", var.domain)
-  parent_hosted_zone_parts = slice(local.domain_parts, 1, length(local.domain_parts))
-  parent_hosted_zone = join(".", local.parent_hosted_zone_parts)
-}
-
 data "aws_route53_zone" "custom_domain_zone" {
   count = var.domain_certificate_arn == null ? 0 : 1
-
-  name = local.parent_hosted_zone
+  
+  name = join(
+    ".",
+    slice(
+      split(".", var.domain),
+      1,
+      length(
+        split(".", var.domain)
+      )
+    )
+  )
 }
 
 resource "aws_route53_record" "custom_domain_subdomain" {
