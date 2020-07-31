@@ -12,11 +12,6 @@ resource "aws_cognito_user_pool" "pool" {
   username_configuration {
     case_sensitive = var.case_sensitive
   }
-  lifecycle {
-    ignore_changes = [
-      admin_create_user_config.0.unused_account_validity_days
-    ]
-  }
 
   # admin_create_user_config
   dynamic "admin_create_user_config" {
