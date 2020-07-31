@@ -1,3 +1,10 @@
+## 0.5.0  (July 31, 2020)
+
+FIXES:
+
+* Depcreate support to `unused_account_validity_days`
+* Update README and examples removing any referece to the deprecated `unused_account_validity_days` field
+
 ## 0.4.0 (May 2, 2020)
 
 ENHANCEMENTS:

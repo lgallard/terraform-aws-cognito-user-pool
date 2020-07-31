@@ -41,8 +41,7 @@ module "aws_cognito_user_pool_complete" {
   auto_verified_attributes = ["email"]
 
   admin_create_user_config = {
-    unused_account_validity_days = 9
-    email_subject                = "Here, your verification code baby"
+    email_subject = "Here, your verification code baby"
   }
 
   email_configuration = {
