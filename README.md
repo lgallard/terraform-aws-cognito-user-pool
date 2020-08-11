@@ -97,7 +97,6 @@ module "aws_cognito_user_pool_complete" {
   }
 
 ```
-
 ## Providers
 
 | Name | Version |
@@ -115,7 +114,6 @@ module "aws_cognito_user_pool_complete" {
 | admin\_create\_user\_config\_sms\_message | - The message template for SMS messages. Must contain `{username}` and `{####}` placeholders, for username and temporary password, respectively | `string` | `"Your username is {username} and temporary password is `{####}`"` | no |
 | alias\_attributes | Attributes supported as an alias for this user pool. Possible values: phone\_number, email, or preferred\_username. Conflicts with `username_attributes` | `list` | n/a | yes |
 | auto\_verified\_attributes | The attributes to be auto-verified. Possible values: email, phone\_number | `list` | `[]` | no |
-| case\_sensitive | Specifies whether username case sensitivity will be applied for all users in the user pool through Cognito APIs | `bool` | `true` | no |
 | client\_allowed\_oauth\_flows | The name of the application client | `list` | `[]` | no |
 | client\_allowed\_oauth\_flows\_user\_pool\_client | Whether the client is allowed to follow the OAuth protocol when interacting with Cognito user pools | `bool` | `true` | no |
 | client\_allowed\_oauth\_scopes | List of allowed OAuth scopes (phone, email, openid, profile, and aws.cognito.signin.user.admin) | `list` | `[]` | no |
@@ -155,7 +153,7 @@ module "aws_cognito_user_pool_complete" {
 | lambda\_config\_verify\_auth\_challenge\_response | Verifies the authentication challenge response | `string` | `""` | no |
 | mfa\_configuration | Set to enable multi-factor authentication. Must be one of the following values (ON, OFF, OPTIONAL) | `string` | `"OFF"` | no |
 | number\_schemas | A container with the number schema attributes of a user pool. Maximum of 50 attributes | `list` | `[]` | no |
-| password\_policy | A container for information about the user pool password policy | <pre>object({<br>    minimum_length    = number,<br>    require_lowercase = bool,<br>    require_lowercase = bool,<br>    require_numbers   = bool,<br>    require_symbols   = bool,<br>    require_uppercase = bool,<br>    temporary_password_validity_days = number    <br>  })</pre> | n/a | yes |
+| password\_policy | A container for information about the user pool password policy | <pre>object({<br>    minimum_length                   = number,<br>    require_lowercase                = bool,<br>    require_lowercase                = bool,<br>    require_numbers                  = bool,<br>    require_symbols                  = bool,<br>    require_uppercase                = bool,<br>    temporary_password_validity_days = number<br>  })</pre> | n/a | yes |
 | password\_policy\_minimum\_length | The minimum length of the password policy that you have set | `number` | `8` | no |
 | password\_policy\_require\_lowercase | Whether you have required users to use at least one lowercase letter in their password | `bool` | `true` | no |
 | password\_policy\_require\_numbers | Whether you have required users to use at least one number in their password | `bool` | `true` | no |
@@ -168,13 +166,13 @@ module "aws_cognito_user_pool_complete" {
 | resource\_server\_scope\_name | The scope name | `string` | n/a | yes |
 | resource\_servers | A container with the user\_groups definitions | `list` | `[]` | no |
 | schemas | A container with the schema attributes of a user pool. Maximum of 50 attributes | `list` | `[]` | no |
-| software\_token\_mfa\_configuration | Configuration block for software token MFA (multifactor-auth). mfa\_configuration must also be enabled for this to work | `map` | `{}` | no |
-| software\_token\_mfa\_configuration\_enabled | If true, and if mfa_configuration is also enabled, multi-factor authentication by software TOTP generator will be enabled | `bool` | `false` | no |
 | sms\_authentication\_message | A string representing the SMS authentication message | `string` | n/a | yes |
 | sms\_configuration | The SMS Configuration | `map` | `{}` | no |
 | sms\_configuration\_external\_id | The external ID used in IAM role trust relationships | `string` | `""` | no |
 | sms\_configuration\_sns\_caller\_arn | The ARN of the Amazon SNS caller. This is usually the IAM role that you've given Cognito permission to assume | `string` | `""` | no |
 | sms\_verification\_message | A string representing the SMS verification message | `string` | n/a | yes |
+| software\_token\_mfa\_configuration | Configuration block for software token MFA (multifactor-auth). mfa\_configuration must also be enabled for this to work | `map` | `{}` | no |
+| software\_token\_mfa\_configuration\_enabled | If true, and if mfa\_configuration is also enabled, multi-factor authentication by software TOTP generator will be enabled | `bool` | `false` | no |
 | string\_schemas | A container with the string schema attributes of a user pool. Maximum of 50 attributes | `list` | `[]` | no |
 | tags | A mapping of tags to assign to the User Pool | `map(string)` | `{}` | no |
 | temporary\_password\_validity\_days | The user account expiration limit, in days, after which the account is no longer usable | `number` | `7` | no |
@@ -187,6 +185,7 @@ module "aws_cognito_user_pool_complete" {
 | user\_pool\_add\_ons\_advanced\_security\_mode | The mode for advanced security, must be one of `OFF`, `AUDIT` or `ENFORCED` | `string` | n/a | yes |
 | user\_pool\_name | The name of the user pool | `string` | n/a | yes |
 | username\_attributes | Specifies whether email addresses or phone numbers can be specified as usernames when a user signs up. Conflicts with `alias_attributes` | `list` | n/a | yes |
+| username\_configuration | The Username Configuration. Seting `case_sesiteve` specifies whether username case sensitivity will be applied for all users in the user pool through Cognito APIs | `map` | `{}` | no |
 | verification\_message\_template | The verification message templates configuration | `map` | `{}` | no |
 | verification\_message\_template\_default\_email\_option | The default email option. Must be either `CONFIRM_WITH_CODE` or `CONFIRM_WITH_LINK`. Defaults to `CONFIRM_WITH_CODE` | `string` | n/a | yes |
 | verification\_message\_template\_email\_message\_by\_link | The email message template for sending a confirmation link to the user, it must contain the `{##Click Here##}` placeholder | `string` | n/a | yes |
@@ -208,7 +207,6 @@ module "aws_cognito_user_pool_complete" {
 | id | The id of the user pool |
 | last\_modified\_date | The date the user pool was last modified |
 | resource\_servers\_scope\_identifiers | A list of all scopes configured in the format identifier/scope\_name |
-
 
 ## Know issue
 ### Removing all lambda triggers
