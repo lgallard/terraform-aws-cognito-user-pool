@@ -18,6 +18,13 @@ variable "email_verification_subject" {
   default     = null
 }
 
+# username_configuration
+variable "username_configuration" {
+  description = "The Username Configuration. Seting `case_sesiteve` specifies whether username case sensitivity will be applied for all users in the user pool through Cognito APIs"
+  type        = map
+  default     = {}
+}
+
 # admin_create_user_config
 variable "admin_create_user_config" {
   description = "The configuration for AdminCreateUser requests"
@@ -66,12 +73,6 @@ variable "username_attributes" {
   description = "Specifies whether email addresses or phone numbers can be specified as usernames when a user signs up. Conflicts with `alias_attributes`"
   type        = list
   default     = null
-}
-
-variable "case_sensitive" {
-  description = "Specifies whether username case sensitivity will be applied for all users in the user pool through Cognito APIs"
-  type        = bool
-  default     = true
 }
 
 variable "auto_verified_attributes" {
