@@ -5,6 +5,10 @@ FIXES:
 * Add `username_configuration` dynamic block to avoid forcing a new resource when importing a user pool
 * Remove `case_sensitive` varible. Use the `username_configuration` map variable to devine the `case_sensitive` attribute
 
+UPDATES:
+
+* Updated README and examples
+
 ## 0.5.0  (July 31, 2020)
 
 FIXES:
