@@ -9,8 +9,13 @@ resource "aws_cognito_user_pool" "pool" {
   sms_authentication_message = var.sms_authentication_message
   sms_verification_message   = var.sms_verification_message
   username_attributes        = var.username_attributes
-  username_configuration {
-    case_sensitive = var.case_sensitive
+
+  # username_configuration
+  dynamic "username_configuration" {
+    for_each = local.username_configuration
+    content {
+      case_sensitive = lookup(username_configuration.value, "case_sensitive")
+    }
   }
 
   # admin_create_user_config
@@ -173,6 +178,12 @@ resource "aws_cognito_user_pool" "pool" {
 }
 
 locals {
+  # username_configuration
+  # If no username_configuration is provided return a empty list
+  username_configuration_default = length(var.username_configuration) == 0 ? {} : {
+    case_sensitive = lookup(var.username_configuration, "case_sensitive", true)
+  }
+  username_configuration = length(local.username_configuration_default) == 0 ? [] : [local.username_configuration_default]
 
   # admin_create_user_config
   # If no admin_create_user_config list is provided, build a admin_create_user_config using the default values
