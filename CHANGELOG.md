@@ -1,3 +1,9 @@
+## 0.6.2  (August 13, 2020)
+
+FIXES:
+
+* Update CHANGELOG
+
 ## 0.6.1  (August 13, 2020)
 
 ENHANCEMENTS:
