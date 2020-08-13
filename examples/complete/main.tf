@@ -1,6 +1,6 @@
 module "aws_cognito_user_pool_complete_example" {
 
-  source = "../modules/terraform-aws-cognito-user-pool"
+  source = "lgallard/cognito-user-pool/aws"
 
   user_pool_name             = "mypool_complete"
   alias_attributes           = ["email", "phone_number"]
