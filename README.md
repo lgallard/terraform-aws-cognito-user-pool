@@ -16,7 +16,7 @@ This simple example creates a AWS Cognito User Pool with the default values:
 ```
 module "aws_cognito_user_pool_simple" {
 
-  source = "../modules/terraform-aws-cognito-user-pool"
+  source  = "lgallard/cognito-user-pool/aws"
 
   user_pool_name = "mypool"
 
@@ -34,7 +34,7 @@ This more complete example creates a AWS Cognito User Pool using a detailed conf
 ```
 module "aws_cognito_user_pool_complete" {
 
-  source = "../modules/terraform-aws-cognito-user-pool"
+  source  = "lgallard/cognito-user-pool/aws"
 
   user_pool_name           = "mypool"
   alias_attributes         = ["email", "phone_number"]
