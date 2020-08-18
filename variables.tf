@@ -376,93 +376,52 @@ variable "domain_certificate_arn" {
 # aws_cognito_user_pool_client
 #
 variable "clients" {
-  description = "A container with the clients definitions"
-  type        = list
-  default     = []
-}
+  description = "Maps of objects containing the clients definitions. Refer to client.tf for the argument reference."
+  type        = map
+  default     = {}
 
-variable "client_allowed_oauth_flows" {
-  description = "The name of the application client"
-  type        = list
-  default     = []
-}
-
-variable "client_allowed_oauth_flows_user_pool_client" {
-  description = "Whether the client is allowed to follow the OAuth protocol when interacting with Cognito user pools"
-  type        = bool
-  default     = true
-}
-
-variable "client_allowed_oauth_scopes" {
-  description = "List of allowed OAuth scopes (phone, email, openid, profile, and aws.cognito.signin.user.admin)"
-  type        = list
-  default     = []
-}
-
-variable "client_callback_urls" {
-  description = "List of allowed callback URLs for the identity providers"
-  type        = list
-  default     = []
-}
-
-variable "client_default_redirect_uri" {
-  description = "The default redirect URI. Must be in the list of callback URLs"
-  type        = string
-  default     = ""
-}
-
-variable "client_explicit_auth_flows" {
-  description = "List of authentication flows (ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_PASSWORD_AUTH)"
-  type        = list
-  default     = []
-}
-
-variable "client_generate_secret" {
-  description = "Should an application secret be generated"
-  type        = bool
-  default     = true
-}
-
-variable "client_logout_urls" {
-  description = "List of allowed logout URLs for the identity providers"
-  type        = list
-  default     = []
-}
-
-variable "client_name" {
-  description = "The name of the application client"
-  type        = string
-  default     = null
-}
-
-variable "client_read_attributes" {
-  description = "List of user pool attributes the application client can read from"
-  type        = list
-  default     = []
-}
-
-variable "client_refresh_token_validity" {
-  description = "The time limit in days refresh tokens are valid for"
-  type        = number
-  default     = 30
-}
-
-variable "client_prevent_user_existence_errors" {
-  description = "Choose which errors and responses are returned by Cognito APIs during authentication, account confirmation, and password recovery when the user does not exist in the user pool. When set to ENABLED and the user does not exist, authentication returns an error indicating either the username or password was incorrect, and account confirmation and password recovery return a response indicating a code was sent to a simulated destination. When set to LEGACY, those APIs will return a UserNotFoundException exception if the user does not exist in the user pool."
-  type        = string
-  default     = ""
-}
-
-variable "client_supported_identity_providers" {
-  description = "List of provider names for the identity providers that are supported on this client"
-  type        = list
-  default     = []
-}
-
-variable "client_write_attributes" {
-  description = "List of user pool attributes the application client can write to"
-  type        = list
-  default     = []
+###Example:
+##  clients = {
+##    "test1" = {
+##      allowed_oauth_flows                  = ["code"]
+##      allowed_oauth_flows_user_pool_client = true
+##      allowed_oauth_scopes                 = []
+##      callback_urls                        = ["https://mydomain.com/callback"]
+##      default_redirect_uri                 = "https://mydomain.com/callback"
+##      explicit_auth_flows                  = [
+##        "ALLOW_USER_SRP_AUTH",
+##        "ALLOW_REFRESH_TOKEN_AUTH"
+##      ]
+##      generate_secret                      = false
+##      logout_urls                          = []
+##      prevent_user_existence_errors        = "ENABLED"
+##      read_attributes                      = [
+##        "email",
+##        "phone_number",
+##      ]
+##      refresh_token_validity               = 60
+##      supported_identity_providers         = []
+##      write_attributes                     = [
+##        "email",
+##        "gender",
+##        "locale",
+##      ]
+##    },
+##    "test2" = {
+##      allowed_oauth_flows                  = []
+##      allowed_oauth_flows_user_pool_client = false
+##      allowed_oauth_scopes                 = []
+##      callback_urls                        = ["https://mydomain.com/callback"]
+##      default_redirect_uri                 = "https://mydomain.com/callback"
+##      explicit_auth_flows                  = []
+##      generate_secret                      = false
+##      logout_urls                          = []
+##      read_attributes                      = []
+##      refresh_token_validity               = 30
+##      supported_identity_providers         = []
+##      write_attributes                     = []
+##    },
+##  }
 }
 
 #
@@ -472,6 +431,7 @@ variable "user_groups" {
   description = "Maps of objects containing the user_groups definitions. Refer to user-group.tf for the argument reference."
   type        = map
   default     = {}
+
   ###Example:
   ## user_groups = {
   ##   "Group1" = {

@@ -1,61 +1,78 @@
 resource "aws_cognito_user_pool_client" "client" {
-  count                                = length(local.clients)
-  allowed_oauth_flows                  = lookup(element(local.clients, count.index), "allowed_oauth_flows", null)
-  allowed_oauth_flows_user_pool_client = lookup(element(local.clients, count.index), "allowed_oauth_flows_user_pool_client", null)
-  allowed_oauth_scopes                 = lookup(element(local.clients, count.index), "allowed_oauth_scopes", null)
-  callback_urls                        = lookup(element(local.clients, count.index), "callback_urls", null)
-  default_redirect_uri                 = lookup(element(local.clients, count.index), "default_redirect_uri", null)
-  explicit_auth_flows                  = lookup(element(local.clients, count.index), "explicit_auth_flows", null)
-  generate_secret                      = lookup(element(local.clients, count.index), "generate_secret", null)
-  logout_urls                          = lookup(element(local.clients, count.index), "logout_urls", null)
-  name                                 = lookup(element(local.clients, count.index), "name", null)
-  read_attributes                      = lookup(element(local.clients, count.index), "read_attributes", null)
-  refresh_token_validity               = lookup(element(local.clients, count.index), "refresh_token_validity", null)
-  supported_identity_providers         = lookup(element(local.clients, count.index), "supported_identity_providers", null)
-  prevent_user_existence_errors        = lookup(element(local.clients, count.index), "prevent_user_existence_errors", null)
-  write_attributes                     = lookup(element(local.clients, count.index), "write_attributes", null)
-  user_pool_id                         = aws_cognito_user_pool.pool.id
-}
+  for_each = var.clients
 
-locals {
-  clients_default = [
-    {
-      allowed_oauth_flows                  = var.client_allowed_oauth_flows
-      allowed_oauth_flows_user_pool_client = var.client_allowed_oauth_flows_user_pool_client
-      allowed_oauth_scopes                 = var.client_allowed_oauth_scopes
-      callback_urls                        = var.client_callback_urls
-      default_redirect_uri                 = var.client_default_redirect_uri
-      explicit_auth_flows                  = var.client_explicit_auth_flows
-      generate_secret                      = var.client_generate_secret
-      logout_urls                          = var.client_logout_urls
-      name                                 = var.client_name
-      read_attributes                      = var.client_read_attributes
-      refresh_token_validity               = var.client_refresh_token_validity
-      supported_identity_providers         = var.client_supported_identity_providers
-      prevent_user_existence_errors        = var.client_prevent_user_existence_errors
-      write_attributes                     = var.client_write_attributes
-    }
-  ]
+  #######
+  # name: (Required) The name of the application client. The resource will only be created when at least 1 name value has been defined.
+  #######
+  name = each.key
 
-  # This parses vars.clients which is a list of objects (map), and transforms it to a tuple of elements to avoid conflict with  the ternary and local.clients_default
-  clients_parsed = [for e in var.clients : {
-    allowed_oauth_flows                  = lookup(e, "allowed_oauth_flows", null)
-    allowed_oauth_flows_user_pool_client = lookup(e, "allowed_oauth_flows_user_pool_client", null)
-    allowed_oauth_scopes                 = lookup(e, "allowed_oauth_scopes", null)
-    callback_urls                        = lookup(e, "callback_urls", null)
-    default_redirect_uri                 = lookup(e, "default_redirect_uri", null)
-    explicit_auth_flows                  = lookup(e, "explicit_auth_flows", null)
-    generate_secret                      = lookup(e, "generate_secret", null)
-    logout_urls                          = lookup(e, "logout_urls", null)
-    name                                 = lookup(e, "name", null)
-    read_attributes                      = lookup(e, "read_attributes", null)
-    refresh_token_validity               = lookup(e, "refresh_token_validity", null)
-    supported_identity_providers         = lookup(e, "supported_identity_providers", null)
-    prevent_user_existence_errors        = lookup(e, "prevent_user_existence_errors", null)
-    write_attributes                     = lookup(e, "write_attributes", null)
-    }
-  ]
+  ######################
+  # allowed_oauth_flows: (Optional) List of allowed OAuth flows (code, implicit, client_credentials).
+  ######################
+  allowed_oauth_flows = try(each.value.allowed_oauth_flows, null)
 
-  clients = length(var.clients) == 0 && (var.client_name == null || var.client_name == "") ? [] : (length(var.clients) > 0 ? local.clients_parsed : local.clients_default)
+  #######################################
+  # allowed_oauth_flows_user_pool_client: (Optional) Whether the client is allowed to follow the OAuth protocol when interacting with Cognito user pools.
+  #######################################
+  allowed_oauth_flows_user_pool_client = try(each.value.allowed_oauth_flows_user_pool_client, null)
 
+  #######################
+  # allowed_oauth_scopes: (Optional) List of allowed OAuth scopes (phone, email, openid, profile, and aws.cognito.signin.user.admin).
+  #######################
+  allowed_oauth_scopes = try(each.value.allowed_oauth_scopes, null)
+
+  ################
+  # callback_urls: (Optional) List of allowed callback URLs for the identity providers.
+  ################
+  callback_urls = try(each.value.callback_urls, null)
+
+  #######################
+  # default_redirect_uri: (Optional) The default redirect URI. Must be in the list of callback URLs.
+  #######################
+  default_redirect_uri = try(each.value.default_redirect_uri, null)
+
+  ######################
+  # explicit_auth_flows: (Optional) List of authentication flows (ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_PASSWORD_AUTH, ALLOW_ADMIN_USER_PASSWORD_AUTH, ALLOW_CUSTOM_AUTH, ALLOW_USER_PASSWORD_AUTH, ALLOW_USER_SRP_AUTH, ALLOW_REFRESH_TOKEN_AUTH).
+  ######################
+  explicit_auth_flows = try(each.value.explicit_auth_flows, null)
+
+  ##################
+  # generate_secret: (Optional) Should an application secret be generated.
+  ##################
+  generate_secret = try(each.value.generate_secret, null)
+
+  ##############
+  # logout_urls: (Optional) List of allowed logout URLs for the identity providers.
+  ##############
+  logout_urls = try(each.value.logout_urls, null)
+
+  ################################
+  # prevent_user_existence_errors: (Optional) Choose which errors and responses are returned by Cognito APIs during authentication, account confirmation, and password recovery when the user does not exist in the user pool. When set to ENABLED and the user does not exist, authentication returns an error indicating either the username or password was incorrect, and account confirmation and password recovery return a response indicating a code was sent to a simulated destination. When set to LEGACY, those APIs will return a UserNotFoundException exception if the user does not exist in the user pool.
+  ################################
+  prevent_user_existence_errors = try(each.value.prevent_user_existence_errors, null)
+
+  ##################
+  # read_attributes: (Optional) List of user pool attributes the application client can read from.
+  ##################
+  read_attributes = try(each.value.read_attributes, null)
+
+  #########################
+  # refresh_token_validity: (Optional) The time limit in days refresh tokens are valid for.
+  #########################
+  refresh_token_validity = try(each.value.refresh_token_validity, null)
+
+  ###############################
+  # supported_identity_providers: (Optional) List of provider names for the identity providers that are supported on this client.
+  ###############################
+  supported_identity_providers = try(each.value.supported_identity_providers, null)
+
+  ###################
+  # write_attributes: (Optional) List of user pool attributes the application client can write to.
+  ###################
+  write_attributes = try(each.value.write_attributes, null)
+
+  ###############
+  # user_pool_id: (Required) The user pool the client belongs to.
+  ###############
+  user_pool_id = aws_cognito_user_pool.pool.id
 }
