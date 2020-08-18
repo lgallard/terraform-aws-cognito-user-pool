@@ -1,32 +1,28 @@
 resource "aws_cognito_user_group" "main" {
-  count        = length(local.groups)
-  name         = lookup(element(local.groups, count.index), "name")
-  description  = lookup(element(local.groups, count.index), "description")
-  precedence   = lookup(element(local.groups, count.index), "precedence")
-  role_arn     = lookup(element(local.groups, count.index), "role_arn")
+  for_each = var.user_groups
+
+  #######
+  # name: The name of the user group. The resource will only be created when at least 1 name value has been defined.
+  #######
+  name = each.key
+
+  ##############
+  # description: (Optional) The description of the user group.
+  ##############
+  description = try(each.value.description, null)
+
+  #############
+  # precedence: (Optional) The precedence of the user group.
+  #############
+  precedence = try(each.value.precedence, null)
+
+  ###########
+  # role_arn: (Optional) The ARN of the IAM role to be associated with the user group.
+  ###########
+  role_arn = try(each.value.role_arn, null)
+
+  ###############
+  # user_pool_id: The user pool ID associated with this user_group.
+  ###############
   user_pool_id = aws_cognito_user_pool.pool.id
-}
-
-locals {
-  groups_default = [
-    {
-      name        = var.user_group_name
-      description = var.user_group_description
-      precedence  = var.user_group_precedence
-      role_arn    = var.user_group_role_arn
-
-    }
-  ]
-
-  # This parses var.user_groups which is a list of objects (map), and transforms it to a tuple of elements to avoid conflict with  the ternary and local.groups_default
-  groups_parsed = [for e in var.user_groups : {
-    name        = lookup(e, "name", null)
-    description = lookup(e, "description", null)
-    precedence  = lookup(e, "precedence", null)
-    role_arn    = lookup(e, "role_arn", null)
-    }
-  ]
-
-  groups = length(var.user_groups) == 0 && (var.user_group_name == null || var.user_group_name == "") ? [] : (length(var.user_groups) > 0 ? local.groups_parsed : local.groups_default)
-
 }

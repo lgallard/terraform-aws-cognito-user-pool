@@ -469,33 +469,20 @@ variable "client_write_attributes" {
 # aws_cognito_user_group
 #
 variable "user_groups" {
-  description = "A container with the user_groups definitions"
-  type        = list
-  default     = []
-}
-
-variable "user_group_name" {
-  description = "The name of the user group"
-  type        = string
-  default     = null
-}
-
-variable "user_group_description" {
-  description = "The description of the user group"
-  type        = string
-  default     = null
-}
-
-variable "user_group_precedence" {
-  description = "The precedence of the user group"
-  type        = number
-  default     = null
-}
-
-variable "user_group_role_arn" {
-  description = "The ARN of the IAM role to be associated with the user group"
-  type        = string
-  default     = null
+  description = "Maps of objects containing the user_groups definitions. Refer to user-group.tf for the argument reference."
+  type        = map
+  default     = {}
+  ###Example:
+  ## user_groups = {
+  ##   "Group1" = {
+  ##     description = "Group1 description"
+  ##     precedence  = 40
+  ##     role_arn    = "arn:aws:iam::111111111111:role/group1_role"
+  ##   },
+  ##   "Group2" = {
+  ##     description = "Group2 description"
+  ##   },
+  ## }
 }
 
 #
