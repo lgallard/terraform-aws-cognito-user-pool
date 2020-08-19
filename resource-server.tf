@@ -1,41 +1,32 @@
 resource "aws_cognito_resource_server" "resource" {
-  count      = length(local.resource_servers)
-  name       = lookup(element(local.resource_servers, count.index), "name")
-  identifier = lookup(element(local.resource_servers, count.index), "identifier")
+  for_each = var.resource_servers
 
-  #scope 
+  #######
+  # name: A name for the resource server.
+  #######
+  name = each.key
+
+  #############
+  # identifier: An identifier for the resource server.
+  #############
+  identifier = each.value.identifier
+
+  ########
+  # scope: (Optional) A list of Authorization Scope.
+  #   scope_name: (Required) The scope name.
+  #   scope_description: (Required) The scope description.
+  ########
   dynamic "scope" {
-    for_each = lookup(element(local.resource_servers, count.index), "scope")
+    for_each = each.value.scope
+
     content {
-      scope_name        = lookup(scope.value, "scope_name")
-      scope_description = lookup(scope.value, "scope_description")
+      scope_name        = scope.value.scope_name
+      scope_description = scope.value.scope_description
     }
   }
 
+  ###############
+  # user_pool_id: (Required) The user pool the client belongs to.
+  ###############
   user_pool_id = aws_cognito_user_pool.pool.id
-}
-
-locals {
-  resource_server_default = [
-    {
-      name       = var.resource_server_name
-      identifier = var.resource_server_identifier
-      scope = [
-        {
-          scope_name        = var.resource_server_scope_name
-          scope_description = var.resource_server_scope_description
-      }]
-    }
-  ]
-
-  # This parses var.user_groups which is a list of objects (map), and transforms it to a tuple of elements to avoid conflict with  the ternary and local.groups_default
-  resource_servers_parsed = [for e in var.resource_servers : {
-    name       = lookup(e, "name", null)
-    identifier = lookup(e, "identifier", null)
-    scope      = lookup(e, "scope", [])
-    }
-  ]
-
-  resource_servers = length(var.resource_servers) == 0 && (var.resource_server_name == null || var.resource_server_name == "") ? [] : (length(var.resource_servers) > 0 ? local.resource_servers_parsed : local.resource_server_default)
-
 }

@@ -380,48 +380,48 @@ variable "clients" {
   type        = map
   default     = {}
 
-###Example:
-##  clients = {
-##    "test1" = {
-##      allowed_oauth_flows                  = ["code"]
-##      allowed_oauth_flows_user_pool_client = true
-##      allowed_oauth_scopes                 = []
-##      callback_urls                        = ["https://mydomain.com/callback"]
-##      default_redirect_uri                 = "https://mydomain.com/callback"
-##      explicit_auth_flows                  = [
-##        "ALLOW_USER_SRP_AUTH",
-##        "ALLOW_REFRESH_TOKEN_AUTH"
-##      ]
-##      generate_secret                      = false
-##      logout_urls                          = []
-##      prevent_user_existence_errors        = "ENABLED"
-##      read_attributes                      = [
-##        "email",
-##        "phone_number",
-##      ]
-##      refresh_token_validity               = 60
-##      supported_identity_providers         = []
-##      write_attributes                     = [
-##        "email",
-##        "gender",
-##        "locale",
-##      ]
-##    },
-##    "test2" = {
-##      allowed_oauth_flows                  = []
-##      allowed_oauth_flows_user_pool_client = false
-##      allowed_oauth_scopes                 = []
-##      callback_urls                        = ["https://mydomain.com/callback"]
-##      default_redirect_uri                 = "https://mydomain.com/callback"
-##      explicit_auth_flows                  = []
-##      generate_secret                      = false
-##      logout_urls                          = []
-##      read_attributes                      = []
-##      refresh_token_validity               = 30
-##      supported_identity_providers         = []
-##      write_attributes                     = []
-##    },
-##  }
+  ###Example:
+  ##  clients = {
+  ##    "test1" = {
+  ##      allowed_oauth_flows                  = ["code"]
+  ##      allowed_oauth_flows_user_pool_client = true
+  ##      allowed_oauth_scopes                 = []
+  ##      callback_urls                        = ["https://mydomain.com/callback"]
+  ##      default_redirect_uri                 = "https://mydomain.com/callback"
+  ##      explicit_auth_flows                  = [
+  ##        "ALLOW_USER_SRP_AUTH",
+  ##        "ALLOW_REFRESH_TOKEN_AUTH"
+  ##      ]
+  ##      generate_secret                      = false
+  ##      logout_urls                          = []
+  ##      prevent_user_existence_errors        = "ENABLED"
+  ##      read_attributes                      = [
+  ##        "email",
+  ##        "phone_number",
+  ##      ]
+  ##      refresh_token_validity               = 60
+  ##      supported_identity_providers         = []
+  ##      write_attributes                     = [
+  ##        "email",
+  ##        "gender",
+  ##        "locale",
+  ##      ]
+  ##    },
+  ##    "test2" = {
+  ##      allowed_oauth_flows                  = []
+  ##      allowed_oauth_flows_user_pool_client = false
+  ##      allowed_oauth_scopes                 = []
+  ##      callback_urls                        = ["https://mydomain.com/callback"]
+  ##      default_redirect_uri                 = "https://mydomain.com/callback"
+  ##      explicit_auth_flows                  = []
+  ##      generate_secret                      = false
+  ##      logout_urls                          = []
+  ##      read_attributes                      = []
+  ##      refresh_token_validity               = 30
+  ##      supported_identity_providers         = []
+  ##      write_attributes                     = []
+  ##    },
+  ##  }
 }
 
 #
@@ -449,9 +449,35 @@ variable "user_groups" {
 # aws_cognito_resource_server
 #
 variable "resource_servers" {
-  description = "A container with the user_groups definitions"
-  type        = list
-  default     = []
+  description = "Maps of objects containing the resource_servers definitions. Refer to resource-server.tf for argument reference."
+  type        = map
+  default     = {}
+
+  ###Example:
+  ## resource_servers = {
+  ##   "mydomain" = {
+  ##     identifier = "https://mydomain.com"
+  ##     scope      = [
+  ##       {
+  ##         scope_name        = "sample-scope-1"
+  ##         scope_description = "A sample Scope Description for mydomain.com"
+  ##       },
+  ##       {
+  ##         scope_name        = "sample-scope-2"
+  ##         scope_description = "Another sample Scope Description for mydomain.com"
+  ##       },
+  ##     ]
+  ##   },
+  ##   "weather-read" = {
+  ##     identifier = "https://weather-read-app.com"
+  ##     scope = [
+  ##       {
+  ##         scope_name        = "weather.read"
+  ##         scope_description = "Read weather forecasts"
+  ##       }
+  ##     ]
+  ##   }
+  ## }
 }
 
 variable "resource_server_name" {

@@ -70,5 +70,8 @@ output "client_secret" {
 #
 output "resource_servers_scope_identifiers" {
   description = " A list of all scopes configured in the format identifier/scope_name"
-  value       = aws_cognito_resource_server.resource.*.scope_identifiers
+  value = {
+    for scope in aws_cognito_resource_server.resource :
+      scope.name => scope.scope_identifiers
+  }
 }
