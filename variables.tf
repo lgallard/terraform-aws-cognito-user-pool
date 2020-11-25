@@ -144,6 +144,12 @@ variable "email_configuration_email_sending_account" {
   default     = "COGNITO_DEFAULT"
 }
 
+variable "email_configuration_from_email_address" {
+  description = "Sender’s email address or sender’s display name with their email address (e.g. `john@example.com`, `John Smith <john@example.com>` or `\"John Smith Ph.D.\" <john@example.com>)`. Escaped double quotes are required around display names that contain certain characters as specified in RFC 5322"
+  type        = string
+  default     = null
+}
+
 # lambda_config
 variable "lambda_config" {
   description = "A container for the AWS Lambda triggers associated with the user pool"

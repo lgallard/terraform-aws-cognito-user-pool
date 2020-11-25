@@ -136,6 +136,7 @@ module "aws_cognito_user_pool_complete" {
 | domain\_certificate\_arn | The ARN of an ISSUED ACM certificate in us-east-1 for a custom domain | `string` | n/a | yes |
 | email\_configuration | The Email Configuration | `map` | `{}` | no |
 | email\_configuration\_email\_sending\_account | Instruct Cognito to either use its built-in functional or Amazon SES to send out emails. Allowed values: `COGNITO_DEFAULT` or `DEVELOPER` | `string` | `"COGNITO_DEFAULT"` | no |
+| email\_configuration\_from\_email\_address | Sender’s email address or sender’s display name with their email address (e.g. `john@example.com`, `John Smith <john@example.com>` or `"John Smith Ph.D." <john@example.com>)`. Escaped double quotes are required around display names that contain certain characters as specified in RFC 5322 | `string` | n/a | yes |
 | email\_configuration\_reply\_to\_email\_address | The REPLY-TO email address | `string` | `""` | no |
 | email\_configuration\_source\_arn | The ARN of the email source | `string` | `""` | no |
 | email\_verification\_message | A string representing the email verification message | `string` | n/a | yes |
