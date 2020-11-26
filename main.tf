@@ -51,7 +51,7 @@ resource "aws_cognito_user_pool" "pool" {
       reply_to_email_address = lookup(email_configuration.value, "reply_to_email_address")
       source_arn             = lookup(email_configuration.value, "source_arn")
       email_sending_account  = lookup(email_configuration.value, "email_sending_account")
-      from_email_address     = lookup(from_email_address.value, "from_email_address")
+      from_email_address     = lookup(email_configuration.value, "from_email_address")
     }
   }
 
