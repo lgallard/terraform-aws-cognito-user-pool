@@ -1,3 +1,9 @@
+## 0.7.0  (November 25, 2020)
+
+ENHANCEMENTS:
+
+* Add `from_email_address`
+
 ## 0.6.2  (August 13, 2020)
 
 FIXES:
