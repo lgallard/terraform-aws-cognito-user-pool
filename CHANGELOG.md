@@ -1,3 +1,9 @@
+## 0.7.1  (December 11, 2020)
+
+FIX:
+
+* Ignore schema changes and prevent pool destruction
+
 ## 0.7.0  (November 25, 2020)
 
 ENHANCEMENTS:
