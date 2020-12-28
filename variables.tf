@@ -536,3 +536,12 @@ variable "resource_server_scope_description" {
   type        = string
   default     = null
 }
+
+#
+# Account Recovery Setting
+#
+variable "recovery_mechanisms" {
+  description = "The list of Account Recovery Options"
+  type        = list
+  default     = []
+}
