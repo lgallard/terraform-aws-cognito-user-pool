@@ -90,7 +90,7 @@ module "aws_cognito_user_pool_complete" {
     }
   ]
 
-  recovery_mechanism = [
+  recovery_mechanisms = [
      {
       name     = "verified_email"
       priority = 1
