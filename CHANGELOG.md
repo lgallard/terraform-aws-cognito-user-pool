@@ -1,3 +1,9 @@
+## 0.8.0  (December 28, 2020)
+
+ENHANCEMENTS:
+
+* Add support for support `account_recovery_setting`
+
 ## 0.7.1  (December 11, 2020)
 
 FIX:

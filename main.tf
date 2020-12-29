@@ -174,6 +174,21 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
+  # account_recovery_setting
+  dynamic "account_recovery_setting" {
+    for_each = length(var.recovery_mechanisms) == 0 ? [] : [1]
+    content {
+      # recovery_mechanism
+      dynamic "recovery_mechanism" {
+        for_each = var.recovery_mechanisms
+        content {
+          name     = lookup(recovery_mechanism.value, "name")
+          priority = lookup(recovery_mechanism.value, "priority")
+        }
+      }
+    }
+  }
+
   # tags
   tags = var.tags
 
@@ -295,7 +310,7 @@ locals {
   password_policy = var.password_policy == null ? [local.password_policy_is_null] : [local.password_policy_not_null]
 
   # user_pool_add_ons
-  # If no user_pool_add_ons is provided, build a email_configuration using the default values
+  # If no user_pool_add_ons is provided, build a configuration using the default values
   user_pool_add_ons_default = {
     advanced_security_mode = lookup(var.user_pool_add_ons, "advanced_security_mode", null) == null ? var.user_pool_add_ons_advanced_security_mode : lookup(var.user_pool_add_ons, "advanced_security_mode")
   }
@@ -303,7 +318,7 @@ locals {
   user_pool_add_ons = var.user_pool_add_ons_advanced_security_mode == null && length(var.user_pool_add_ons) == 0 ? [] : [local.user_pool_add_ons_default]
 
   # verification_message_template
-  # If no verification_message_template is provided, build a email_configuration using the default values
+  # If no verification_message_template is provided, build a verification_message_template using the default values
   verification_message_template_default = {
     default_email_option  = lookup(var.verification_message_template, "default_email_option", null) == null ? var.verification_message_template_default_email_option : lookup(var.verification_message_template, "default_email_option")
     email_message_by_link = lookup(var.verification_message_template, "email_message_by_link", null) == null ? var.verification_message_template_email_message_by_link : lookup(var.verification_message_template, "email_message_by_link")
@@ -319,4 +334,5 @@ locals {
   }
 
   software_token_mfa_configuration = (length(var.sms_configuration) == 0 || local.sms_configuration == null) && var.mfa_configuration == "OFF" ? [] : [local.software_token_mfa_configuration_default]
+
 }
