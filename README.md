@@ -27,6 +27,22 @@ module "aws_cognito_user_pool_simple" {
   }
 ```
 
+### Example (conditional creation)
+
+Sometimes you need to have a way to create Cognito User Pool resources conditionally but Terraform does not allow to use `count` inside `module` block, so the solution is to specify argument `create_user_pool`.
+
+```
+# This Cognito User Pool will not be created
+module "aws_cognito_user_pool_conditional_creation" {
+
+  source  = "lgallard/cognito-user-pool/aws"
+
+  user_pool_name = "conditional_user_pool"
+  create_user_pool = false
+
+}
+```
+
 ### Example (complete)
 
 This more complete example creates a AWS Cognito User Pool using a detailed configuration. Please check the example folder to get the example with all options:
@@ -147,6 +163,7 @@ module "aws_cognito_user_pool_complete" {
 | client\_supported\_identity\_providers | List of provider names for the identity providers that are supported on this client | `list` | `[]` | no |
 | client\_write\_attributes | List of user pool attributes the application client can write to | `list` | `[]` | no |
 | clients | A container with the clients definitions | `list` | `[]` | no |
+| create_user_pool | Controls if Cognito User Pool should be created | `bool` | `false` | no |
 | device\_configuration | The configuration for the user pool's device tracking | `map` | `{}` | no |
 | device\_configuration\_challenge\_required\_on\_new\_device | Indicates whether a challenge is required on a new device. Only applicable to a new device | `bool` | `false` | no |
 | device\_configuration\_device\_only\_remembered\_on\_user\_prompt | If true, a device is only remembered on user prompt | `bool` | `false` | no |
