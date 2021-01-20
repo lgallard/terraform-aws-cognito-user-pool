@@ -1,10 +1,10 @@
 resource "aws_cognito_user_group" "main" {
-  count        = length(local.groups)
+  count        = var.create_user_pool ? length(local.groups) : 0
   name         = lookup(element(local.groups, count.index), "name")
   description  = lookup(element(local.groups, count.index), "description")
   precedence   = lookup(element(local.groups, count.index), "precedence")
   role_arn     = lookup(element(local.groups, count.index), "role_arn")
-  user_pool_id = aws_cognito_user_pool.pool.id
+  user_pool_id = aws_cognito_user_pool.pool[0].id
 }
 
 locals {

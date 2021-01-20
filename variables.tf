@@ -1,6 +1,12 @@
 #
 # aws_cognito_user_pool
 #
+variable "create_user_pool" {
+  description = "Controls if Cognito User Pool should be created"
+  type        = bool
+  default     = false
+}
+
 variable "user_pool_name" {
   description = "The name of the user pool"
   type        = string
