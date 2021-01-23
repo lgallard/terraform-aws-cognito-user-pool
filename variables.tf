@@ -1,7 +1,7 @@
 #
 # aws_cognito_user_pool
 #
-variable "create_user_pool" {
+variable "enabled" {
   description = "Controls if Cognito User Pool should be created"
   type        = bool
   default     = false

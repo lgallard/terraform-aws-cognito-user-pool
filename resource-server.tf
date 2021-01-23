@@ -1,5 +1,5 @@
 resource "aws_cognito_resource_server" "resource" {
-  count      = var.create_user_pool ? length(local.resource_servers) : 0
+  count      = var.enabled ? length(local.resource_servers) : 0
   name       = lookup(element(local.resource_servers, count.index), "name")
   identifier = lookup(element(local.resource_servers, count.index), "identifier")
 

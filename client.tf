@@ -1,5 +1,5 @@
 resource "aws_cognito_user_pool_client" "client" {
-  count                                = var.create_user_pool ? length(local.clients) : 0
+  count                                = var.enabled ? length(local.clients) : 0
   allowed_oauth_flows                  = lookup(element(local.clients, count.index), "allowed_oauth_flows", null)
   allowed_oauth_flows_user_pool_client = lookup(element(local.clients, count.index), "allowed_oauth_flows_user_pool_client", null)
   allowed_oauth_scopes                 = lookup(element(local.clients, count.index), "allowed_oauth_scopes", null)

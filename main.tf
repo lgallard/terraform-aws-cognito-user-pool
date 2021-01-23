@@ -1,5 +1,5 @@
 resource "aws_cognito_user_pool" "pool" {
-  count = var.create_user_pool ? 1 : 0
+  count = var.enabled ? 1 : 0
 
   alias_attributes           = var.alias_attributes
   auto_verified_attributes   = var.auto_verified_attributes

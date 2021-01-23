@@ -1,5 +1,5 @@
 resource "aws_cognito_user_group" "main" {
-  count        = var.create_user_pool ? length(local.groups) : 0
+  count        = var.enabled ? length(local.groups) : 0
   name         = lookup(element(local.groups, count.index), "name")
   description  = lookup(element(local.groups, count.index), "description")
   precedence   = lookup(element(local.groups, count.index), "precedence")
