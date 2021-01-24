@@ -1,4 +1,5 @@
 resource "aws_cognito_user_pool" "pool" {
+  count = var.enabled ? 1 : 0
 
   alias_attributes           = var.alias_attributes
   auto_verified_attributes   = var.auto_verified_attributes
@@ -196,7 +197,6 @@ resource "aws_cognito_user_pool" "pool" {
     ignore_changes = [
       schema,
     ]
-    prevent_destroy = true
   }
 }
 

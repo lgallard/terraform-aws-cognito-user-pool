@@ -1,26 +1,26 @@
 output "id" {
   description = "The id of the user pool"
-  value       = aws_cognito_user_pool.pool.id
+  value       = var.enabled ? aws_cognito_user_pool.pool[0].id : null
 }
 
 output "arn" {
   description = "The ARN of the user pool"
-  value       = aws_cognito_user_pool.pool.arn
+  value       = var.enabled ? aws_cognito_user_pool.pool[0].arn : null
 }
 
 output "endpoint" {
   description = "The endpoint name of the user pool. Example format: cognito-idp.REGION.amazonaws.com/xxxx_yyyyy"
-  value       = aws_cognito_user_pool.pool.endpoint
+  value       = var.enabled ? aws_cognito_user_pool.pool[0].endpoint : null
 }
 
 output "creation_date" {
   description = "The date the user pool was created"
-  value       = aws_cognito_user_pool.pool.creation_date
+  value       = var.enabled ? aws_cognito_user_pool.pool[0].creation_date : null
 }
 
 output "last_modified_date" {
   description = "The date the user pool was last modified"
-  value       = aws_cognito_user_pool.pool.last_modified_date
+  value       = var.enabled ? aws_cognito_user_pool.pool[0].last_modified_date : null
 }
 
 #
@@ -28,22 +28,22 @@ output "last_modified_date" {
 #
 output "domain_aws_account_id" {
   description = "The AWS account ID for the user pool owner"
-  value       = join("", aws_cognito_user_pool_domain.domain.*.aws_account_id)
+  value       = var.enabled ? join("", aws_cognito_user_pool_domain.domain.*.aws_account_id) : null
 }
 
 output "domain_cloudfront_distribution_arn" {
   description = "The ARN of the CloudFront distribution"
-  value       = join("", aws_cognito_user_pool_domain.domain.*.cloudfront_distribution_arn)
+  value       = var.enabled ? join("", aws_cognito_user_pool_domain.domain.*.cloudfront_distribution_arn) : null
 }
 
 output "domain_s3_bucket" {
   description = "The S3 bucket where the static files for this domain are stored"
-  value       = join("", aws_cognito_user_pool_domain.domain.*.s3_bucket)
+  value       = var.enabled ? join("", aws_cognito_user_pool_domain.domain.*.s3_bucket) : null
 }
 
 output "domain_app_version" {
   description = "The app version"
-  value       = join("", aws_cognito_user_pool_domain.domain.*.version)
+  value       = var.enabled ? join("", aws_cognito_user_pool_domain.domain.*.version) : null
 }
 
 #
@@ -51,12 +51,12 @@ output "domain_app_version" {
 #
 output "client_ids" {
   description = "The ids of the user pool clients"
-  value       = aws_cognito_user_pool_client.client.*.id
+  value       = var.enabled ? aws_cognito_user_pool_client.client.*.id : null
 }
 
 output "client_secrets" {
   description = " The client secrets of the user pool clients"
-  value       = aws_cognito_user_pool_client.client.*.client_secret
+  value       = var.enabled ? aws_cognito_user_pool_client.client.*.client_secret : null
 }
 
 #
@@ -64,5 +64,5 @@ output "client_secrets" {
 #
 output "resource_servers_scope_identifiers" {
   description = " A list of all scopes configured in the format identifier/scope_name"
-  value       = aws_cognito_resource_server.resource.*.scope_identifiers
+  value       = var.enabled ? aws_cognito_resource_server.resource.*.scope_identifiers : null
 }

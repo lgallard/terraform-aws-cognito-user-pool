@@ -1,5 +1,5 @@
 resource "aws_cognito_user_pool_client" "client" {
-  count                                = length(local.clients)
+  count                                = var.enabled ? length(local.clients) : 0
   allowed_oauth_flows                  = lookup(element(local.clients, count.index), "allowed_oauth_flows", null)
   allowed_oauth_flows_user_pool_client = lookup(element(local.clients, count.index), "allowed_oauth_flows_user_pool_client", null)
   allowed_oauth_scopes                 = lookup(element(local.clients, count.index), "allowed_oauth_scopes", null)
@@ -14,7 +14,7 @@ resource "aws_cognito_user_pool_client" "client" {
   supported_identity_providers         = lookup(element(local.clients, count.index), "supported_identity_providers", null)
   prevent_user_existence_errors        = lookup(element(local.clients, count.index), "prevent_user_existence_errors", null)
   write_attributes                     = lookup(element(local.clients, count.index), "write_attributes", null)
-  user_pool_id                         = aws_cognito_user_pool.pool.id
+  user_pool_id                         = aws_cognito_user_pool.pool[0].id
 }
 
 locals {

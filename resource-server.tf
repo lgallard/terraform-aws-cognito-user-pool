@@ -1,5 +1,5 @@
 resource "aws_cognito_resource_server" "resource" {
-  count      = length(local.resource_servers)
+  count      = var.enabled ? length(local.resource_servers) : 0
   name       = lookup(element(local.resource_servers, count.index), "name")
   identifier = lookup(element(local.resource_servers, count.index), "identifier")
 
@@ -12,7 +12,7 @@ resource "aws_cognito_resource_server" "resource" {
     }
   }
 
-  user_pool_id = aws_cognito_user_pool.pool.id
+  user_pool_id = aws_cognito_user_pool.pool[0].id
 }
 
 locals {

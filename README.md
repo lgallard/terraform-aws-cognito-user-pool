@@ -27,6 +27,22 @@ module "aws_cognito_user_pool_simple" {
   }
 ```
 
+### Example (conditional creation)
+
+Sometimes you need to have a way to create Cognito User Pool resources conditionally but Terraform does not allow to use `count` inside `module` block, so the solution is to specify argument `enabled`.
+
+```
+# This Cognito User Pool will not be created
+module "aws_cognito_user_pool_conditional_creation" {
+
+  source  = "lgallard/cognito-user-pool/aws"
+
+  user_pool_name = "conditional_user_pool"
+  enabled = false
+
+}
+```
+
 ### Example (complete)
 
 This more complete example creates a AWS Cognito User Pool using a detailed configuration. Please check the example folder to get the example with all options:
@@ -159,6 +175,7 @@ module "aws_cognito_user_pool_complete" {
 | email\_configuration\_source\_arn | The ARN of the email source | `string` | `""` | no |
 | email\_verification\_message | A string representing the email verification message | `string` | `null` | no |
 | email\_verification\_subject | A string representing the email verification subject | `string` | `null` | no |
+| enabled | Controls if Cognito User Pool should be created | `bool` | `false` | no |
 | lambda\_config | A container for the AWS Lambda triggers associated with the user pool | `map` | `null` | no |
 | lambda\_config\_create\_auth\_challenge | The ARN of the lambda creating an authentication challenge. | `string` | `""` | no |
 | lambda\_config\_custom\_message | A custom Message AWS Lambda trigger. | `string` | `""` | no |
