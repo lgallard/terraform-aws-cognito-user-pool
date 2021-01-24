@@ -1,3 +1,9 @@
+## 0.9.0  (January 24, 2021)
+
+ENHANCEMENTS:
+
+* Support conditional creation (thanks @Necromancerx)
+
 ## 0.8.0  (December 28, 2020)
 
 ENHANCEMENTS:
