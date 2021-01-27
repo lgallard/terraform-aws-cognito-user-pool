@@ -29,7 +29,7 @@ module "aws_cognito_user_pool_simple" {
 
 ### Example (conditional creation)
 
-Sometimes you need to have a way to create Cognito User Pool resources conditionally but Terraform does not allow to use `count` inside `module` block, so the solution is to specify argument `enabled`.
+If you need to create Cognito User Pool resources conditionally in ealierform  versions such as 0.11, 0,12 and 0.13 you can set the input variable `enabled` to false:
 
 ```
 # This Cognito User Pool will not be created
@@ -38,10 +38,13 @@ module "aws_cognito_user_pool_conditional_creation" {
   source  = "lgallard/cognito-user-pool/aws"
 
   user_pool_name = "conditional_user_pool"
+
   enabled = false
 
 }
 ```
+
+For Terraform 0.14 and later you can use `count` inside `module` blocks, or use the input variable `enabled` as described above.
 
 ### Example (complete)
 
