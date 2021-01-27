@@ -1,3 +1,9 @@
+## 0.9.1  (January 27, 2021)
+
+FIX:
+
+* Set default value for enable variable to `true`
+
 ## 0.9.0  (January 24, 2021)
 
 ENHANCEMENTS:
