@@ -2,7 +2,7 @@
 # aws_cognito_user_pool
 #
 variable "enabled" {
-  description = "Controls if Cognito User Pool should be created"
+  description = "Change to false to avoid deploying any resources"
   type        = bool
   default     = true
 }

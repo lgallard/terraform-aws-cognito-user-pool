@@ -1,3 +1,10 @@
+## 0.9.3  (January 27, 2021)
+
+ENHANCEMENTS:
+
+* Update description for `enabled` variable
+
+
 ## 0.9.2  (January 27, 2021)
 
 ENHANCEMENTS:

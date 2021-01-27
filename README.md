@@ -179,7 +179,7 @@ module "aws_cognito_user_pool_complete" {
 | email\_configuration\_source\_arn | The ARN of the email source | `string` | `""` | no |
 | email\_verification\_message | A string representing the email verification message | `string` | `null` | no |
 | email\_verification\_subject | A string representing the email verification subject | `string` | `null` | no |
-| enabled | Controls if Cognito User Pool should be created | `bool` | `true` | no |
+| enabled | Change to false to avoid deploying any resources | `bool` | `true` | no |
 | lambda\_config | A container for the AWS Lambda triggers associated with the user pool | `map` | `null` | no |
 | lambda\_config\_create\_auth\_challenge | The ARN of the lambda creating an authentication challenge. | `string` | `""` | no |
 | lambda\_config\_custom\_message | A custom Message AWS Lambda trigger. | `string` | `""` | no |
