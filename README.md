@@ -29,7 +29,6 @@ module "aws_cognito_user_pool_simple" {
 
 ### Example (conditional creation)
 
-
 If you need to create Cognito User Pool resources conditionally in ealierform  versions such as 0.11, 0,12 and 0.13 you can set the input variable `enabled` to false:
 
 ```
