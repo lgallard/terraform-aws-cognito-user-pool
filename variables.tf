@@ -4,7 +4,7 @@
 variable "enabled" {
   description = "Controls if Cognito User Pool should be created"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "user_pool_name" {
