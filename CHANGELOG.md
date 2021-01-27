@@ -1,3 +1,9 @@
+## 0.9.2  (January 27, 2021)
+
+ENHANCEMENTS:
+
+* Update conditional creation example
+
 ## 0.9.1  (January 27, 2021)
 
 FIX:
