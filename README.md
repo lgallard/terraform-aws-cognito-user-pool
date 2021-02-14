@@ -249,9 +249,13 @@ module "aws_cognito_user_pool_complete" {
 | last\_modified\_date | The date the user pool was last modified |
 | resource\_servers\_scope\_identifiers | A list of all scopes configured in the format identifier/scope\_name |
 
-## Know issue
+## Know issues
+### Schema changes (adding attributes)
+There's an [open issue](https://github.com/hashicorp/terraform-provider-aws/issues/3891) in the AWS provider. The issue is regarding new schema changings like adding new attributes, forces the pool recreation.
+
+This module disabled  schema changes recognition in PR #28 through an ignore lifecycle to avoid this behavior, until there's an official fix in the AWS provider.
+
 ### Removing all lambda triggers
+If you define lambda triggers using the `lambda_config` block or any `lambda_config_*` variable and you want to remove all triggers, define the lambda_config block with an empty map `{}` and apply the plan. Then comment the `lambda_config` block or define it as `null` and apply the plan again.
 
-If you define lambda triggers using the `lambda_config` block or any `lambda_config_*` variable and you want to remove all triggers, define the lambda_config block with an empty map `{}` and apply the plan. Then comment the `lambda_config` block or define it as `null` and apply the plan again. 
-
-This is needed because all paramters for the `lambda_config` block are optional and keeping all block attributes empty or null forces to create a `lambda_config {}` block very time a plan/apply is run.
+This is needed because all parameters for the `lambda_config` block are optional and keeping all block attributes empty or null forces to create a `lambda_config {}` block very time a plan/apply is run.

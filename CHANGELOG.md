@@ -1,3 +1,9 @@
+## 0.9.4  (February 14, 2021)
+
+FIX:
+
+* Update README to include schema changes know issue
+
 ## 0.9.3  (January 27, 2021)
 
 ENHANCEMENTS:
