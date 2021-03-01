@@ -40,6 +40,12 @@ module "aws_cognito_user_pool_conditional_creation" {
   user_pool_name = "conditional_user_pool"
 
   enabled = false
+  
+  tags = {
+    Owner       = "infra"
+    Environment = "production"
+    Terraform   = true
+  }
 
 }
 ```
