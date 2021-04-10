@@ -1,59 +1,66 @@
-## 0.9.4  (February 14, 2021)
+## 0.10.0 (April 10, 2021)
+
+ENHANCEMENTS:
+
+* Add support for `access_token_validity`, `id_token_validity` and `token_validity_units`
+* Update complete example with `access_token_validity`, `id_token_validity` and `token_validity_units`
+
+## 0.9.4 (February 14, 2021)
 
 FIX:
 
 * Update README to include schema changes know issue
 
-## 0.9.3  (January 27, 2021)
+## 0.9.3 (January 27, 2021)
 
 ENHANCEMENTS:
 
 * Update description for `enabled` variable
 
 
-## 0.9.2  (January 27, 2021)
+## 0.9.2 (January 27, 2021)
 
 ENHANCEMENTS:
 
 * Update conditional creation example
 
-## 0.9.1  (January 27, 2021)
+## 0.9.1 (January 27, 2021)
 
 FIX:
 
 * Set default value for enable variable to `true`
 
-## 0.9.0  (January 24, 2021)
+## 0.9.0 (January 24, 2021)
 
 ENHANCEMENTS:
 
 * Support conditional creation (thanks @Necromancerx)
 
-## 0.8.0  (December 28, 2020)
+## 0.8.0 (December 28, 2020)
 
 ENHANCEMENTS:
 
 * Add support for support `account_recovery_setting`
 
-## 0.7.1  (December 11, 2020)
+## 0.7.1 (December 11, 2020)
 
 FIX:
 
 * Ignore schema changes and prevent pool destruction
 
-## 0.7.0  (November 25, 2020)
+## 0.7.0 (November 25, 2020)
 
 ENHANCEMENTS:
 
 * Add `from_email_address`
 
-## 0.6.2  (August 13, 2020)
+## 0.6.2 (August 13, 2020)
 
 FIXES:
 
 * Update CHANGELOG
 
-## 0.6.1  (August 13, 2020)
+## 0.6.1 (August 13, 2020)
 
 ENHANCEMENTS:
 
@@ -68,7 +75,7 @@ UPDATES:
 
 * Updated README and examples
 
-## 0.5.0  (July 31, 2020)
+## 0.5.0 (July 31, 2020)
 
 FIXES:
 
@@ -81,7 +88,7 @@ ENHANCEMENTS:
 
 * Add support for `software_token_mfa_configuration`
 
-## 0.3.3  (April 24, 2020)
+## 0.3.3 (April 24, 2020)
 
 FIXES:
 

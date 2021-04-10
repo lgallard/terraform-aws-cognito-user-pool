@@ -149,9 +149,15 @@ module "aws_cognito_user_pool_complete_example" {
       logout_urls                          = []
       name                                 = "test1"
       read_attributes                      = ["email"]
-      refresh_token_validity               = 30
       supported_identity_providers         = []
       write_attributes                     = []
+      id_token_validity                    = 1
+      refresh_token_validity               = 60
+      token_validity_units = {
+        access_token  = "hours"
+        id_token      = "hours"
+        refresh_token = "days"
+      }
     },
     {
       allowed_oauth_flows                  = []
@@ -164,9 +170,9 @@ module "aws_cognito_user_pool_complete_example" {
       logout_urls                          = []
       name                                 = "test2"
       read_attributes                      = []
-      refresh_token_validity               = 30
       supported_identity_providers         = []
       write_attributes                     = []
+      refresh_token_validity               = 30
     },
     {
       allowed_oauth_flows                  = ["code", "implicit"]
@@ -179,9 +185,9 @@ module "aws_cognito_user_pool_complete_example" {
       logout_urls                          = ["https://mydomain.com/logout"]
       name                                 = "test3"
       read_attributes                      = ["email", "phone_number"]
-      refresh_token_validity               = 60
       supported_identity_providers         = []
       write_attributes                     = ["email", "gender", "locale", ]
+      refresh_token_validity               = 30
     }
   ]
 
