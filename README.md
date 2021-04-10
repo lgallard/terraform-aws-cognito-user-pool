@@ -133,7 +133,6 @@ module "aws_cognito_user_pool_complete" {
   }
 
 ```
-
 ## Requirements
 
 | Name | Version |
@@ -147,6 +146,20 @@ module "aws_cognito_user_pool_complete" {
 |------|---------|
 | aws | >= 2.54.0 |
 
+## Modules
+
+No Modules.
+
+## Resources
+
+| Name |
+|------|
+| [aws_cognito_resource_server](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_resource_server) |
+| [aws_cognito_user_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_group) |
+| [aws_cognito_user_pool](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_pool) |
+| [aws_cognito_user_pool_client](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_pool_client) |
+| [aws_cognito_user_pool_domain](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_pool_domain) |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -158,6 +171,7 @@ module "aws_cognito_user_pool_complete" {
 | admin\_create\_user\_config\_sms\_message | - The message template for SMS messages. Must contain `{username}` and `{####}` placeholders, for username and temporary password, respectively | `string` | `"Your username is {username} and temporary password is `{####}`"` | no |
 | alias\_attributes | Attributes supported as an alias for this user pool. Possible values: phone\_number, email, or preferred\_username. Conflicts with `username_attributes` | `list` | `null` | no |
 | auto\_verified\_attributes | The attributes to be auto-verified. Possible values: email, phone\_number | `list` | `[]` | no |
+| client\_access\_token\_validity | Time limit, between 5 minutes and 1 day, after which the access token is no longer valid and cannot be used. This value will be overridden if you have entered a value in `token_validity_units`. | `number` | `60` | no |
 | client\_allowed\_oauth\_flows | The name of the application client | `list` | `[]` | no |
 | client\_allowed\_oauth\_flows\_user\_pool\_client | Whether the client is allowed to follow the OAuth protocol when interacting with Cognito user pools | `bool` | `true` | no |
 | client\_allowed\_oauth\_scopes | List of allowed OAuth scopes (phone, email, openid, profile, and aws.cognito.signin.user.admin) | `list` | `[]` | no |
@@ -165,14 +179,16 @@ module "aws_cognito_user_pool_complete" {
 | client\_default\_redirect\_uri | The default redirect URI. Must be in the list of callback URLs | `string` | `""` | no |
 | client\_explicit\_auth\_flows | List of authentication flows (ADMIN\_NO\_SRP\_AUTH, CUSTOM\_AUTH\_FLOW\_ONLY, USER\_PASSWORD\_AUTH) | `list` | `[]` | no |
 | client\_generate\_secret | Should an application secret be generated | `bool` | `true` | no |
+| client\_id\_token\_validity | Time limit, between 5 minutes and 1 day, after which the ID token is no longer valid and cannot be used. Must be between 5 minutes and 1 day. Cannot be greater than refresh token expiration. This value will be overridden if you have entered a value in `token_validity_units`. | `number` | `60` | no |
 | client\_logout\_urls | List of allowed logout URLs for the identity providers | `list` | `[]` | no |
 | client\_name | The name of the application client | `string` | `null` | no |
 | client\_prevent\_user\_existence\_errors | Choose which errors and responses are returned by Cognito APIs during authentication, account confirmation, and password recovery when the user does not exist in the user pool. When set to ENABLED and the user does not exist, authentication returns an error indicating either the username or password was incorrect, and account confirmation and password recovery return a response indicating a code was sent to a simulated destination. When set to LEGACY, those APIs will return a UserNotFoundException exception if the user does not exist in the user pool. | `string` | `""` | no |
 | client\_read\_attributes | List of user pool attributes the application client can read from | `list` | `[]` | no |
-| client\_refresh\_token\_validity | The time limit in days refresh tokens are valid for | `number` | `30` | no |
+| client\_refresh\_token\_validity | The time limit in days refresh tokens are valid for. Must be between 60 minutes and 3650 days. This value will be overridden if you have entered a value in `token_validity_units` | `number` | `30` | no |
 | client\_supported\_identity\_providers | List of provider names for the identity providers that are supported on this client | `list` | `[]` | no |
+| client\_token\_validity\_units | Configuration block for units in which the validity times are represented in. Valid values for the following arguments are: `seconds`, `minutes`, `hours` or `days`. | `any` | <pre>{<br>  "access_token": "hours",<br>  "id_token": "hours",<br>  "refresh_token": "days"<br>}</pre> | no |
 | client\_write\_attributes | List of user pool attributes the application client can write to | `list` | `[]` | no |
-| clients | A container with the clients definitions | `list` | `[]` | no |
+| clients | A container with the clients definitions | `any` | `[]` | no |
 | device\_configuration | The configuration for the user pool's device tracking | `map` | `{}` | no |
 | device\_configuration\_challenge\_required\_on\_new\_device | Indicates whether a challenge is required on a new device. Only applicable to a new device | `bool` | `false` | no |
 | device\_configuration\_device\_only\_remembered\_on\_user\_prompt | If true, a device is only remembered on user prompt | `bool` | `false` | no |
