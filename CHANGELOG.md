@@ -1,3 +1,9 @@
+## 0.10.1 (April 10, 2021)
+
+FIXES:
+
+* Update comple example
+
 ## 0.10.0 (April 10, 2021)
 
 ENHANCEMENTS:
@@ -7,7 +13,7 @@ ENHANCEMENTS:
 
 ## 0.9.4 (February 14, 2021)
 
-FIX:
+FIXES:
 
 * Update README to include schema changes know issue
 
@@ -26,7 +32,7 @@ ENHANCEMENTS:
 
 ## 0.9.1 (January 27, 2021)
 
-FIX:
+FIXES:
 
 * Set default value for enable variable to `true`
 
@@ -44,7 +50,7 @@ ENHANCEMENTS:
 
 ## 0.7.1 (December 11, 2020)
 
-FIX:
+FIXES:
 
 * Ignore schema changes and prevent pool destruction
 
