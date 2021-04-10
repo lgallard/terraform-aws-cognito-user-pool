@@ -2,7 +2,7 @@
 
 FIXES:
 
-* Update comple example
+* Update complete example
 
 ## 0.10.0 (April 10, 2021)
 
