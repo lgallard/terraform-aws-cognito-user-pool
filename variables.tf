@@ -453,12 +453,6 @@ variable "client_read_attributes" {
   default     = []
 }
 
-variable "client_refresh_token_validity" {
-  description = "The time limit in days refresh tokens are valid for"
-  type        = number
-  default     = 30
-}
-
 variable "client_prevent_user_existence_errors" {
   description = "Choose which errors and responses are returned by Cognito APIs during authentication, account confirmation, and password recovery when the user does not exist in the user pool. When set to ENABLED and the user does not exist, authentication returns an error indicating either the username or password was incorrect, and account confirmation and password recovery return a response indicating a code was sent to a simulated destination. When set to LEGACY, those APIs will return a UserNotFoundException exception if the user does not exist in the user pool."
   type        = string
@@ -475,6 +469,30 @@ variable "client_write_attributes" {
   description = "List of user pool attributes the application client can write to"
   type        = list
   default     = []
+}
+
+variable "client_access_token_validity" {
+  description = "Time limit, between 5 minutes and 1 day, after which the access token is no longer valid and cannot be used. This value will be overridden if you have entered a value in `token_validity_units`."
+  type        = number
+  default     = 60
+}
+
+variable "client_id_token_validity" {
+  description = "Time limit, between 5 minutes and 1 day, after which the ID token is no longer valid and cannot be used. This value will be overridden if you have entered a value in `token_validity_units`."
+  type        = number
+  default     = 60
+}
+
+variable "client_refresh_token_validity" {
+  description = "The time limit in days refresh tokens are valid for"
+  type        = number
+  default     = 30
+}
+
+variable "client_token_validity_units" {
+  description = "Configuration block for units in which the validity times are represented in. Valid values for the following arguments are: `seconds`, `minutes`, `hours` or `days`."
+  type        = any
+  default     = {}
 }
 
 #
