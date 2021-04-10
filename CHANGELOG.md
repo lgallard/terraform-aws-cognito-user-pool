@@ -1,3 +1,9 @@
+## 0.10.2 (April 10, 2021)
+
+FIXES:
+
+* Remove lifecycle for schema addition ([issue](https://github.com/hashicorp/terraform-provider-aws/pull/18512) fixed in the AWS provider)
+
 ## 0.10.1 (April 10, 2021)
 
 FIXES:
