@@ -1,3 +1,9 @@
+## 0.10.2 (April 10, 2021)
+
+FIXES:
+
+* Remove lifecycle for schema addition
+
 ## 0.10.1 (April 10, 2021)
 
 FIXES:
