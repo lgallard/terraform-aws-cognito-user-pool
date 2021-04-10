@@ -44,11 +44,13 @@ module "aws_cognito_user_pool_complete_example" {
   }
 
   password_policy = {
-    minimum_length    = 10
-    require_lowercase = false
-    require_numbers   = true
-    require_symbols   = true
-    require_uppercase = true
+    minimum_length                   = 10
+    require_lowercase                = false
+    require_numbers                  = true
+    require_symbols                  = true
+    require_uppercase                = true
+    temporary_password_validity_days = 120
+
   }
 
   user_pool_add_ons = {
