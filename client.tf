@@ -20,11 +20,11 @@ resource "aws_cognito_user_pool_client" "client" {
 
   # token_validity_units
   dynamic "token_validity_units" {
-    for_each = lookup(element(local.clients, count.index), "token_validity_units", null)
+    for_each = length(lookup(element(local.clients, count.index), "token_validity_units", {})) == 0 ? [] : [lookup(element(local.clients, count.index), "token_validity_units")]
     content {
-      access_token  = lookup(token_validity_units.value, "access_token")
-      id_token      = lookup(token_validity_units.value, "id_token")
-      refresh_token = lookup(token_validity_units.value, "refresh_token")
+      access_token  = lookup(token_validity_units.value, "access_token", null)
+      id_token      = lookup(token_validity_units.value, "id_token", null)
+      refresh_token = lookup(token_validity_units.value, "refresh_token", null)
     }
   }
 }
@@ -44,6 +44,7 @@ locals {
       read_attributes                      = var.client_read_attributes
       access_token_validity                = var.client_access_token_validity
       id_token_validity                    = var.client_id_token_validity
+      token_validity_units                 = var.client_token_validity_units
       refresh_token_validity               = var.client_refresh_token_validity
       supported_identity_providers         = var.client_supported_identity_providers
       prevent_user_existence_errors        = var.client_prevent_user_existence_errors
@@ -66,6 +67,7 @@ locals {
     access_token_validity                = lookup(e, "access_token_validity", null)
     id_token_validity                    = lookup(e, "id_token_validity", null)
     refresh_token_validity               = lookup(e, "refresh_token_validity", null)
+    token_validity_units                 = lookup(e, "token_validity_units", {})
     supported_identity_providers         = lookup(e, "supported_identity_providers", null)
     prevent_user_existence_errors        = lookup(e, "prevent_user_existence_errors", null)
     write_attributes                     = lookup(e, "write_attributes", null)

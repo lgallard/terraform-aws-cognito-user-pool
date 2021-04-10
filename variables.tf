@@ -389,7 +389,7 @@ variable "domain_certificate_arn" {
 #
 variable "clients" {
   description = "A container with the clients definitions"
-  type        = list
+  type        = any
   default     = []
 }
 
@@ -478,13 +478,13 @@ variable "client_access_token_validity" {
 }
 
 variable "client_id_token_validity" {
-  description = "Time limit, between 5 minutes and 1 day, after which the ID token is no longer valid and cannot be used. This value will be overridden if you have entered a value in `token_validity_units`."
+  description = "Time limit, between 5 minutes and 1 day, after which the ID token is no longer valid and cannot be used. Must be between 5 minutes and 1 day. Cannot be greater than refresh token expiration. This value will be overridden if you have entered a value in `token_validity_units`."
   type        = number
   default     = 60
 }
 
 variable "client_refresh_token_validity" {
-  description = "The time limit in days refresh tokens are valid for"
+  description = "The time limit in days refresh tokens are valid for. Must be between 60 minutes and 3650 days. This value will be overridden if you have entered a value in `token_validity_units`"
   type        = number
   default     = 30
 }
@@ -492,7 +492,12 @@ variable "client_refresh_token_validity" {
 variable "client_token_validity_units" {
   description = "Configuration block for units in which the validity times are represented in. Valid values for the following arguments are: `seconds`, `minutes`, `hours` or `days`."
   type        = any
-  default     = {}
+  default = {
+    access_token  = "hours"
+    id_token      = "hours"
+    refresh_token = "days"
+  }
+
 }
 
 #
