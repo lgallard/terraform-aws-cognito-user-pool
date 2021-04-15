@@ -125,7 +125,7 @@ resource "aws_cognito_user_pool" "pool" {
       name                     = lookup(schema.value, "name")
       required                 = lookup(schema.value, "required")
 
-      # string_attribute_constraints  
+      # string_attribute_constraints
       dynamic "string_attribute_constraints" {
         for_each = length(lookup(schema.value, "string_attribute_constraints")) == 0 ? [] : [lookup(schema.value, "string_attribute_constraints", {})]
         content {

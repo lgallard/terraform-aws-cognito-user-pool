@@ -1,3 +1,9 @@
+## 0.10.3 (April 15, 2021)
+
+FIXES:
+
+* Make code formatting works with Terraform >= 0.14 (Thanks @stevie-)
+
 ## 0.10.2 (April 10, 2021)
 
 FIXES:
