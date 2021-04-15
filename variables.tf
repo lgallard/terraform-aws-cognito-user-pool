@@ -27,14 +27,14 @@ variable "email_verification_subject" {
 # username_configuration
 variable "username_configuration" {
   description = "The Username Configuration. Seting `case_sesiteve` specifies whether username case sensitivity will be applied for all users in the user pool through Cognito APIs"
-  type        = map
+  type        = map(any)
   default     = {}
 }
 
 # admin_create_user_config
 variable "admin_create_user_config" {
   description = "The configuration for AdminCreateUser requests"
-  type        = map
+  type        = map(any)
   default     = {}
 }
 
@@ -71,26 +71,26 @@ variable "admin_create_user_config_sms_message" {
 
 variable "alias_attributes" {
   description = "Attributes supported as an alias for this user pool. Possible values: phone_number, email, or preferred_username. Conflicts with `username_attributes`"
-  type        = list
+  type        = list(string)
   default     = null
 }
 
 variable "username_attributes" {
   description = "Specifies whether email addresses or phone numbers can be specified as usernames when a user signs up. Conflicts with `alias_attributes`"
-  type        = list
+  type        = list(string)
   default     = null
 }
 
 variable "auto_verified_attributes" {
   description = "The attributes to be auto-verified. Possible values: email, phone_number"
-  type        = list
+  type        = list(string)
   default     = []
 }
 
 # sms_configuration
 variable "sms_configuration" {
   description = "The SMS Configuration"
-  type        = map
+  type        = map(any)
   default     = {}
 }
 
@@ -109,7 +109,7 @@ variable "sms_configuration_sns_caller_arn" {
 # device_configuration
 variable "device_configuration" {
   description = "The configuration for the user pool's device tracking"
-  type        = map
+  type        = map(any)
   default     = {}
 }
 
@@ -128,7 +128,7 @@ variable "device_configuration_device_only_remembered_on_user_prompt" {
 # email_configuration
 variable "email_configuration" {
   description = "The Email Configuration"
-  type        = map
+  type        = map(any)
   default     = {}
 }
 
@@ -159,7 +159,7 @@ variable "email_configuration_from_email_address" {
 # lambda_config
 variable "lambda_config" {
   description = "A container for the AWS Lambda triggers associated with the user pool"
-  type        = map
+  type        = map(any)
   default     = null
 }
 
@@ -231,7 +231,7 @@ variable "mfa_configuration" {
 # software_token_mfa_configuration
 variable "software_token_mfa_configuration" {
   description = "Configuration block for software token MFA (multifactor-auth). mfa_configuration must also be enabled for this to work"
-  type        = map
+  type        = map(any)
   default     = {}
 }
 
@@ -295,19 +295,19 @@ variable "password_policy_temporary_password_validity_days" {
 # schema
 variable "schemas" {
   description = "A container with the schema attributes of a user pool. Maximum of 50 attributes"
-  type        = list
+  type        = list(any)
   default     = []
 }
 
 variable "string_schemas" {
   description = "A container with the string schema attributes of a user pool. Maximum of 50 attributes"
-  type        = list
+  type        = list(any)
   default     = []
 }
 
 variable "number_schemas" {
   description = "A container with the number schema attributes of a user pool. Maximum of 50 attributes"
-  type        = list
+  type        = list(any)
   default     = []
 }
 
@@ -334,7 +334,7 @@ variable "tags" {
 # user_pool_add_ons
 variable "user_pool_add_ons" {
   description = "Configuration block for user pool add-ons to enable user pool advanced security mode features"
-  type        = map
+  type        = map(any)
   default     = {}
 }
 
@@ -347,7 +347,7 @@ variable "user_pool_add_ons_advanced_security_mode" {
 # verification_message_template
 variable "verification_message_template" {
   description = "The verification message templates configuration"
-  type        = map
+  type        = map(any)
   default     = {}
 }
 
@@ -395,7 +395,7 @@ variable "clients" {
 
 variable "client_allowed_oauth_flows" {
   description = "The name of the application client"
-  type        = list
+  type        = list(string)
   default     = []
 }
 
@@ -407,13 +407,13 @@ variable "client_allowed_oauth_flows_user_pool_client" {
 
 variable "client_allowed_oauth_scopes" {
   description = "List of allowed OAuth scopes (phone, email, openid, profile, and aws.cognito.signin.user.admin)"
-  type        = list
+  type        = list(string)
   default     = []
 }
 
 variable "client_callback_urls" {
   description = "List of allowed callback URLs for the identity providers"
-  type        = list
+  type        = list(string)
   default     = []
 }
 
@@ -425,7 +425,7 @@ variable "client_default_redirect_uri" {
 
 variable "client_explicit_auth_flows" {
   description = "List of authentication flows (ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_PASSWORD_AUTH)"
-  type        = list
+  type        = list(string)
   default     = []
 }
 
@@ -437,7 +437,7 @@ variable "client_generate_secret" {
 
 variable "client_logout_urls" {
   description = "List of allowed logout URLs for the identity providers"
-  type        = list
+  type        = list(string)
   default     = []
 }
 
@@ -449,7 +449,7 @@ variable "client_name" {
 
 variable "client_read_attributes" {
   description = "List of user pool attributes the application client can read from"
-  type        = list
+  type        = list(string)
   default     = []
 }
 
@@ -461,13 +461,13 @@ variable "client_prevent_user_existence_errors" {
 
 variable "client_supported_identity_providers" {
   description = "List of provider names for the identity providers that are supported on this client"
-  type        = list
+  type        = list(string)
   default     = []
 }
 
 variable "client_write_attributes" {
   description = "List of user pool attributes the application client can write to"
-  type        = list
+  type        = list(string)
   default     = []
 }
 
@@ -505,7 +505,7 @@ variable "client_token_validity_units" {
 #
 variable "user_groups" {
   description = "A container with the user_groups definitions"
-  type        = list
+  type        = list(any)
   default     = []
 }
 
@@ -538,7 +538,7 @@ variable "user_group_role_arn" {
 #
 variable "resource_servers" {
   description = "A container with the user_groups definitions"
-  type        = list
+  type        = list(any)
   default     = []
 }
 
@@ -571,6 +571,6 @@ variable "resource_server_scope_description" {
 #
 variable "recovery_mechanisms" {
   description = "The list of Account Recovery Options"
-  type        = list
+  type        = list(any)
   default     = []
 }
