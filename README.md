@@ -274,11 +274,6 @@ No modules.
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Know issues
-### Schema changes (adding attributes)
-There's an [open issue](https://github.com/hashicorp/terraform-provider-aws/issues/3891) in the AWS provider. The issue is regarding new schema changings like adding new attributes, forces the pool recreation.
-
-This module disabled  schema changes recognition in PR #28 through an ignore lifecycle to avoid this behavior, until there's an official fix in the AWS provider.
-
 ### Removing all lambda triggers
 If you define lambda triggers using the `lambda_config` block or any `lambda_config_*` variable and you want to remove all triggers, define the lambda_config block with an empty map `{}` and apply the plan. Then comment the `lambda_config` block or define it as `null` and apply the plan again.
 
