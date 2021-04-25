@@ -3,7 +3,7 @@ resource "aws_cognito_resource_server" "resource" {
   name       = lookup(element(local.resource_servers, count.index), "name")
   identifier = lookup(element(local.resource_servers, count.index), "identifier")
 
-  #scope 
+  #scope
   dynamic "scope" {
     for_each = lookup(element(local.resource_servers, count.index), "scope")
     content {
