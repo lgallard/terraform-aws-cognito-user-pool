@@ -1,3 +1,10 @@
+## 0.10.4 (April 25, 2021)
+
+FIXES:
+
+* Add `depends_on` servers in `aws_cognito_user_pool_client.client` resource
+
+
 ## 0.10.3 (April 15, 2021)
 
 FIXES:
