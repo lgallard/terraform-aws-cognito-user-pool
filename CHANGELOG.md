@@ -2,7 +2,7 @@
 
 FIXES:
 
-* Fix incorrect example with `access_token_validity`. Thanks @tsimbalar)
+* Fix incorrect example with `access_token_validity` (Thanks @tsimbalar)
 
 ## 0.10.4 (April 25, 2021)
 
