@@ -152,7 +152,7 @@ module "aws_cognito_user_pool_complete_example" {
       read_attributes                      = ["email"]
       supported_identity_providers         = []
       write_attributes                     = []
-      access_validity                      = 1
+      access_token_validity                = 1
       id_token_validity                    = 1
       refresh_token_validity               = 60
       token_validity_units = {
