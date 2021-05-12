@@ -1,9 +1,14 @@
+## 0.10.5 (May 12, 2021)
+
+FIXES:
+
+* Fix incorrect example with `access_token_validity` (Thanks @tsimbalar)
+
 ## 0.10.4 (April 25, 2021)
 
 FIXES:
 
 * Add `depends_on` servers in `aws_cognito_user_pool_client.client` resource
-
 
 ## 0.10.3 (April 15, 2021)
 
