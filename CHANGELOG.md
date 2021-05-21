@@ -1,8 +1,14 @@
+## 0.11.0 (May 21, 2021)
+
+ENHANCEMENTS:
+
+* Add support to prevent the user pool from being destroyed (thanks @Waschnick)
+
 ## 0.10.5 (May 12, 2021)
 
 FIXES:
 
-* Fix incorrect example with `access_token_validity` (Thanks @tsimbalar)
+* Fix incorrect example with `access_token_validity` (thanks @tsimbalar)
 
 ## 0.10.4 (April 25, 2021)
 
@@ -99,7 +105,7 @@ ENHANCEMENTS:
 FIXES:
 
 * Add `username_configuration` dynamic block to avoid forcing a new resource when importing a user pool
-* Remove `case_sensitive` variable. Use the `username_configuration` map variable to devine the `case_sensitive` attribute
+* Remove `case_sensitive` variable. Use the `username_configuration` map variable to define the `case_sensitive` attribute
 
 UPDATES:
 
@@ -110,7 +116,7 @@ UPDATES:
 FIXES:
 
 * Depcreate support to `unused_account_validity_days`
-* Update README and examples removing any referece to the deprecated `unused_account_validity_days` field
+* Update README and examples removing any reference to the deprecated `unused_account_validity_days` field
 
 ## 0.4.0 (May 2, 2020)
 
@@ -122,7 +128,7 @@ ENHANCEMENTS:
 
 FIXES:
 
-* Applies case_sensitive via username_configuration
+* Applies `case_sensitive` via `username_configuration`
 
 ## 0.3.2 (April 24, 2020)
 
@@ -134,7 +140,7 @@ UPDATE:
 
 ENHANCEMENTS:
 
-* Add `case_sensitive` for aws_cognito_user_pool
+* Add `case_sensitive` for `aws_cognito_user_pool`
 
 ## 0.3.0 (April 1, 2020)
 
