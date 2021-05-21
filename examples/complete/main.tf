@@ -230,6 +230,8 @@ module "aws_cognito_user_pool_complete_example" {
     }
   ]
 
+  prevent_destroy = true
+
   # tags
   tags = {
     Owner       = "infra"
