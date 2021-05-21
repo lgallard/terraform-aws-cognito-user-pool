@@ -223,7 +223,6 @@ No modules.
 | <a name="input_password_policy_require_symbols"></a> [password\_policy\_require\_symbols](#input\_password\_policy\_require\_symbols) | Whether you have required users to use at least one symbol in their password | `bool` | `true` | no |
 | <a name="input_password_policy_require_uppercase"></a> [password\_policy\_require\_uppercase](#input\_password\_policy\_require\_uppercase) | Whether you have required users to use at least one uppercase letter in their password | `bool` | `true` | no |
 | <a name="input_password_policy_temporary_password_validity_days"></a> [password\_policy\_temporary\_password\_validity\_days](#input\_password\_policy\_temporary\_password\_validity\_days) | The minimum length of the password policy that you have set | `number` | `7` | no |
-| <a name="input_prevent_destroy"></a> [prevent_destroy](#input\_prevent_destroy) | Change to true to avoid deleting your user pool. | `boolean` | `false` | no |
 | <a name="input_recovery_mechanisms"></a> [recovery\_mechanisms](#input\_recovery\_mechanisms) | The list of Account Recovery Options | `list(any)` | `[]` | no |
 | <a name="input_resource_server_identifier"></a> [resource\_server\_identifier](#input\_resource\_server\_identifier) | An identifier for the resource server | `string` | `null` | no |
 | <a name="input_resource_server_name"></a> [resource\_server\_name](#input\_resource\_server\_name) | A name for the resource server | `string` | `null` | no |

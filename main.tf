@@ -190,10 +190,6 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-  lifecycle {
-    prevent_destroy = var.prevent_destroy
-  }
-
   # tags
   tags = var.tags
 }

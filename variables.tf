@@ -7,12 +7,6 @@ variable "enabled" {
   default     = true
 }
 
-variable "prevent_destroy" {
-  description = "Change to true to avoid deleting your user pool"
-  type        = bool
-  default     = false
-}
-
 variable "user_pool_name" {
   description = "The name of the user pool"
   type        = string
