@@ -1,3 +1,9 @@
+## 0.11.1 (May 21, 2021)
+
+FIXES:
+
+* Revert prevent_destroy due to [Variables may not be used here issue](https://github.com/hashicorp/terraform/issues/22544)
+
 ## 0.11.0 (May 21, 2021)
 
 ENHANCEMENTS:
