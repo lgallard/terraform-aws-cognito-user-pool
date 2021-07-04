@@ -1,3 +1,9 @@
+## 0.12.0 (July 4, 2021)
+
+FIXES:
+
+* set client_secrets output to be sensitive (thanks @sapei)
+
 ## 0.11.1 (May 21, 2021)
 
 FIXES:
