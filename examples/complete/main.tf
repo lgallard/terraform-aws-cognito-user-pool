@@ -245,6 +245,7 @@ module "aws_cognito_user_pool_complete_example" {
       attribute_mapping = {
         email    = "email"
         username = "sub"
+        gender   = "gender"
       }
     }
   ]
