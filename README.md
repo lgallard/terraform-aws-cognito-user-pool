@@ -155,6 +155,7 @@ No modules.
 
 | Name | Type |
 |------|------|
+| [aws_cognito_identity_provider.identity_provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_identity_provider) | resource |
 | [aws_cognito_resource_server.resource](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_resource_server) | resource |
 | [aws_cognito_user_group.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_group) | resource |
 | [aws_cognito_user_pool.pool](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_pool) | resource |
@@ -203,6 +204,7 @@ No modules.
 | <a name="input_email_verification_message"></a> [email\_verification\_message](#input\_email\_verification\_message) | A string representing the email verification message | `string` | `null` | no |
 | <a name="input_email_verification_subject"></a> [email\_verification\_subject](#input\_email\_verification\_subject) | A string representing the email verification subject | `string` | `null` | no |
 | <a name="input_enabled"></a> [enabled](#input\_enabled) | Change to false to avoid deploying any resources | `bool` | `true` | no |
+| <a name="input_identity_providers"></a> [identity\_providers](#input\_identity\_providers) | Cognito Pool Identity Providers | `list(any)` | `[]` | no |
 | <a name="input_lambda_config"></a> [lambda\_config](#input\_lambda\_config) | A container for the AWS Lambda triggers associated with the user pool | `map(any)` | `null` | no |
 | <a name="input_lambda_config_create_auth_challenge"></a> [lambda\_config\_create\_auth\_challenge](#input\_lambda\_config\_create\_auth\_challenge) | The ARN of the lambda creating an authentication challenge. | `string` | `""` | no |
 | <a name="input_lambda_config_custom_message"></a> [lambda\_config\_custom\_message](#input\_lambda\_config\_custom\_message) | A custom Message AWS Lambda trigger. | `string` | `""` | no |
