@@ -1,3 +1,9 @@
+## 0.13.0 (August 10, 2021)
+
+ENHANCEMENTS:
+
+* Add support for Cognito Identity Providers (thanks @bobdoah)
+
 ## 0.12.0 (July 4, 2021)
 
 FIXES:
