@@ -3,7 +3,7 @@
 ```
 module "aws_cognito_user_pool_complete_example" {
 
-  source = "../modules/terraform-aws-cognito-user-pool"
+  source = "lgallard/cognito-user-pool/aws"
 
   user_pool_name             = "mypool_complete"
   alias_attributes           = ["email", "phone_number"]
@@ -47,11 +47,13 @@ module "aws_cognito_user_pool_complete_example" {
   }
 
   password_policy = {
-    minimum_length    = 10
-    require_lowercase = false
-    require_numbers   = true
-    require_symbols   = true
-    require_uppercase = true
+    minimum_length                   = 10
+    require_lowercase                = false
+    require_numbers                  = true
+    require_symbols                  = true
+    require_uppercase                = true
+    temporary_password_validity_days = 120
+
   }
 
   user_pool_add_ons = {
@@ -136,7 +138,6 @@ module "aws_cognito_user_pool_complete_example" {
   # user_pool_domain
   domain = "mydomain-com"
 
-
   # clients
   clients = [
     {
@@ -172,9 +173,9 @@ module "aws_cognito_user_pool_complete_example" {
       logout_urls                          = []
       name                                 = "test2"
       read_attributes                      = []
-      refresh_token_validity               = 30
       supported_identity_providers         = []
       write_attributes                     = []
+      refresh_token_validity               = 30
     },
     {
       allowed_oauth_flows                  = ["code", "implicit"]
@@ -187,9 +188,9 @@ module "aws_cognito_user_pool_complete_example" {
       logout_urls                          = ["https://mydomain.com/logout"]
       name                                 = "test3"
       read_attributes                      = ["email", "phone_number"]
-      refresh_token_validity               = 60
       supported_identity_providers         = []
       write_attributes                     = ["email", "gender", "locale", ]
+      refresh_token_validity               = 30
     }
   ]
 
@@ -231,12 +232,31 @@ module "aws_cognito_user_pool_complete_example" {
     }
   ]
 
+  # identity_providers
+  identity_providers = [
+    {
+      provider_name = "Google"
+      provider_type = "Google"
+
+      provider_details = {
+        authorize_scopes = "email"
+        client_id        = "your client_id"
+        client_secret    = "your client_secret"
+      }
+
+      attribute_mapping = {
+        email    = "email"
+        username = "sub"
+        gender   = "gender"
+      }
+    }
+  ]
+
   # tags
   tags = {
     Owner       = "infra"
     Environment = "production"
     Terraform   = true
   }
-
 }
 ```

@@ -1,6 +1,6 @@
 module "aws_cognito_user_pool_complete_example" {
 
-  source = "lgallard/cognito-user-pool/aws"
+  source = "../../"
 
   user_pool_name             = "mypool_complete"
   alias_attributes           = ["email", "phone_number"]
@@ -135,7 +135,6 @@ module "aws_cognito_user_pool_complete_example" {
   # user_pool_domain
   domain = "mydomain-com"
 
-
   # clients
   clients = [
     {
@@ -256,5 +255,4 @@ module "aws_cognito_user_pool_complete_example" {
     Environment = "production"
     Terraform   = true
   }
-
 }
