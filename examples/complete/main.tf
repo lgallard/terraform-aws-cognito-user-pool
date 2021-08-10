@@ -230,6 +230,26 @@ module "aws_cognito_user_pool_complete_example" {
     }
   ]
 
+  # identity_providers
+  identity_providers = [
+    {
+      provider_name = "Google"
+      provider_type = "Google"
+
+      provider_details = {
+        authorize_scopes = "email"
+        client_id        = "your client_id"
+        client_secret    = "your client_secret"
+      }
+
+      attribute_mapping = {
+        email    = "email"
+        username = "sub"
+        gender   = "gender"
+      }
+    }
+  ]
+
   # tags
   tags = {
     Owner       = "infra"

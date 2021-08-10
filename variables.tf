@@ -574,3 +574,12 @@ variable "recovery_mechanisms" {
   type        = list(any)
   default     = []
 }
+
+#
+# aws_cognito_identity_provider
+#
+variable "identity_providers" {
+  description = "Cognito Pool Identity Providers"
+  type        = list(any)
+  default     = []
+}
