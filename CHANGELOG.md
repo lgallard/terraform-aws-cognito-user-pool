@@ -2,7 +2,7 @@
 
 ENHANCEMENTS:
 
-* Add map output for client and secret ids (thanks dmytro-dorofeiev)
+* Add map output for client and secret ids (thanks @dmytro-dorofeiev)
 
 ## 0.13.0 (August 10, 2021)
 
