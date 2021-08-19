@@ -145,7 +145,7 @@ module "aws_cognito_user_pool_complete" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 3.2 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.54.0 |
 
 ## Modules
 
@@ -263,7 +263,9 @@ No modules.
 |------|-------------|
 | <a name="output_arn"></a> [arn](#output\_arn) | The ARN of the user pool |
 | <a name="output_client_ids"></a> [client\_ids](#output\_client\_ids) | The ids of the user pool clients |
+| <a name="output_client_ids_map"></a> [client\_ids\_map](#output\_client\_ids\_map) | The ids map of the user pool clients |
 | <a name="output_client_secrets"></a> [client\_secrets](#output\_client\_secrets) | The client secrets of the user pool clients |
+| <a name="output_client_secrets_map"></a> [client\_secrets\_map](#output\_client\_secrets\_map) | The client secrets map of the user pool clients |
 | <a name="output_creation_date"></a> [creation\_date](#output\_creation\_date) | The date the user pool was created |
 | <a name="output_domain_app_version"></a> [domain\_app\_version](#output\_domain\_app\_version) | The app version |
 | <a name="output_domain_aws_account_id"></a> [domain\_aws\_account\_id](#output\_domain\_aws\_account\_id) | The AWS account ID for the user pool owner |
