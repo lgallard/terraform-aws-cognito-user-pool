@@ -60,6 +60,17 @@ output "client_secrets" {
   sensitive   = true
 }
 
+output "client_ids_map" {
+  description = "The ids map of the user pool clients"
+  value       = var.enabled ? { for k, v in aws_cognito_user_pool_client.client : v.name => v.id } : null
+}
+
+output "client_secrets_map" {
+  description = "The client secrets map of the user pool clients"
+  value       = var.enabled ? { for k, v in aws_cognito_user_pool_client.client : v.name => v.client_secret } : null
+  sensitive   = true
+}
+
 #
 # aws_cognito_resource_servers
 #
