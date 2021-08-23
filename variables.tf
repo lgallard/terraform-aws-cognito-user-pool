@@ -493,8 +493,8 @@ variable "client_token_validity_units" {
   description = "Configuration block for units in which the validity times are represented in. Valid values for the following arguments are: `seconds`, `minutes`, `hours` or `days`."
   type        = any
   default = {
-    access_token  = "hours"
-    id_token      = "hours"
+    access_token  = "minutes"
+    id_token      = "minutes"
     refresh_token = "days"
   }
 
