@@ -2,7 +2,7 @@
 
 FIXES:
 
-* Use accepted token validity periods
+* Use accepted token validity periods (thanks @bobdoah)
 
 ## 0.14.0 (August 19, 2021)
 
