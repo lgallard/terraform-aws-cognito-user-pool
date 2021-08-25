@@ -1,3 +1,9 @@
+## 0.14.1 (August 25, 2021)
+
+FIXES:
+
+* Use accepted token validity periods
+
 ## 0.14.0 (August 19, 2021)
 
 ENHANCEMENTS:
