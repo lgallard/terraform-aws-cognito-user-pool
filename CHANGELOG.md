@@ -1,4 +1,4 @@
-## 0.14.1 (September 20, 2021)
+## 0.14.2 (September 20, 2021)
 
 FIXES:
 
