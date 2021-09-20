@@ -28,7 +28,10 @@ resource "aws_cognito_user_pool_client" "client" {
     }
   }
 
-  depends_on = [aws_cognito_resource_server.resource]
+  depends_on = [
+    aws_cognito_resource_server.resource,
+    aws_cognito_identity_provider.identity_provider
+  ]
 }
 
 locals {
