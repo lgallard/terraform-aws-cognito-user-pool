@@ -1,3 +1,9 @@
+## 0.14.1 (September 20, 2021)
+
+FIXES:
+
+* Add identity provider as a dependency for `aws_cognito_user_pool_client` (thanks @xposix)
+
 ## 0.14.1 (August 25, 2021)
 
 FIXES:
