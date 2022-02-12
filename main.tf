@@ -58,7 +58,7 @@ resource "aws_cognito_user_pool" "pool" {
 
   # lambda_config
   dynamic "lambda_config" {
-    for_each = var.lambda_config == null && length(join("", values(local.lambda_config[0]))) == 0 ? [] : local.lambda_config
+    for_each = var.lambda_config == null && length(local.lambda_config) == 0 ? [] : local.lambda_config
     content {
       create_auth_challenge          = lookup(lambda_config.value, "create_auth_challenge")
       custom_message                 = lookup(lambda_config.value, "custom_message")
@@ -70,6 +70,21 @@ resource "aws_cognito_user_pool" "pool" {
       pre_token_generation           = lookup(lambda_config.value, "pre_token_generation")
       user_migration                 = lookup(lambda_config.value, "user_migration")
       verify_auth_challenge_response = lookup(lambda_config.value, "verify_auth_challenge_response")
+      kms_key_id                     = lookup(lambda_config.value, "kms_key_id")
+      dynamic "custom_email_sender" {
+        for_each = length(lambda_config.value["custom_email_sender"]) == 0 ? [] : [1]
+        content {
+          lambda_arn     = lambda_config.value["custom_email_sender"]["lambda_arn"]
+          lambda_version = lambda_config.value["custom_email_sender"]["lambda_version"]
+        }
+      }
+      dynamic "custom_sms_sender" {
+        for_each = length(lambda_config.value["custom_sms_sender"]) == 0 ? [] : [1]
+        content {
+          lambda_arn     = lambda_config.value["custom_sms_sender"]["lambda_arn"]
+          lambda_version = lambda_config.value["custom_sms_sender"]["lambda_version"]
+        }
+      }
     }
   }
 
@@ -258,6 +273,9 @@ locals {
     pre_token_generation           = var.lambda_config_pre_token_generation
     user_migration                 = var.lambda_config_user_migration
     verify_auth_challenge_response = var.lambda_config_verify_auth_challenge_response
+    kms_key_id                     = var.lambda_config_kms_key_id
+    custom_email_sender            = var.lambda_config_custom_email_sender
+    custom_sms_sender              = var.lambda_config_custom_sms_sender
   }
 
   # If lambda_config is NOT null
@@ -273,6 +291,9 @@ locals {
     pre_token_generation           = lookup(var.lambda_config, "pre_token_generation", null) == null ? var.lambda_config_pre_token_generation : lookup(var.lambda_config, "pre_token_generation")
     user_migration                 = lookup(var.lambda_config, "user_migration", null) == null ? var.lambda_config_user_migration : lookup(var.lambda_config, "user_migration")
     verify_auth_challenge_response = lookup(var.lambda_config, "verify_auth_challenge_response", null) == null ? var.lambda_config_verify_auth_challenge_response : lookup(var.lambda_config, "verify_auth_challenge_response")
+    kms_key_id                     = lookup(var.lambda_config, "kms_key_id", null) == null ? var.lambda_config_kms_key_id : lookup(var.lambda_config, "kms_key_id")
+    custom_email_sender            = lookup(var.lambda_config, "custom_email_sender", null) == null ? var.lambda_config_custom_email_sender : lookup(var.lambda_config, "custom_email_sender")
+    custom_sms_sender              = lookup(var.lambda_config, "custom_sms_sender", null) == null ? var.lambda_config_custom_sms_sender : lookup(var.lambda_config, "custom_sms_sender")
   }
 
   # Return the default values

@@ -159,7 +159,7 @@ variable "email_configuration_from_email_address" {
 # lambda_config
 variable "lambda_config" {
   description = "A container for the AWS Lambda triggers associated with the user pool"
-  type        = map(any)
+  type        = any
   default     = null
 }
 
@@ -220,6 +220,24 @@ variable "lambda_config_verify_auth_challenge_response" {
   description = "Verifies the authentication challenge response"
   type        = string
   default     = ""
+}
+
+variable "lambda_config_kms_key_id" {
+  description = "The Amazon Resource Name of Key Management Service Customer master keys. Amazon Cognito uses the key to encrypt codes and temporary passwords sent to CustomEmailSender and CustomSMSSender."
+  type        = string
+  default     = null
+}
+
+variable "lambda_config_custom_email_sender" {
+  description = "A custom email sender AWS Lambda trigger."
+  type        = map(any)
+  default     = {}
+}
+
+variable "lambda_config_custom_sms_sender" {
+  description = "A custom SMS sender AWS Lambda trigger."
+  type        = map(any)
+  default     = {}
 }
 
 variable "mfa_configuration" {
