@@ -145,7 +145,7 @@ module "aws_cognito_user_pool_complete" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 3.2 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.74.2 |
 
 ## Modules
 
@@ -188,7 +188,7 @@ No modules.
 | <a name="input_client_read_attributes"></a> [client\_read\_attributes](#input\_client\_read\_attributes) | List of user pool attributes the application client can read from | `list(string)` | `[]` | no |
 | <a name="input_client_refresh_token_validity"></a> [client\_refresh\_token\_validity](#input\_client\_refresh\_token\_validity) | The time limit in days refresh tokens are valid for. Must be between 60 minutes and 3650 days. This value will be overridden if you have entered a value in `token_validity_units` | `number` | `30` | no |
 | <a name="input_client_supported_identity_providers"></a> [client\_supported\_identity\_providers](#input\_client\_supported\_identity\_providers) | List of provider names for the identity providers that are supported on this client | `list(string)` | `[]` | no |
-| <a name="input_client_token_validity_units"></a> [client\_token\_validity\_units](#input\_client\_token\_validity\_units) | Configuration block for units in which the validity times are represented in. Valid values for the following arguments are: `seconds`, `minutes`, `hours` or `days`. | `any` | <pre>{<br>  "access_token": "hours",<br>  "id_token": "hours",<br>  "refresh_token": "days"<br>}</pre> | no |
+| <a name="input_client_token_validity_units"></a> [client\_token\_validity\_units](#input\_client\_token\_validity\_units) | Configuration block for units in which the validity times are represented in. Valid values for the following arguments are: `seconds`, `minutes`, `hours` or `days`. | `any` | <pre>{<br>  "access_token": "minutes",<br>  "id_token": "minutes",<br>  "refresh_token": "days"<br>}</pre> | no |
 | <a name="input_client_write_attributes"></a> [client\_write\_attributes](#input\_client\_write\_attributes) | List of user pool attributes the application client can write to | `list(string)` | `[]` | no |
 | <a name="input_clients"></a> [clients](#input\_clients) | A container with the clients definitions | `any` | `[]` | no |
 | <a name="input_device_configuration"></a> [device\_configuration](#input\_device\_configuration) | The configuration for the user pool's device tracking | `map(any)` | `{}` | no |
@@ -205,10 +205,13 @@ No modules.
 | <a name="input_email_verification_subject"></a> [email\_verification\_subject](#input\_email\_verification\_subject) | A string representing the email verification subject | `string` | `null` | no |
 | <a name="input_enabled"></a> [enabled](#input\_enabled) | Change to false to avoid deploying any resources | `bool` | `true` | no |
 | <a name="input_identity_providers"></a> [identity\_providers](#input\_identity\_providers) | Cognito Pool Identity Providers | `list(any)` | `[]` | no |
-| <a name="input_lambda_config"></a> [lambda\_config](#input\_lambda\_config) | A container for the AWS Lambda triggers associated with the user pool | `map(any)` | `null` | no |
+| <a name="input_lambda_config"></a> [lambda\_config](#input\_lambda\_config) | A container for the AWS Lambda triggers associated with the user pool | `any` | `null` | no |
 | <a name="input_lambda_config_create_auth_challenge"></a> [lambda\_config\_create\_auth\_challenge](#input\_lambda\_config\_create\_auth\_challenge) | The ARN of the lambda creating an authentication challenge. | `string` | `""` | no |
+| <a name="input_lambda_config_custom_email_sender"></a> [lambda\_config\_custom\_email\_sender](#input\_lambda\_config\_custom\_email\_sender) | A custom email sender AWS Lambda trigger. | `map(any)` | `{}` | no |
 | <a name="input_lambda_config_custom_message"></a> [lambda\_config\_custom\_message](#input\_lambda\_config\_custom\_message) | A custom Message AWS Lambda trigger. | `string` | `""` | no |
+| <a name="input_lambda_config_custom_sms_sender"></a> [lambda\_config\_custom\_sms\_sender](#input\_lambda\_config\_custom\_sms\_sender) | A custom SMS sender AWS Lambda trigger. | `map(any)` | `{}` | no |
 | <a name="input_lambda_config_define_auth_challenge"></a> [lambda\_config\_define\_auth\_challenge](#input\_lambda\_config\_define\_auth\_challenge) | Defines the authentication challenge. | `string` | `""` | no |
+| <a name="input_lambda_config_kms_key_id"></a> [lambda\_config\_kms\_key\_id](#input\_lambda\_config\_kms\_key\_id) | The Amazon Resource Name of Key Management Service Customer master keys. Amazon Cognito uses the key to encrypt codes and temporary passwords sent to CustomEmailSender and CustomSMSSender. | `string` | `null` | no |
 | <a name="input_lambda_config_post_authentication"></a> [lambda\_config\_post\_authentication](#input\_lambda\_config\_post\_authentication) | A post-authentication AWS Lambda trigger | `string` | `""` | no |
 | <a name="input_lambda_config_post_confirmation"></a> [lambda\_config\_post\_confirmation](#input\_lambda\_config\_post\_confirmation) | A post-confirmation AWS Lambda trigger | `string` | `""` | no |
 | <a name="input_lambda_config_pre_authentication"></a> [lambda\_config\_pre\_authentication](#input\_lambda\_config\_pre\_authentication) | A pre-authentication AWS Lambda trigger | `string` | `""` | no |

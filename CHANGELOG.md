@@ -2,7 +2,7 @@
 
 ENHANCEMENTS:
 
-* Add custom sms and email sender support (thanks @xposix) 
+* Add custom sms and email sender support (thanks @xposix)
 
 ## 0.14.2 (September 20, 2021)
 
