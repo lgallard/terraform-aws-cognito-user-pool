@@ -1,3 +1,9 @@
+## 0.15.0 (February 12, 2022)
+
+ENHANCEMENTS:
+
+* Add custom sms and email sender support (thanks @xposix)
+
 ## 0.14.2 (September 20, 2021)
 
 FIXES:
