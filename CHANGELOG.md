@@ -1,3 +1,9 @@
+## 0.15.1 (February 15, 2022)
+
+FIXES:
+
+* Change default value for `client_prevent_user_existence_errors` (thanks @juan-acevedo-ntt)
+
 ## 0.15.0 (February 12, 2022)
 
 ENHANCEMENTS:
