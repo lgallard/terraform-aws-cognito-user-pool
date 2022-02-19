@@ -2,7 +2,7 @@
 
 FIXES:
 
-* Change aws provider version contraints to be able to use 4.x
+* Change aws provider version constraints to be able to use 4.x
 
 ## 0.15.1 (February 15, 2022)
 
