@@ -145,7 +145,7 @@ module "aws_cognito_user_pool_complete" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.74.2 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.16.0 |
 
 ## Modules
 
@@ -205,20 +205,20 @@ No modules.
 | <a name="input_email_verification_subject"></a> [email\_verification\_subject](#input\_email\_verification\_subject) | A string representing the email verification subject | `string` | `null` | no |
 | <a name="input_enabled"></a> [enabled](#input\_enabled) | Change to false to avoid deploying any resources | `bool` | `true` | no |
 | <a name="input_identity_providers"></a> [identity\_providers](#input\_identity\_providers) | Cognito Pool Identity Providers | `list(any)` | `[]` | no |
-| <a name="input_lambda_config"></a> [lambda\_config](#input\_lambda\_config) | A container for the AWS Lambda triggers associated with the user pool | `any` | `null` | no |
-| <a name="input_lambda_config_create_auth_challenge"></a> [lambda\_config\_create\_auth\_challenge](#input\_lambda\_config\_create\_auth\_challenge) | The ARN of the lambda creating an authentication challenge. | `string` | `""` | no |
-| <a name="input_lambda_config_custom_email_sender"></a> [lambda\_config\_custom\_email\_sender](#input\_lambda\_config\_custom\_email\_sender) | A custom email sender AWS Lambda trigger. | `map(any)` | `{}` | no |
-| <a name="input_lambda_config_custom_message"></a> [lambda\_config\_custom\_message](#input\_lambda\_config\_custom\_message) | A custom Message AWS Lambda trigger. | `string` | `""` | no |
-| <a name="input_lambda_config_custom_sms_sender"></a> [lambda\_config\_custom\_sms\_sender](#input\_lambda\_config\_custom\_sms\_sender) | A custom SMS sender AWS Lambda trigger. | `map(any)` | `{}` | no |
-| <a name="input_lambda_config_define_auth_challenge"></a> [lambda\_config\_define\_auth\_challenge](#input\_lambda\_config\_define\_auth\_challenge) | Defines the authentication challenge. | `string` | `""` | no |
+| <a name="input_lambda_config"></a> [lambda\_config](#input\_lambda\_config) | A container for the AWS Lambda triggers associated with the user pool | `any` | `{}` | no |
+| <a name="input_lambda_config_create_auth_challenge"></a> [lambda\_config\_create\_auth\_challenge](#input\_lambda\_config\_create\_auth\_challenge) | The ARN of the lambda creating an authentication challenge. | `string` | `null` | no |
+| <a name="input_lambda_config_custom_email_sender"></a> [lambda\_config\_custom\_email\_sender](#input\_lambda\_config\_custom\_email\_sender) | A custom email sender AWS Lambda trigger. | `any` | `{}` | no |
+| <a name="input_lambda_config_custom_message"></a> [lambda\_config\_custom\_message](#input\_lambda\_config\_custom\_message) | A custom Message AWS Lambda trigger. | `string` | `null` | no |
+| <a name="input_lambda_config_custom_sms_sender"></a> [lambda\_config\_custom\_sms\_sender](#input\_lambda\_config\_custom\_sms\_sender) | A custom SMS sender AWS Lambda trigger. | `any` | `{}` | no |
+| <a name="input_lambda_config_define_auth_challenge"></a> [lambda\_config\_define\_auth\_challenge](#input\_lambda\_config\_define\_auth\_challenge) | Defines the authentication challenge. | `string` | `null` | no |
 | <a name="input_lambda_config_kms_key_id"></a> [lambda\_config\_kms\_key\_id](#input\_lambda\_config\_kms\_key\_id) | The Amazon Resource Name of Key Management Service Customer master keys. Amazon Cognito uses the key to encrypt codes and temporary passwords sent to CustomEmailSender and CustomSMSSender. | `string` | `null` | no |
-| <a name="input_lambda_config_post_authentication"></a> [lambda\_config\_post\_authentication](#input\_lambda\_config\_post\_authentication) | A post-authentication AWS Lambda trigger | `string` | `""` | no |
-| <a name="input_lambda_config_post_confirmation"></a> [lambda\_config\_post\_confirmation](#input\_lambda\_config\_post\_confirmation) | A post-confirmation AWS Lambda trigger | `string` | `""` | no |
-| <a name="input_lambda_config_pre_authentication"></a> [lambda\_config\_pre\_authentication](#input\_lambda\_config\_pre\_authentication) | A pre-authentication AWS Lambda trigger | `string` | `""` | no |
-| <a name="input_lambda_config_pre_sign_up"></a> [lambda\_config\_pre\_sign\_up](#input\_lambda\_config\_pre\_sign\_up) | A pre-registration AWS Lambda trigger | `string` | `""` | no |
-| <a name="input_lambda_config_pre_token_generation"></a> [lambda\_config\_pre\_token\_generation](#input\_lambda\_config\_pre\_token\_generation) | Allow to customize identity token claims before token generation | `string` | `""` | no |
-| <a name="input_lambda_config_user_migration"></a> [lambda\_config\_user\_migration](#input\_lambda\_config\_user\_migration) | The user migration Lambda config type | `string` | `""` | no |
-| <a name="input_lambda_config_verify_auth_challenge_response"></a> [lambda\_config\_verify\_auth\_challenge\_response](#input\_lambda\_config\_verify\_auth\_challenge\_response) | Verifies the authentication challenge response | `string` | `""` | no |
+| <a name="input_lambda_config_post_authentication"></a> [lambda\_config\_post\_authentication](#input\_lambda\_config\_post\_authentication) | A post-authentication AWS Lambda trigger | `string` | `null` | no |
+| <a name="input_lambda_config_post_confirmation"></a> [lambda\_config\_post\_confirmation](#input\_lambda\_config\_post\_confirmation) | A post-confirmation AWS Lambda trigger | `string` | `null` | no |
+| <a name="input_lambda_config_pre_authentication"></a> [lambda\_config\_pre\_authentication](#input\_lambda\_config\_pre\_authentication) | A pre-authentication AWS Lambda trigger | `string` | `null` | no |
+| <a name="input_lambda_config_pre_sign_up"></a> [lambda\_config\_pre\_sign\_up](#input\_lambda\_config\_pre\_sign\_up) | A pre-registration AWS Lambda trigger | `string` | `null` | no |
+| <a name="input_lambda_config_pre_token_generation"></a> [lambda\_config\_pre\_token\_generation](#input\_lambda\_config\_pre\_token\_generation) | Allow to customize identity token claims before token generation | `string` | `null` | no |
+| <a name="input_lambda_config_user_migration"></a> [lambda\_config\_user\_migration](#input\_lambda\_config\_user\_migration) | The user migration Lambda config type | `string` | `null` | no |
+| <a name="input_lambda_config_verify_auth_challenge_response"></a> [lambda\_config\_verify\_auth\_challenge\_response](#input\_lambda\_config\_verify\_auth\_challenge\_response) | Verifies the authentication challenge response | `string` | `null` | no |
 | <a name="input_mfa_configuration"></a> [mfa\_configuration](#input\_mfa\_configuration) | Set to enable multi-factor authentication. Must be one of the following values (ON, OFF, OPTIONAL) | `string` | `"OFF"` | no |
 | <a name="input_number_schemas"></a> [number\_schemas](#input\_number\_schemas) | A container with the number schema attributes of a user pool. Maximum of 50 attributes | `list(any)` | `[]` | no |
 | <a name="input_password_policy"></a> [password\_policy](#input\_password\_policy) | A container for information about the user pool password policy | <pre>object({<br>    minimum_length                   = number,<br>    require_lowercase                = bool,<br>    require_lowercase                = bool,<br>    require_numbers                  = bool,<br>    require_symbols                  = bool,<br>    require_uppercase                = bool,<br>    temporary_password_validity_days = number<br>  })</pre> | `null` | no |

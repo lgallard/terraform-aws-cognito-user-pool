@@ -160,66 +160,66 @@ variable "email_configuration_from_email_address" {
 variable "lambda_config" {
   description = "A container for the AWS Lambda triggers associated with the user pool"
   type        = any
-  default     = null
+  default     = {}
 }
 
 variable "lambda_config_create_auth_challenge" {
   description = "The ARN of the lambda creating an authentication challenge."
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "lambda_config_custom_message" {
   description = "A custom Message AWS Lambda trigger."
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "lambda_config_define_auth_challenge" {
   description = "Defines the authentication challenge."
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "lambda_config_post_authentication" {
   description = "A post-authentication AWS Lambda trigger"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "lambda_config_post_confirmation" {
   description = "A post-confirmation AWS Lambda trigger"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "lambda_config_pre_authentication" {
   description = "A pre-authentication AWS Lambda trigger"
   type        = string
-  default     = ""
+  default     = null
 }
 variable "lambda_config_pre_sign_up" {
   description = "A pre-registration AWS Lambda trigger"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "lambda_config_pre_token_generation" {
   description = "Allow to customize identity token claims before token generation"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "lambda_config_user_migration" {
   description = "The user migration Lambda config type"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "lambda_config_verify_auth_challenge_response" {
   description = "Verifies the authentication challenge response"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "lambda_config_kms_key_id" {
@@ -230,13 +230,13 @@ variable "lambda_config_kms_key_id" {
 
 variable "lambda_config_custom_email_sender" {
   description = "A custom email sender AWS Lambda trigger."
-  type        = map(any)
+  type        = any
   default     = {}
 }
 
 variable "lambda_config_custom_sms_sender" {
   description = "A custom SMS sender AWS Lambda trigger."
-  type        = map(any)
+  type        = any
   default     = {}
 }
 
