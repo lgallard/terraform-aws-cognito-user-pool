@@ -72,17 +72,17 @@ resource "aws_cognito_user_pool" "pool" {
       verify_auth_challenge_response = lookup(var.lambda_config, "verify_auth_challenge_response", var.lambda_config_verify_auth_challenge_response)
       kms_key_id                     = lookup(var.lambda_config, "kms_key_id", var.lambda_config_kms_key_id)
       dynamic "custom_email_sender" {
-        for_each = [for k, v in lookup(var.lambda_config, "custom_email_sender", {}) : v]
+        for_each = lookup(var.lambda_config, "custom_email_sender", var.lambda_config_custom_email_sender) == {} ? [] : [1]
         content {
-          lambda_arn     = lookup(lookup(var.lambda_config, "custom_email_sender"), "lambda_arn", null)
-          lambda_version = lookup(lookup(var.lambda_config, "custom_email_sender"), "lambda_version", null)
+          lambda_arn     = lookup(lookup(var.lambda_config, "custom_email_sender", var.lambda_config_custom_email_sender), "lambda_arn", null)
+          lambda_version = lookup(lookup(var.lambda_config, "custom_email_sender", var.lambda_config_custom_email_sender), "lambda_version", null)
         }
       }
       dynamic "custom_sms_sender" {
-        for_each = [for k, v in lookup(var.lambda_config, "custom_sms_sender", {}) : v]
+        for_each = lookup(var.lambda_config, "custom_sms_sender", var.lambda_config_custom_sms_sender) == {} ? [] : [1]
         content {
-          lambda_arn     = lookup(lookup(var.lambda_config, "custom_sms_sender"), "lambda_arn", null)
-          lambda_version = lookup(lookup(var.lambda_config, "custom_sms_sender"), "lambda_version")
+          lambda_arn     = lookup(lookup(var.lambda_config, "custom_sms_sender", var.lambda_config_custom_sms_sender), "lambda_arn", null)
+          lambda_version = lookup(lookup(var.lambda_config, "custom_sms_sender", var.lambda_config_custom_sms_sender), "lambda_version", null)
         }
       }
     }
