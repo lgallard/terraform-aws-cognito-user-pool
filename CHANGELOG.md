@@ -1,3 +1,14 @@
+## 0.16.0 (May 30, 2022)
+
+ENHANCEMENTS:
+
+* Update complete example
+* Update .pre-commit yaml file
+
+FIXES:
+
+* Fix `lambda_config` keeps changing
+
 ## 0.15.2 (February 19, 2022)
 
 FIXES:
@@ -44,7 +55,7 @@ ENHANCEMENTS:
 
 FIXES:
 
-* set client_secrets output to be sensitive (thanks @sapei)
+* Set client_secrets output to be sensitive (thanks @sapei)
 
 ## 0.11.1 (May 21, 2021)
 
