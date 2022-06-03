@@ -132,6 +132,12 @@ variable "email_configuration" {
   default     = {}
 }
 
+variable "email_configuration_configuration_set" {
+  description = "The name of the configuration set"
+  type        = string
+  default     = null
+}
+
 variable "email_configuration_reply_to_email_address" {
   description = "The REPLY-TO email address"
   type        = string
