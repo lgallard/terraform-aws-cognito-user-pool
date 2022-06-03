@@ -49,6 +49,7 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "email_configuration" {
     for_each = local.email_configuration
     content {
+      configuration_set      = lookup(email_configuration.value, "configuration_set")
       reply_to_email_address = lookup(email_configuration.value, "reply_to_email_address")
       source_arn             = lookup(email_configuration.value, "source_arn")
       email_sending_account  = lookup(email_configuration.value, "email_sending_account")
@@ -250,6 +251,7 @@ locals {
   # email_configuration
   # If no email_configuration is provided, build a email_configuration using the default values
   email_configuration_default = {
+    configuration_set      = lookup(var.email_configuration, "configuration_set", null) == null ? var.email_configuration_configuration_set : lookup(var.email_configuration, "configuration_set")
     reply_to_email_address = lookup(var.email_configuration, "reply_to_email_address", null) == null ? var.email_configuration_reply_to_email_address : lookup(var.email_configuration, "reply_to_email_address")
     source_arn             = lookup(var.email_configuration, "source_arn", null) == null ? var.email_configuration_source_arn : lookup(var.email_configuration, "source_arn")
     email_sending_account  = lookup(var.email_configuration, "email_sending_account", null) == null ? var.email_configuration_email_sending_account : lookup(var.email_configuration, "email_sending_account")
