@@ -49,6 +49,7 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "email_configuration" {
     for_each = local.email_configuration
     content {
+      configuration_set      = lookup(email_configuration.value, "configuration_set")
       reply_to_email_address = lookup(email_configuration.value, "reply_to_email_address")
       source_arn             = lookup(email_configuration.value, "source_arn")
       email_sending_account  = lookup(email_configuration.value, "email_sending_account")
