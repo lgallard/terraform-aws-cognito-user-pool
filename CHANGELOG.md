@@ -1,3 +1,9 @@
+## 0.17.0 (Jun 3, 2022)
+
+ENHANCEMENTS:
+
+* Add `configuration_set` field in `email_configuration` block (thanks @tiagoposse)
+
 ## 0.16.0 (May 30, 2022)
 
 ENHANCEMENTS:
