@@ -208,6 +208,12 @@ resource "aws_cognito_user_pool" "pool" {
 
   # tags
   tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+      estimated_number_of_users
+    ]
+  }
 }
 
 locals {
