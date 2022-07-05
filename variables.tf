@@ -607,3 +607,17 @@ variable "identity_providers" {
   type        = list(any)
   default     = []
 }
+
+
+variable "ignore_changes_list" {
+  default     = ["estimated_number_of_users"]
+  description = "List of attribute changes to ignore in pool resource"
+  type        = list(string)
+
+}
+
+variable "is_prevent_destroy" {
+  default     = false
+  description = "Prevent destroy pool"
+  type        = bool
+}
