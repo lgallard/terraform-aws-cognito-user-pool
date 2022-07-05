@@ -209,9 +209,10 @@ resource "aws_cognito_user_pool" "pool" {
   # tags
   tags = var.tags
 
-  lifecycle = {
-    prevent_destroy = var.is_prevent_destroy
-    ignore_changes  = var.ignore_changes_list
+  lifecycle {
+    ignore_changes = [
+      estimated_number_of_users
+    ]
   }
 }
 
