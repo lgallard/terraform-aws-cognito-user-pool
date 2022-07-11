@@ -210,6 +210,17 @@ resource "aws_cognito_user_pool" "pool" {
   tags = var.tags
 }
 
+# Grant Cognito the ability to execute each lambda function.
+resource "aws_lambda_permission" "cognito" {
+  for_each = var.enabled ? toset(local.distinct_lambda_function_names) : toset([])
+
+  statement_id  = "AllowCognitoLambdaExecution"
+  action        = "lambda:InvokeFunction"
+  function_name = each.key
+  principal     = "cognito-idp.amazonaws.com"
+  source_arn = aws_cognito_user_pool.pool[0].arn
+}
+
 locals {
   # username_configuration
   # If no username_configuration is provided return a empty list
@@ -311,4 +322,14 @@ locals {
 
   software_token_mfa_configuration = (length(var.sms_configuration) == 0 || local.sms_configuration == null) && var.mfa_configuration == "OFF" ? [] : [local.software_token_mfa_configuration_default]
 
+  # lambda_config
+  # Generate a list of distinct lambda function names. The function name is currently the last field of the lambda ARN.
+  # Unfortunately terraform doesn't allow negative array indexes.
+  # https://docs.aws.amazon.com/lambda/latest/dg/lambda-api-permissions-ref.html
+  # E.g. arn:aws:lambda:us-west-2:123456789012:function:my-function
+  # E.g. arn:aws:lambda:us-west-2:123456789012:function:my-function:1
+  distinct_lambda_function_names = distinct([for name, arn in var.lambda_config : contains(["custom_email_sender", "custom_sms_sender"], name) ? split(":", arn.lambda_arn)[6] : split(":", arn)[6]])
 }
+
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
