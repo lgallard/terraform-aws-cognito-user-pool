@@ -16,6 +16,7 @@ resource "aws_cognito_user_pool_client" "client" {
   supported_identity_providers         = lookup(element(local.clients, count.index), "supported_identity_providers", null)
   prevent_user_existence_errors        = lookup(element(local.clients, count.index), "prevent_user_existence_errors", null)
   write_attributes                     = lookup(element(local.clients, count.index), "write_attributes", null)
+  enable_token_revocation              = lookup(element(local.clients, count.index), "enable_token_revocation", null)
   user_pool_id                         = aws_cognito_user_pool.pool[0].id
 
   # token_validity_units
@@ -54,6 +55,7 @@ locals {
       supported_identity_providers         = var.client_supported_identity_providers
       prevent_user_existence_errors        = var.client_prevent_user_existence_errors
       write_attributes                     = var.client_write_attributes
+      enable_token_revocation              = var.client_enable_token_revocation
     }
   ]
 
@@ -76,6 +78,7 @@ locals {
     supported_identity_providers         = lookup(e, "supported_identity_providers", null)
     prevent_user_existence_errors        = lookup(e, "prevent_user_existence_errors", null)
     write_attributes                     = lookup(e, "write_attributes", null)
+    enable_token_revocation              = lookup(e, "enable_token_revocation", null)
     }
   ]
 
