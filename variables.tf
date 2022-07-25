@@ -447,6 +447,12 @@ variable "client_default_redirect_uri" {
   default     = ""
 }
 
+variable "client_enable_token_revocation" {
+  description = "Whether the client token can be revoked"
+  type        = bool
+  default     = true
+}
+
 variable "client_explicit_auth_flows" {
   description = "List of authentication flows (ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_PASSWORD_AUTH)"
   type        = list(string)

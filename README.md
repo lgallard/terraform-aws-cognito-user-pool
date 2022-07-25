@@ -145,7 +145,7 @@ module "aws_cognito_user_pool_complete" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.16.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.22.0 |
 
 ## Modules
 
@@ -179,6 +179,7 @@ No modules.
 | <a name="input_client_allowed_oauth_scopes"></a> [client\_allowed\_oauth\_scopes](#input\_client\_allowed\_oauth\_scopes) | List of allowed OAuth scopes (phone, email, openid, profile, and aws.cognito.signin.user.admin) | `list(string)` | `[]` | no |
 | <a name="input_client_callback_urls"></a> [client\_callback\_urls](#input\_client\_callback\_urls) | List of allowed callback URLs for the identity providers | `list(string)` | `[]` | no |
 | <a name="input_client_default_redirect_uri"></a> [client\_default\_redirect\_uri](#input\_client\_default\_redirect\_uri) | The default redirect URI. Must be in the list of callback URLs | `string` | `""` | no |
+| <a name="input_client_enable_token_revocation"></a> [client\_enable\_token\_revocation](#input\_client\_enable\_token\_revocation) | Whether the client token can be revoked | `bool` | `true` | no |
 | <a name="input_client_explicit_auth_flows"></a> [client\_explicit\_auth\_flows](#input\_client\_explicit\_auth\_flows) | List of authentication flows (ADMIN\_NO\_SRP\_AUTH, CUSTOM\_AUTH\_FLOW\_ONLY, USER\_PASSWORD\_AUTH) | `list(string)` | `[]` | no |
 | <a name="input_client_generate_secret"></a> [client\_generate\_secret](#input\_client\_generate\_secret) | Should an application secret be generated | `bool` | `true` | no |
 | <a name="input_client_id_token_validity"></a> [client\_id\_token\_validity](#input\_client\_id\_token\_validity) | Time limit, between 5 minutes and 1 day, after which the ID token is no longer valid and cannot be used. Must be between 5 minutes and 1 day. Cannot be greater than refresh token expiration. This value will be overridden if you have entered a value in `token_validity_units`. | `number` | `60` | no |
