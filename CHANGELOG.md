@@ -1,4 +1,10 @@
-## 0.17.0 (Jun 3, 2022)
+## 0.18.0 (July 25, 2022)
+
+ENHANCEMENTS:
+
+* Add missing option to allow client token revocation (thanks @rastakajakwanna)
+
+## 0.17.0 (June 3, 2022)
 
 ENHANCEMENTS:
 
