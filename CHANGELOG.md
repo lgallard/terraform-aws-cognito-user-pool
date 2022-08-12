@@ -1,3 +1,9 @@
+## 0.18.1 (August 12, 2022)
+
+ENHANCEMENTS:
+
+* Add  0.13.7 as the lowest Terraform version supported (thanks @oleksiidv)
+
 ## 0.18.0 (July 25, 2022)
 
 ENHANCEMENTS:
