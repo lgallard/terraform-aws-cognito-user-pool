@@ -138,14 +138,14 @@ module "aws_cognito_user_pool_complete" {
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.14.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= v0.13.7 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.2 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.23.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.25.0 |
 
 ## Modules
 
