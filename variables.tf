@@ -26,7 +26,7 @@ variable "email_verification_subject" {
 
 # username_configuration
 variable "username_configuration" {
-  description = "The Username Configuration. Seting `case_sesiteve` specifies whether username case sensitivity will be applied for all users in the user pool through Cognito APIs"
+  description = "The Username Configuration. Setting `case_sensitive` specifies whether username case sensitivity will be applied for all users in the user pool through Cognito APIs"
   type        = map(any)
   default     = {}
 }
