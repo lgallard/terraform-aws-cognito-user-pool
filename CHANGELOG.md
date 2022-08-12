@@ -1,3 +1,9 @@
+## 0.18.2 (August 12, 2022)
+
+FIXES:
+
+* Fix ´username_configuration´ typo in README (thanks @ajoga and @KelvinVenancio)
+
 ## 0.18.1 (August 12, 2022)
 
 ENHANCEMENTS:
