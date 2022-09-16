@@ -612,4 +612,5 @@ variable "identity_providers" {
   description = "Cognito Pool Identity Providers"
   type        = list(any)
   default     = []
+  sensitive   = true
 }
