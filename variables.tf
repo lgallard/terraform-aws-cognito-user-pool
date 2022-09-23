@@ -271,7 +271,6 @@ variable "password_policy" {
   type = object({
     minimum_length                   = number,
     require_lowercase                = bool,
-    require_lowercase                = bool,
     require_numbers                  = bool,
     require_symbols                  = bool,
     require_uppercase                = bool,
