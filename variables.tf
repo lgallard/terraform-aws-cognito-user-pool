@@ -81,6 +81,12 @@ variable "username_attributes" {
   default     = null
 }
 
+variable "deletion_protection" {
+  description = "When active, DeletionProtection prevents accidental deletion of your user pool. Before you can delete a user pool that you have protected against deletion, you must deactivate this feature. Valid values are ACTIVE and INACTIVE."
+  type        = string
+  default     = "INACTIVE"
+}
+
 variable "auto_verified_attributes" {
   description = "The attributes to be auto-verified. Possible values: email, phone_number"
   type        = list(string)
