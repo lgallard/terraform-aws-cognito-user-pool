@@ -82,7 +82,7 @@ variable "username_attributes" {
 }
 
 variable "deletion_protection" {
-  description = "When active, DeletionProtection prevents accidental deletion of your user pool. Before you can delete a user pool that you have protected against deletion, you must deactivate this feature. Valid values are ACTIVE and INACTIVE."
+  description = "When active, DeletionProtection prevents accidental deletion of your user pool. Before you can delete a user pool that you have protected against deletion, you must deactivate this feature. Valid values are `ACTIVE` and `INACTIVE`."
   type        = string
   default     = "INACTIVE"
 }
