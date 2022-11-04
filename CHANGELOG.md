@@ -1,4 +1,4 @@
-## 0.20.0 (Setember 22, 2022)
+## 0.20.0 (September 22, 2022)
 
 ENHANCEMENTS:
 
@@ -9,7 +9,7 @@ FIXES:
 
 * Remove duplicate `require_lowercasei` key for password policies (thanks @jeromegamez)
 
-## 0.19.0 (Setember 22, 2022)
+## 0.19.0 (September 22, 2022)
 
 FIXES:
 
