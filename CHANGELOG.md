@@ -1,3 +1,20 @@
+## 0.20.0 (Setember 22, 2022)
+
+ENHANCEMENTS:
+
+* Add support for user pool deletion_protection (thanks @dmcgillen)
+* Set `identity_providers` variable to `sensitive` (thanks @LawrenceWarren)
+
+FIXES:
+
+* Remove duplicate `require_lowercasei` key for password policies (thanks @jeromegamez)
+
+## 0.19.0 (Setember 22, 2022)
+
+FIXES:
+
+* Fix the attributes constraints for number and string schemas (thanks @sgtoj)
+
 ## 0.18.2 (August 12, 2022)
 
 FIXES:
