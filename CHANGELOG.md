@@ -1,3 +1,9 @@
+## 0.20.1 (November 24, 2022)
+
+FIXES:
+
+* Updated AWS provider minimum version to v4.38 as a requirement for `deletion_protection` (thanks @gchristidis)
+
 ## 0.20.0 (September 22, 2022)
 
 ENHANCEMENTS:
