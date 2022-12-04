@@ -32,6 +32,11 @@ module "aws_cognito_user_pool_complete_example" {
     source_arn             = "arn:aws:ses:us-east-1:123456789012:identity/myemail@mydomain.com"
   }
 
+  # Attributes requiring verification before update
+  user_attribute_update_settings = {
+    attributes_require_verification_before_update = ["email", "phone_number"]
+  }
+
   lambda_config = {
     create_auth_challenge          = "arn:aws:lambda:us-east-1:123456789012:function:create_auth_challenge"
     custom_message                 = "arn:aws:lambda:us-east-1:123456789012:function:custom_message"

@@ -321,5 +321,5 @@ locals {
 
   # user_attribute_update_settings
   # As default, all auto_verified_attributes will become attributes_require_verification_before_update
-  user_attribute_update_settings = var.user_attribute_update_settings == null ? (length(var.auto_verified_attributes) > 0 ? { attributes_require_verification_before_update = var.auto_verified_attributes } : {}) : var.user_attribute_update_settings
+  user_attribute_update_settings = lenght(var.attributes_require_verification_before_update) > 0 ? { attributes_require_verification_before_update = var.attributes_require_verification_before_update } : {}
 }

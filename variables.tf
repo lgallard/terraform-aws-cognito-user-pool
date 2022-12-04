@@ -361,10 +361,10 @@ variable "tags" {
 }
 
 # user_attribute_update_settings
-variable "user_attribute_update_settings" {
-  description = "Configuration block for user attribute update settings"
-  type        = map(any)
-  default     = null
+variable "attributes_require_verification_before_update" {
+  description = "A list of attributes requiring verification before update. If set, the provided value(s) must also be set in `auto_verified_attributes`. Valid values: `email`, `phone_number`"
+  type        = list(string)
+  default     = []
 }
 
 # user_pool_add_ons

@@ -1,3 +1,9 @@
+## 0.21.0 (December 4, 2022)
+
+ENHANCEMENTS:
+
+* Add `user_attribute_update_settings` to user pool (thanks @endrec)
+
 ## 0.20.1 (November 24, 2022)
 
 FIXES:
