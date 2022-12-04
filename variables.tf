@@ -360,6 +360,13 @@ variable "tags" {
   default     = {}
 }
 
+# user_attribute_update_settings
+variable "user_attribute_update_settings" {
+  description = "Configuration block for user attribute update settings"
+  type        = map(any)
+  default     = null
+}
+
 # user_pool_add_ons
 variable "user_pool_add_ons" {
   description = "Configuration block for user pool add-ons to enable user pool advanced security mode features"
