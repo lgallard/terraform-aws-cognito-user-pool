@@ -2,11 +2,12 @@ module "aws_cognito_user_pool_complete_example" {
 
   source = "../../"
 
-  user_pool_name             = "mypool_complete"
-  alias_attributes           = ["email", "phone_number"]
-  auto_verified_attributes   = ["email"]
-  sms_authentication_message = "Your username is {username} and temporary password is {####}."
-  sms_verification_message   = "This is the verification message {####}."
+  user_pool_name                                = "mypool_complete"
+  alias_attributes                              = ["email", "phone_number"]
+  auto_verified_attributes                      = ["email"]
+  attributes_require_verification_before_update = ["email"]
+  sms_authentication_message                    = "Your username is {username} and temporary password is {####}."
+  sms_verification_message                      = "This is the verification message {####}."
 
   deletion_protection = "ACTIVE"
 
@@ -30,11 +31,6 @@ module "aws_cognito_user_pool_complete_example" {
     email_sending_account  = "DEVELOPER"
     reply_to_email_address = "email@mydomain.com"
     source_arn             = "arn:aws:ses:us-east-1:123456789012:identity/myemail@mydomain.com"
-  }
-
-  # Attributes requiring verification before update
-  user_attribute_update_settings = {
-    attributes_require_verification_before_update = ["email", "phone_number"]
   }
 
   lambda_config = {
