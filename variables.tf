@@ -447,6 +447,12 @@ variable "client_allowed_oauth_scopes" {
   default     = []
 }
 
+variable "client_auth_session_validity" {
+  description = "Amazon Cognito creates a session token for each API request in an authentication flow. AuthSessionValidity is the duration, in minutes, of that session token. Your user pool native user must respond to each authentication challenge before the session expires. Valid values between 3 and 15. Default value is 3."
+  type        = number
+  default     = 3
+}
+
 variable "client_callback_urls" {
   description = "List of allowed callback URLs for the identity providers"
   type        = list(string)
