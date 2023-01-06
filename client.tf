@@ -3,6 +3,7 @@ resource "aws_cognito_user_pool_client" "client" {
   allowed_oauth_flows                  = lookup(element(local.clients, count.index), "allowed_oauth_flows", null)
   allowed_oauth_flows_user_pool_client = lookup(element(local.clients, count.index), "allowed_oauth_flows_user_pool_client", null)
   allowed_oauth_scopes                 = lookup(element(local.clients, count.index), "allowed_oauth_scopes", null)
+  auth_session_validity                = lookup(element(local.clients, count.index), "auth_session_validity", null)
   callback_urls                        = lookup(element(local.clients, count.index), "callback_urls", null)
   default_redirect_uri                 = lookup(element(local.clients, count.index), "default_redirect_uri", null)
   explicit_auth_flows                  = lookup(element(local.clients, count.index), "explicit_auth_flows", null)
@@ -41,6 +42,7 @@ locals {
       allowed_oauth_flows                  = var.client_allowed_oauth_flows
       allowed_oauth_flows_user_pool_client = var.client_allowed_oauth_flows_user_pool_client
       allowed_oauth_scopes                 = var.client_allowed_oauth_scopes
+      auth_session_validity                = var.client_auth_session_validity
       callback_urls                        = var.client_callback_urls
       default_redirect_uri                 = var.client_default_redirect_uri
       explicit_auth_flows                  = var.client_explicit_auth_flows
@@ -64,6 +66,7 @@ locals {
     allowed_oauth_flows                  = lookup(e, "allowed_oauth_flows", null)
     allowed_oauth_flows_user_pool_client = lookup(e, "allowed_oauth_flows_user_pool_client", null)
     allowed_oauth_scopes                 = lookup(e, "allowed_oauth_scopes", null)
+    auth_session_validity                = lookup(e, "auth_session_validity", null)
     callback_urls                        = lookup(e, "callback_urls", null)
     default_redirect_uri                 = lookup(e, "default_redirect_uri", null)
     explicit_auth_flows                  = lookup(e, "explicit_auth_flows", null)
