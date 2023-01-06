@@ -1,3 +1,9 @@
+## 0.21.0 (January 6, 2023)
+
+ENHANCEMENTS:
+
+* Add support for `auth_session_validity` parameter to user pool client (thanks @xposix)
+
 ## 0.20.1 (November 24, 2022)
 
 FIXES:

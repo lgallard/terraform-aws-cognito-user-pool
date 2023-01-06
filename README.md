@@ -147,7 +147,7 @@ module "aws_cognito_user_pool_complete" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.41.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.49.0 |
 
 ## Modules
 
@@ -179,6 +179,7 @@ No modules.
 | <a name="input_client_allowed_oauth_flows"></a> [client\_allowed\_oauth\_flows](#input\_client\_allowed\_oauth\_flows) | The name of the application client | `list(string)` | `[]` | no |
 | <a name="input_client_allowed_oauth_flows_user_pool_client"></a> [client\_allowed\_oauth\_flows\_user\_pool\_client](#input\_client\_allowed\_oauth\_flows\_user\_pool\_client) | Whether the client is allowed to follow the OAuth protocol when interacting with Cognito user pools | `bool` | `true` | no |
 | <a name="input_client_allowed_oauth_scopes"></a> [client\_allowed\_oauth\_scopes](#input\_client\_allowed\_oauth\_scopes) | List of allowed OAuth scopes (phone, email, openid, profile, and aws.cognito.signin.user.admin) | `list(string)` | `[]` | no |
+| <a name="input_client_auth_session_validity"></a> [client\_auth\_session\_validity](#input\_client\_auth\_session\_validity) | Amazon Cognito creates a session token for each API request in an authentication flow. AuthSessionValidity is the duration, in minutes, of that session token. Your user pool native user must respond to each authentication challenge before the session expires. Valid values between 3 and 15. Default value is 3. | `number` | `3` | no |
 | <a name="input_client_callback_urls"></a> [client\_callback\_urls](#input\_client\_callback\_urls) | List of allowed callback URLs for the identity providers | `list(string)` | `[]` | no |
 | <a name="input_client_default_redirect_uri"></a> [client\_default\_redirect\_uri](#input\_client\_default\_redirect\_uri) | The default redirect URI. Must be in the list of callback URLs | `string` | `""` | no |
 | <a name="input_client_enable_token_revocation"></a> [client\_enable\_token\_revocation](#input\_client\_enable\_token\_revocation) | Whether the client token can be revoked | `bool` | `true` | no |
