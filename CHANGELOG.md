@@ -1,3 +1,9 @@
+## 0.22.0 (November 24, 2022)
+
+FIXES:
+
+* Fix user attribute update settings lookup (thanks @trahim)
+
 ## 0.21.0 (January 6, 2023)
 
 ENHANCEMENTS:

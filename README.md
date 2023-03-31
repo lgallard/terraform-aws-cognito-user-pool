@@ -147,7 +147,7 @@ module "aws_cognito_user_pool_complete" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.49.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.61.0 |
 
 ## Modules
 
@@ -251,7 +251,7 @@ No modules.
 | <a name="input_string_schemas"></a> [string\_schemas](#input\_string\_schemas) | A container with the string schema attributes of a user pool. Maximum of 50 attributes | `list(any)` | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A mapping of tags to assign to the User Pool | `map(string)` | `{}` | no |
 | <a name="input_temporary_password_validity_days"></a> [temporary\_password\_validity\_days](#input\_temporary\_password\_validity\_days) | The user account expiration limit, in days, after which the account is no longer usable | `number` | `7` | no |
-| <a name="input_user_attribute_update_settings"></a> [user\_attribute\_update\_settings](#input\_user\_attribute\_update\_settings) | Configuration block for user attribute update settings | `map(any)` | `null` | no |
+| <a name="input_user_attribute_update_settings"></a> [user\_attribute\_update\_settings](#input\_user\_attribute\_update\_settings) | Configuration block for user attribute update settings. Must contain key `attributes_require_verification_before_update` with list with only valid values of `email` and `phone_number` | `map(list(string))` | `null` | no |
 | <a name="input_user_group_description"></a> [user\_group\_description](#input\_user\_group\_description) | The description of the user group | `string` | `null` | no |
 | <a name="input_user_group_name"></a> [user\_group\_name](#input\_user\_group\_name) | The name of the user group | `string` | `null` | no |
 | <a name="input_user_group_precedence"></a> [user\_group\_precedence](#input\_user\_group\_precedence) | The precedence of the user group | `number` | `null` | no |
