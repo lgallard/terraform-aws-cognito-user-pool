@@ -362,8 +362,8 @@ variable "tags" {
 
 # user_attribute_update_settings
 variable "user_attribute_update_settings" {
-  description = "Configuration block for user attribute update settings"
-  type        = map(any)
+  description = "Configuration block for user attribute update settings. Must contain key `attributes_require_verification_before_update` with list with only valid values of `email` and `phone_number`"
+  type        = map(list(string))
   default     = null
 }
 
