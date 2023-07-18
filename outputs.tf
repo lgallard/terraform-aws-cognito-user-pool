@@ -23,6 +23,11 @@ output "last_modified_date" {
   value       = var.enabled ? aws_cognito_user_pool.pool[0].last_modified_date : null
 }
 
+output "name" {
+  description = "The name of the user pool"
+  value       = var.enabled ? aws_cognito_user_pool.pool[0].name : null
+}
+
 #
 # aws_cognito_user_pool_domain
 #
