@@ -147,7 +147,7 @@ module "aws_cognito_user_pool_complete" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.61.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.8.0 |
 
 ## Modules
 
@@ -284,6 +284,7 @@ No modules.
 | <a name="output_endpoint"></a> [endpoint](#output\_endpoint) | The endpoint name of the user pool. Example format: cognito-idp.REGION.amazonaws.com/xxxx\_yyyyy |
 | <a name="output_id"></a> [id](#output\_id) | The id of the user pool |
 | <a name="output_last_modified_date"></a> [last\_modified\_date](#output\_last\_modified\_date) | The date the user pool was last modified |
+| <a name="output_name"></a> [name](#output\_name) | The name of the user pool |
 | <a name="output_resource_servers_scope_identifiers"></a> [resource\_servers\_scope\_identifiers](#output\_resource\_servers\_scope\_identifiers) | A list of all scopes configured in the format identifier/scope\_name |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
