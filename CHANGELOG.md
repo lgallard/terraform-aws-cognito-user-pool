@@ -1,3 +1,9 @@
+## 0.23.0 (July 19, 2023)
+
+ENHANCEMENTS:
+
+* Add Cognito User Pool name as output (thanks @SlavaNL)
+
 ## 0.22.0 (March 31, 2023)
 
 FIXES:
