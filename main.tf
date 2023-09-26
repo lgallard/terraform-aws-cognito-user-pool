@@ -254,7 +254,7 @@ locals {
     device_only_remembered_on_user_prompt = lookup(var.device_configuration, "device_only_remembered_on_user_prompt", null) == null ? var.device_configuration_device_only_remembered_on_user_prompt : lookup(var.device_configuration, "device_only_remembered_on_user_prompt")
   }
 
-  device_configuration = lookup(local.device_configuration_default, "challenge_required_on_new_device") == false && lookup(local.device_configuration_default, "device_only_remembered_on_user_prompt") == false ? [] : [local.device_configuration_default]
+  device_configuration = [local.device_configuration_default]
 
   # email_configuration
   # If no email_configuration is provided, build a email_configuration using the default values
