@@ -144,7 +144,7 @@ resource "aws_cognito_user_pool" "pool" {
 
       # string_attribute_constraints
       dynamic "string_attribute_constraints" {
-        for_each = length(keys(lookup(schema.value, "string_attribute_constraints", {}))) == 0 ? [] : [lookup(schema.value, "string_attribute_constraints", {})]
+        for_each = length(keys(lookup(schema.value, "string_attribute_constraints", {}))) == 0 ? [{}] : [lookup(schema.value, "string_attribute_constraints", {})]
         content {
           min_length = lookup(string_attribute_constraints.value, "min_length", null)
           max_length = lookup(string_attribute_constraints.value, "max_length", null)
@@ -165,7 +165,7 @@ resource "aws_cognito_user_pool" "pool" {
 
       # number_attribute_constraints
       dynamic "number_attribute_constraints" {
-        for_each = length(keys(lookup(schema.value, "number_attribute_constraints", {}))) == 0 ? [] : [lookup(schema.value, "number_attribute_constraints", {})]
+        for_each = length(keys(lookup(schema.value, "number_attribute_constraints", {}))) == 0 ? [{}] : [lookup(schema.value, "number_attribute_constraints", {})]
         content {
           min_value = lookup(number_attribute_constraints.value, "min_value", null)
           max_value = lookup(number_attribute_constraints.value, "max_value", null)
