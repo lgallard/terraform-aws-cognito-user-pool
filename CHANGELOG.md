@@ -1,3 +1,9 @@
+## 0.24.0 (November 13, 2023)
+
+FIXES:
+
+*  Make sure `attribute_constraints` are created for string and number schemas (thanks @@mhorbul)
+
 ## 0.23.0 (July 19, 2023)
 
 ENHANCEMENTS:
