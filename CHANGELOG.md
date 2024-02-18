@@ -1,3 +1,9 @@
+## 0.25.0 (February 17, 2024)
+
+FIXES:
+
+* Add back previously removed lifecyle ignore block (thanks @chris-symbiote)
+
 ## 0.24.0 (November 13, 2023)
 
 FIXES:
