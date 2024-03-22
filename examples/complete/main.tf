@@ -169,6 +169,8 @@ module "aws_cognito_user_pool_complete_example" {
         id_token      = "hours"
         refresh_token = "days"
       }
+      ui_customization_css        = file("custom_style.css")
+      ui_customization_image_file = filebase64("logo.png")
     },
     {
       allowed_oauth_flows                  = []

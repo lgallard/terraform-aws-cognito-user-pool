@@ -1,3 +1,9 @@
+## 0.26.0 (March 22, 2024)
+
+ENHANCEMENTS:
+
+* Add ui customization for clients (thanks @DocMarten)
+
 ## 0.25.0 (February 17, 2024)
 
 FIXES:
