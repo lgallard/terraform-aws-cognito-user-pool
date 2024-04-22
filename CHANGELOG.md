@@ -1,3 +1,9 @@
+## 0.27.2 (April 22, 2024)
+
+FIXES:
+
+* Fix case when no `pre_token_generation_config` is present
+
 ## 0.27.1 (April 22, 2024)
 
 FIXES:
