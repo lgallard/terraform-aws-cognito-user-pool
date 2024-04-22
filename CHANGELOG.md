@@ -1,3 +1,9 @@
+## 0.27.1 (April 22, 2024)
+
+FIXES:
+
+* Fix dynamic `pre_token_generation_config` args (thanks @lgallard)
+
 ## 0.27.0 (April 22, 2024)
 
 ENHANCEMENTS:
