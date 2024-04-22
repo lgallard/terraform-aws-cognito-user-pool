@@ -1,3 +1,13 @@
+## 0.27.0 (April 22, 2024)
+
+ENHANCEMENTS:
+
+* Add `cloudfront_distribution_zone_id` attribute as output (thanks @catrielg)
+
+FIXES:
+
+* Fix support for pre token customization lambda V2 (thanks @Dogacel)
+
 ## 0.26.0 (March 22, 2024)
 
 ENHANCEMENTS:
