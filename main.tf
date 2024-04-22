@@ -71,10 +71,10 @@ resource "aws_cognito_user_pool" "pool" {
       pre_sign_up           = lookup(var.lambda_config, "pre_sign_up", var.lambda_config_pre_sign_up)
       pre_token_generation  = lookup(var.lambda_config, "pre_token_generation", var.lambda_config_pre_token_generation)
       dynamic "pre_token_generation_config" {
-        for_each = length(var.lambda_config["pre_token_generation_config"]) > 0 ? [var.lambda_config["pre_token_generation_config"]] : []
+        for_each = lookup(var.lambda_config, "pre_token_generation_config", []) == [] ? [] : [lookup(var.lambda_config, "pre_token_generation_config", [])]
         content {
-          lambda_arn     = lookup(for_each.value, "lambda_arn", null)
-          lambda_version = lookup(for_each.value, "lambda_version", null)
+          lambda_arn     = lookup(pre_token_generation_config.value, "lambda_arn", null)
+          lambda_version = lookup(pre_token_generation_config.value, "lambda_version", null)
         }
       }
       user_migration                 = lookup(var.lambda_config, "user_migration", var.lambda_config_user_migration)
