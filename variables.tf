@@ -224,11 +224,8 @@ variable "lambda_config_pre_token_generation" {
 
 variable "lambda_config_pre_token_generation_config" {
   description = "Allow to customize identity token claims before token generation"
-  type = object({
-    lambda_arn     = string
-    lambda_version = string
-  })
-  default = null
+  type        = any
+  default     = {}
 }
 
 variable "lambda_config_user_migration" {
