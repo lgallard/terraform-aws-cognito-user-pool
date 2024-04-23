@@ -2,7 +2,7 @@
 
 FIXES:
 
-* Fix lambda customization config not working ((thanks @Dogacel))
+* Fix lambda customization config not working (thanks @Dogacel)
 
 ## 0.27.2 (April 22, 2024)
 
