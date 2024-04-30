@@ -1,3 +1,9 @@
+## 0.28.0 (April 30, 2024)
+
+ENHANCEMENTS:
+
+* Add domain `cloudfront_distribution` name attribute as output (thanks @julb)
+
 ## 0.27.3 (April 23, 2024)
 
 FIXES:

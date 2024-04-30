@@ -281,6 +281,7 @@ No modules.
 | <a name="output_creation_date"></a> [creation\_date](#output\_creation\_date) | The date the user pool was created |
 | <a name="output_domain_app_version"></a> [domain\_app\_version](#output\_domain\_app\_version) | The app version |
 | <a name="output_domain_aws_account_id"></a> [domain\_aws\_account\_id](#output\_domain\_aws\_account\_id) | The AWS account ID for the user pool owner |
+| <a name="output_domain_cloudfront_distribution"></a> [domain\_cloudfront\_distribution](#output\_domain\_cloudfront\_distribution) | The name of the CloudFront distribution |
 | <a name="output_domain_cloudfront_distribution_arn"></a> [domain\_cloudfront\_distribution\_arn](#output\_domain\_cloudfront\_distribution\_arn) | The ARN of the CloudFront distribution |
 | <a name="output_domain_cloudfront_distribution_zone_id"></a> [domain\_cloudfront\_distribution\_zone\_id](#output\_domain\_cloudfront\_distribution\_zone\_id) | The ZoneID of the CloudFront distribution |
 | <a name="output_domain_s3_bucket"></a> [domain\_s3\_bucket](#output\_domain\_s3\_bucket) | The S3 bucket where the static files for this domain are stored |
