@@ -1,3 +1,9 @@
+## 0.29.0 (April 30, 2024)
+
+ENHANCEMENTS:
+
+* Refactor `lambda_config`  (thanks @lgallard)
+
 ## 0.28.0 (April 30, 2024)
 
 ENHANCEMENTS:
