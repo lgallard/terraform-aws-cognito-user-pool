@@ -60,38 +60,38 @@ resource "aws_cognito_user_pool" "pool" {
 
   # lambda_config
   dynamic "lambda_config" {
-    for_each = var.lambda_config == null || length(var.lambda_config) == 0 ? [] : [1]
+    for_each = local.lambda_config
     content {
-      create_auth_challenge = lookup(var.lambda_config, "create_auth_challenge", var.lambda_config_create_auth_challenge)
-      custom_message        = lookup(var.lambda_config, "custom_message", var.lambda_config_custom_message)
-      define_auth_challenge = lookup(var.lambda_config, "define_auth_challenge", var.lambda_config_define_auth_challenge)
-      post_authentication   = lookup(var.lambda_config, "post_authentication", var.lambda_config_post_authentication)
-      post_confirmation     = lookup(var.lambda_config, "post_confirmation", var.lambda_config_post_confirmation)
-      pre_authentication    = lookup(var.lambda_config, "pre_authentication", var.lambda_config_pre_authentication)
-      pre_sign_up           = lookup(var.lambda_config, "pre_sign_up", var.lambda_config_pre_sign_up)
-      pre_token_generation  = lookup(var.lambda_config, "pre_token_generation", var.lambda_config_pre_token_generation)
+      create_auth_challenge = lookup(lambda_config.value, "create_auth_challenge")
+      custom_message        = lookup(lambda_config.value, "custom_message")
+      define_auth_challenge = lookup(lambda_config.value, "define_auth_challenge")
+      post_authentication   = lookup(lambda_config.value, "post_authentication")
+      post_confirmation     = lookup(lambda_config.value, "post_confirmation")
+      pre_authentication    = lookup(lambda_config.value, "pre_authentication")
+      pre_sign_up           = lookup(lambda_config.value, "pre_sign_up")
+      pre_token_generation  = lookup(lambda_config.value, "pre_token_generation")
       dynamic "pre_token_generation_config" {
-        for_each = lookup(var.lambda_config, "pre_token_generation_config", null) == null ? [] : [1]
+        for_each = lookup(lambda_config.value, "pre_token_generation_config")
         content {
-          lambda_arn     = lookup(lookup(var.lambda_config, "pre_token_generation_config", {}), "lambda_arn", null)
-          lambda_version = lookup(lookup(var.lambda_config, "pre_token_generation_config", {}), "lambda_version", null)
+          lambda_arn     = lookup(pre_token_generation_config.value, "lambda_arn")
+          lambda_version = lookup(pre_token_generation_config.value, "lambda_version")
         }
       }
-      user_migration                 = lookup(var.lambda_config, "user_migration", var.lambda_config_user_migration)
-      verify_auth_challenge_response = lookup(var.lambda_config, "verify_auth_challenge_response", var.lambda_config_verify_auth_challenge_response)
-      kms_key_id                     = lookup(var.lambda_config, "kms_key_id", var.lambda_config_kms_key_id)
+      user_migration                 = lookup(lambda_config.value, "user_migration")
+      verify_auth_challenge_response = lookup(lambda_config.value, "verify_auth_challenge_response")
+      kms_key_id                     = lookup(lambda_config.value, "kms_key_id")
       dynamic "custom_email_sender" {
-        for_each = lookup(var.lambda_config, "custom_email_sender", var.lambda_config_custom_email_sender) == {} ? [] : [1]
+        for_each = lookup(lambda_config.value, "custom_email_sender")
         content {
-          lambda_arn     = lookup(lookup(var.lambda_config, "custom_email_sender", var.lambda_config_custom_email_sender), "lambda_arn", null)
-          lambda_version = lookup(lookup(var.lambda_config, "custom_email_sender", var.lambda_config_custom_email_sender), "lambda_version", null)
+          lambda_arn     = lookup(custom_email_sender.value, "lambda_arn")
+          lambda_version = lookup(custom_email_sender.value, "lambda_version")
         }
       }
       dynamic "custom_sms_sender" {
-        for_each = lookup(var.lambda_config, "custom_sms_sender", var.lambda_config_custom_sms_sender) == {} ? [] : [1]
+        for_each = lookup(lambda_config.value, "custom_sms_sender")
         content {
-          lambda_arn     = lookup(lookup(var.lambda_config, "custom_sms_sender", var.lambda_config_custom_sms_sender), "lambda_arn", null)
-          lambda_version = lookup(lookup(var.lambda_config, "custom_sms_sender", var.lambda_config_custom_sms_sender), "lambda_version", null)
+          lambda_arn     = lookup(custom_sms_sender.value, "lambda_arn")
+          lambda_version = lookup(custom_sms_sender.value, "lambda_version")
         }
       }
     }
@@ -264,7 +264,7 @@ locals {
   device_configuration = lookup(local.device_configuration_default, "challenge_required_on_new_device") == false && lookup(local.device_configuration_default, "device_only_remembered_on_user_prompt") == false ? [] : [local.device_configuration_default]
 
   # email_configuration
-  # If no email_configuration is provided, build a email_configuration using the default values
+  # If no email_configuration is provided, build an email_configuration using the default values
   email_configuration_default = {
     configuration_set      = lookup(var.email_configuration, "configuration_set", null) == null ? var.email_configuration_configuration_set : lookup(var.email_configuration, "configuration_set")
     reply_to_email_address = lookup(var.email_configuration, "reply_to_email_address", null) == null ? var.email_configuration_reply_to_email_address : lookup(var.email_configuration, "reply_to_email_address")
@@ -274,6 +274,27 @@ locals {
   }
 
   email_configuration = [local.email_configuration_default]
+
+  # lambda_config
+  # If no lambda_config is provided, build a lambda_config using the default values
+  lambda_config_default = {
+    create_auth_challenge          = lookup(var.lambda_config, "create_auth_challenge", var.lambda_config_create_auth_challenge)
+    custom_message                 = lookup(var.lambda_config, "custom_message", var.lambda_config_custom_message)
+    define_auth_challenge          = lookup(var.lambda_config, "define_auth_challenge", var.lambda_config_define_auth_challenge)
+    post_authentication            = lookup(var.lambda_config, "post_authentication", var.lambda_config_post_authentication)
+    post_confirmation              = lookup(var.lambda_config, "post_confirmation", var.lambda_config_post_confirmation)
+    pre_authentication             = lookup(var.lambda_config, "pre_authentication", var.lambda_config_pre_authentication)
+    pre_sign_up                    = lookup(var.lambda_config, "pre_sign_up", var.lambda_config_pre_sign_up)
+    pre_token_generation           = lookup(var.lambda_config, "pre_token_generation", var.lambda_config_pre_token_generation)
+    pre_token_generation_config    = lookup(var.lambda_config, "pre_token_generation_config", var.lambda_config_pre_token_generation_config) == {} ? [] : [lookup(var.lambda_config, "pre_token_generation_config", var.lambda_config_pre_token_generation_config)]
+    user_migration                 = lookup(var.lambda_config, "user_migration", var.lambda_config_user_migration)
+    verify_auth_challenge_response = lookup(var.lambda_config, "verify_auth_challenge_response", var.lambda_config_verify_auth_challenge_response)
+    kms_key_id                     = lookup(var.lambda_config, "kms_key_id", var.lambda_config_kms_key_id)
+    custom_email_sender            = lookup(var.lambda_config, "custom_email_sender", var.lambda_config_custom_email_sender) == {} ? [] : [lookup(var.lambda_config, "custom_email_sender", var.lambda_config_custom_email_sender)]
+    custom_sms_sender              = lookup(var.lambda_config, "custom_sms_sender", var.lambda_config_custom_sms_sender) == {} ? [] : [lookup(var.lambda_config, "custom_sms_sender", var.lambda_config_custom_sms_sender)]
+  }
+
+  lambda_config = var.lambda_config == null || length(var.lambda_config) == 0 ? [] : [local.lambda_config_default]
 
   # password_policy
   # If no password_policy is provided, build a password_policy using the default values
