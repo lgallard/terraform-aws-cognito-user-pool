@@ -294,7 +294,7 @@ locals {
     custom_sms_sender              = lookup(var.lambda_config, "custom_sms_sender", var.lambda_config_custom_sms_sender) == {} ? [] : [lookup(var.lambda_config, "custom_sms_sender", var.lambda_config_custom_sms_sender)]
   }
 
-  lambda_config = var.lambda_config == null || length(var.lambda_config) == 0 ? [] : [local.email_configuration_default]
+  lambda_config = var.lambda_config == null || length(var.lambda_config) == 0 ? [] : [local.lambda_config_default]
 
   # password_policy
   # If no password_policy is provided, build a password_policy using the default values
