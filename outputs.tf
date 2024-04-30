@@ -36,6 +36,11 @@ output "domain_aws_account_id" {
   value       = var.enabled ? join("", aws_cognito_user_pool_domain.domain.*.aws_account_id) : null
 }
 
+output "domain_cloudfront_distribution" {
+  description = "The name of the CloudFront distribution"
+  value       = var.enabled ? join("", aws_cognito_user_pool_domain.domain.*.cloudfront_distribution) : null
+}
+
 output "domain_cloudfront_distribution_arn" {
   description = "The ARN of the CloudFront distribution"
   value       = var.enabled ? join("", aws_cognito_user_pool_domain.domain.*.cloudfront_distribution_arn) : null
