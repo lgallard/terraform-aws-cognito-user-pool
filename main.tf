@@ -193,11 +193,15 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "verification_message_template" {
     for_each = local.verification_message_template
     content {
-      default_email_option  = lookup(verification_message_template.value, "default_email_option")
-      email_message_by_link = lookup(verification_message_template.value, "email_message_by_link")
-      email_subject_by_link = lookup(verification_message_template.value, "email_subject_by_link")
+      default_email_option  = lookup(verification_message_template.value, "default_email_option", "CONFIRM_WITH_CODE")
+      email_message         = lookup(verification_message_template.value, "email_message", null)
+      email_message_by_link = lookup(verification_message_template.value, "email_message_by_link", null)
+      email_subject         = lookup(verification_message_template.value, "email_subject", null)
+      email_subject_by_link = lookup(verification_message_template.value, "email_subject_by_link", null)
+      sms_message           = lookup(verification_message_template.value, "sms_message", null)
     }
   }
+
 
   dynamic "user_attribute_update_settings" {
     for_each = local.user_attribute_update_settings
