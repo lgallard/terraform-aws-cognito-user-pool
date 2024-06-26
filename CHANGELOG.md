@@ -1,3 +1,9 @@
+## 0.30.0 (Jun 26, 2024)
+
+ENHANCEMENTS:
+
+* Add missing arguments for `verification_message_template` block (thanks @catrielg)
+
 ## 0.29.0 (April 30, 2024)
 
 ENHANCEMENTS:
