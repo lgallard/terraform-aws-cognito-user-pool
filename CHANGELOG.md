@@ -1,3 +1,9 @@
+## 0.31.0 (Aug 09, 2024)
+
+FIXES:
+
+* Unable to have devices remembered and force MFA sign in every time (thanks @trahim)
+
 ## 0.30.0 (Jun 26, 2024)
 
 ENHANCEMENTS:
