@@ -122,13 +122,13 @@ variable "device_configuration" {
 variable "device_configuration_challenge_required_on_new_device" {
   description = "Indicates whether a challenge is required on a new device. Only applicable to a new device"
   type        = bool
-  default     = false
+  default     = null
 }
 
 variable "device_configuration_device_only_remembered_on_user_prompt" {
   description = "If true, a device is only remembered on user prompt"
   type        = bool
-  default     = false
+  default     = null
 }
 
 # email_configuration
