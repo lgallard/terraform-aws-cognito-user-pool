@@ -638,3 +638,10 @@ variable "identity_providers" {
   default     = []
   sensitive   = true
 }
+
+
+variable "enable_propagate_additional_user_context_data" {
+  description = "Enables the propagation of additional user context data"
+  type        = bool
+  default     = false
+}
