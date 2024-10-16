@@ -115,7 +115,10 @@ variable "sms_configuration_sns_caller_arn" {
 # device_configuration
 variable "device_configuration" {
   description = "The configuration for the user pool's device tracking"
-  type        = map(any)
+  type        = map(object({
+    challenge_required_on_new_device = bool
+    device_only_remembered_on_user_prompt = bool
+  }))
   default     = {}
 }
 
