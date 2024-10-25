@@ -427,6 +427,21 @@ variable "domain_certificate_arn" {
 }
 
 #
+# default_ui_customization
+#
+variable "default_ui_customization_image_file" {
+  description = "Image file path for default UI customization"
+  type        = string
+  default     = null
+}
+
+variable "default_ui_customization_css" {
+  description = "CSS file content for default UI customization"
+  type        = string
+  default     = null
+}
+
+#
 # aws_cognito_user_pool_client
 #
 variable "clients" {
