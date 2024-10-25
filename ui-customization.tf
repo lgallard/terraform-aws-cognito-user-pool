@@ -8,6 +8,7 @@ locals {
   }
 }
 
+# UI customizations for specific clients
 resource "aws_cognito_user_pool_ui_customization" "ui_customization" {
   for_each = local.client_ui_customizations
 
@@ -16,5 +17,14 @@ resource "aws_cognito_user_pool_ui_customization" "ui_customization" {
   css        = each.value.css
   image_file = each.value.image_file
 
+  user_pool_id = aws_cognito_user_pool.pool[0].id
+}
+
+# Default UI customization
+resource "aws_cognito_user_pool_ui_customization" "default_ui_customization" {
+  count = var.default_ui_customization_css != null || var.default_ui_customization_image_file != null ? 1 : 0
+
+  css         = var.default_ui_customization_css
+  image_file  = var.default_ui_customization_image_file
   user_pool_id = aws_cognito_user_pool.pool[0].id
 }
