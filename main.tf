@@ -124,6 +124,7 @@ resource "aws_cognito_user_pool" "pool" {
       require_symbols                  = lookup(password_policy.value, "require_symbols")
       require_uppercase                = lookup(password_policy.value, "require_uppercase")
       temporary_password_validity_days = lookup(password_policy.value, "temporary_password_validity_days")
+      password_history_size            = lookup(password_policy.value, "password_history_size")
     }
   }
 

@@ -287,6 +287,7 @@ variable "password_policy" {
     require_symbols                  = bool,
     require_uppercase                = bool,
     temporary_password_validity_days = number
+    password_history_size            = number
   })
   default = null
 }
