@@ -210,6 +210,7 @@ No modules.
 | <a name="input_email_configuration_source_arn"></a> [email\_configuration\_source\_arn](#input\_email\_configuration\_source\_arn) | The ARN of the email source | `string` | `""` | no |
 | <a name="input_email_verification_message"></a> [email\_verification\_message](#input\_email\_verification\_message) | A string representing the email verification message | `string` | `null` | no |
 | <a name="input_email_verification_subject"></a> [email\_verification\_subject](#input\_email\_verification\_subject) | A string representing the email verification subject | `string` | `null` | no |
+| <a name="input_enable_propagate_additional_user_context_data"></a> [enable\_propagate\_additional\_user\_context\_data](#input\_enable\_propagate\_additional\_user\_context\_data) | Enables the propagation of additional user context data | `bool` | `false` | no |
 | <a name="input_enabled"></a> [enabled](#input\_enabled) | Change to false to avoid deploying any resources | `bool` | `true` | no |
 | <a name="input_identity_providers"></a> [identity\_providers](#input\_identity\_providers) | Cognito Pool Identity Providers | `list(any)` | `[]` | no |
 | <a name="input_lambda_config"></a> [lambda\_config](#input\_lambda\_config) | A container for the AWS Lambda triggers associated with the user pool | `any` | `{}` | no |
