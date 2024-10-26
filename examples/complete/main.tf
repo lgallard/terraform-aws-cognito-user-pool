@@ -254,8 +254,8 @@ module "aws_cognito_user_pool_complete_example" {
 
       provider_details = {
         authorize_scopes              = "email"
-        client_id                     = "your client_id"
-        client_secret                 = "your client_secret"
+        client_id                     = "your client_id"     # This should be retrieved from AWS Secret Manager, otherwise Terraform will force an in-place replacement becuase is treated as a sensitive value
+        client_secret                 = "your client_secret" # # This should be retrieved from AWS Secret Manager, otherwise Terraform will force an in-place replacement becuase is treated as a sensitive value
         attributes_url_add_attributes = "true"
         authorize_url                 = "https://accounts.google.com/o/oauth2/v2/auth"
         oidc_issuer                   = "https://accounts.google.com"

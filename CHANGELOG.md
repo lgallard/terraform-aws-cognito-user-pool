@@ -1,3 +1,14 @@
+## 0.32.0 (Oct 27, 2024)
+
+ENHANCEMENTS:
+
+* Add enable_propagate_additional_user_context_data (thanks @AzgadGZ-CH)
+
+FIXES:
+
+* Fix device_configuration perpetual in-place replacement (thanks @joelgaria)
+* Added comment in the complete example regarding perpetual in-place replacements when using sensitive data in idnetity_provider resources
+
 ## 0.31.0 (Aug 09, 2024)
 
 FIXES:
