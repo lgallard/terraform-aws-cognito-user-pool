@@ -260,7 +260,8 @@ locals {
 
   # device_configuration
   # If no device_configuration list is provided, build a device_configuration using the default values
-  device_configuration = [{
+
+  device_configuration = length(var.device_configuration) == 0 ? [] : [{
     challenge_required_on_new_device      = lookup(var.device_configuration, "challenge_required_on_new_device", null) == null ? var.device_configuration_challenge_required_on_new_device : lookup(var.device_configuration, "challenge_required_on_new_device")
     device_only_remembered_on_user_prompt = lookup(var.device_configuration, "device_only_remembered_on_user_prompt", null) == null ? var.device_configuration_device_only_remembered_on_user_prompt : lookup(var.device_configuration, "device_only_remembered_on_user_prompt")
   }]
