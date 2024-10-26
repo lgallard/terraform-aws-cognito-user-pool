@@ -287,6 +287,7 @@ variable "password_policy" {
     require_symbols                  = bool,
     require_uppercase                = bool,
     temporary_password_validity_days = number
+    password_history_size            = number
   })
   default = null
 }
@@ -325,6 +326,12 @@ variable "password_policy_temporary_password_validity_days" {
   description = "The minimum length of the password policy that you have set"
   type        = number
   default     = 7
+}
+
+variable "password_history_size" {
+  description = "The number of previous passwords that users are prevented from reusing"
+  type        = number
+  default     = 0
 }
 
 # schema
