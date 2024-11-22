@@ -124,6 +124,7 @@ resource "aws_cognito_user_pool" "pool" {
       require_symbols                  = lookup(password_policy.value, "require_symbols")
       require_uppercase                = lookup(password_policy.value, "require_uppercase")
       temporary_password_validity_days = lookup(password_policy.value, "temporary_password_validity_days")
+      password_history_size            = lookup(password_policy.value, "password_history_size")
     }
   }
 
@@ -309,6 +310,7 @@ locals {
     require_symbols                  = var.password_policy_require_symbols
     require_uppercase                = var.password_policy_require_uppercase
     temporary_password_validity_days = var.password_policy_temporary_password_validity_days
+    password_history_size            = var.password_policy_password_history_size
   }
 
   password_policy_not_null = var.password_policy == null ? local.password_policy_is_null : {
@@ -318,7 +320,7 @@ locals {
     require_symbols                  = lookup(var.password_policy, "require_symbols", null) == null ? var.password_policy_require_symbols : lookup(var.password_policy, "require_symbols")
     require_uppercase                = lookup(var.password_policy, "require_uppercase", null) == null ? var.password_policy_require_uppercase : lookup(var.password_policy, "require_uppercase")
     temporary_password_validity_days = lookup(var.password_policy, "temporary_password_validity_days", null) == null ? var.password_policy_temporary_password_validity_days : lookup(var.password_policy, "temporary_password_validity_days")
-
+    password_history_size            = lookup(var.password_policy, "password_history_size", null) == null ? var.password_policy_password_history_size : lookup(var.password_policy, "password_history_size")
   }
 
   # Return the default values

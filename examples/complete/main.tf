@@ -65,7 +65,7 @@ module "aws_cognito_user_pool_complete_example" {
     require_symbols                  = true
     require_uppercase                = true
     temporary_password_validity_days = 120
-
+    password_history_size            = 5
   }
 
   user_pool_add_ons = {

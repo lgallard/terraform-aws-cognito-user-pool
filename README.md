@@ -141,13 +141,13 @@ module "aws_cognito_user_pool_complete" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= v0.13.7 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.38 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.73 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.42.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.73.0 |
 
 ## Modules
 
@@ -233,7 +233,8 @@ No modules.
 | <a name="input_lambda_config_verify_auth_challenge_response"></a> [lambda\_config\_verify\_auth\_challenge\_response](#input\_lambda\_config\_verify\_auth\_challenge\_response) | Verifies the authentication challenge response | `string` | `null` | no |
 | <a name="input_mfa_configuration"></a> [mfa\_configuration](#input\_mfa\_configuration) | Set to enable multi-factor authentication. Must be one of the following values (ON, OFF, OPTIONAL) | `string` | `"OFF"` | no |
 | <a name="input_number_schemas"></a> [number\_schemas](#input\_number\_schemas) | A container with the number schema attributes of a user pool. Maximum of 50 attributes | `list(any)` | `[]` | no |
-| <a name="input_password_policy"></a> [password\_policy](#input\_password\_policy) | A container for information about the user pool password policy | <pre>object({<br>    minimum_length                   = number,<br>    require_lowercase                = bool,<br>    require_numbers                  = bool,<br>    require_symbols                  = bool,<br>    require_uppercase                = bool,<br>    temporary_password_validity_days = number<br>  })</pre> | `null` | no |
+| <a name="input_password_history_size"></a> [password\_history\_size](#input\_password\_history\_size) | The number of previous passwords that users are prevented from reusing | `number` | `0` | no |
+| <a name="input_password_policy"></a> [password\_policy](#input\_password\_policy) | A container for information about the user pool password policy | <pre>object({<br>    minimum_length                   = number,<br>    require_lowercase                = bool,<br>    require_numbers                  = bool,<br>    require_symbols                  = bool,<br>    require_uppercase                = bool,<br>    temporary_password_validity_days = number<br>    password_history_size            = number<br>  })</pre> | `null` | no |
 | <a name="input_password_policy_minimum_length"></a> [password\_policy\_minimum\_length](#input\_password\_policy\_minimum\_length) | The minimum length of the password policy that you have set | `number` | `8` | no |
 | <a name="input_password_policy_require_lowercase"></a> [password\_policy\_require\_lowercase](#input\_password\_policy\_require\_lowercase) | Whether you have required users to use at least one lowercase letter in their password | `bool` | `true` | no |
 | <a name="input_password_policy_require_numbers"></a> [password\_policy\_require\_numbers](#input\_password\_policy\_require\_numbers) | Whether you have required users to use at least one number in their password | `bool` | `true` | no |
