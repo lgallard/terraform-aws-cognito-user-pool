@@ -163,6 +163,7 @@ No modules.
 | [aws_cognito_user_pool.pool](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_pool) | resource |
 | [aws_cognito_user_pool_client.client](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_pool_client) | resource |
 | [aws_cognito_user_pool_domain.domain](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_pool_domain) | resource |
+| [aws_cognito_user_pool_ui_customization.default_ui_customization](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_pool_ui_customization) | resource |
 | [aws_cognito_user_pool_ui_customization.ui_customization](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_pool_ui_customization) | resource |
 
 ## Inputs
@@ -196,6 +197,8 @@ No modules.
 | <a name="input_client_token_validity_units"></a> [client\_token\_validity\_units](#input\_client\_token\_validity\_units) | Configuration block for units in which the validity times are represented in. Valid values for the following arguments are: `seconds`, `minutes`, `hours` or `days`. | `any` | <pre>{<br>  "access_token": "minutes",<br>  "id_token": "minutes",<br>  "refresh_token": "days"<br>}</pre> | no |
 | <a name="input_client_write_attributes"></a> [client\_write\_attributes](#input\_client\_write\_attributes) | List of user pool attributes the application client can write to | `list(string)` | `[]` | no |
 | <a name="input_clients"></a> [clients](#input\_clients) | A container with the clients definitions | `any` | `[]` | no |
+| <a name="input_default_ui_customization_css"></a> [default\_ui\_customization\_css](#input\_default\_ui\_customization\_css) | CSS file content for default UI customization | `string` | `null` | no |
+| <a name="input_default_ui_customization_image_file"></a> [default\_ui\_customization\_image\_file](#input\_default\_ui\_customization\_image\_file) | Image file path for default UI customization | `string` | `null` | no |
 | <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection) | When active, DeletionProtection prevents accidental deletion of your user pool. Before you can delete a user pool that you have protected against deletion, you must deactivate this feature. Valid values are `ACTIVE` and `INACTIVE`. | `string` | `"INACTIVE"` | no |
 | <a name="input_device_configuration"></a> [device\_configuration](#input\_device\_configuration) | The configuration for the user pool's device tracking | `map(any)` | `{}` | no |
 | <a name="input_device_configuration_challenge_required_on_new_device"></a> [device\_configuration\_challenge\_required\_on\_new\_device](#input\_device\_configuration\_challenge\_required\_on\_new\_device) | Indicates whether a challenge is required on a new device. Only applicable to a new device | `bool` | `null` | no |

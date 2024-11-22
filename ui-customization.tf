@@ -24,7 +24,7 @@ resource "aws_cognito_user_pool_ui_customization" "ui_customization" {
 resource "aws_cognito_user_pool_ui_customization" "default_ui_customization" {
   count = var.default_ui_customization_css != null || var.default_ui_customization_image_file != null ? 1 : 0
 
-  css         = var.default_ui_customization_css
-  image_file  = var.default_ui_customization_image_file
+  css          = var.default_ui_customization_css
+  image_file   = var.default_ui_customization_image_file
   user_pool_id = aws_cognito_user_pool.pool[0].id
 }

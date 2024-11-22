@@ -1,3 +1,9 @@
+## 0.33.0 (November 22, 2024)
+
+ENHANCEMENTS:
+
+* Add Default UI customization (thanks @sp-lut)
+
 ## 0.32.0 (Oct 27, 2024)
 
 ENHANCEMENTS:
