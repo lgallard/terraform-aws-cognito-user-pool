@@ -399,14 +399,32 @@ variable "verification_message_template_default_email_option" {
   default     = null
 }
 
+variable "verification_message_template_email_message" {
+  description = "Email message template. Must contain the {####} placeholder. Conflicts with email_verification_message argument."
+  type        = string
+  default     = null
+}
+
 variable "verification_message_template_email_message_by_link" {
   description = "The email message template for sending a confirmation link to the user, it must contain the `{##Click Here##}` placeholder"
   type        = string
   default     = null
 }
 
+variable "verification_message_template_email_subject" {
+  description = "Subject line for the email message template. Conflicts with email_verification_subject argument."
+  type        = string
+  default     = null
+}
+
 variable "verification_message_template_email_subject_by_link" {
   description = "The subject line for the email message template for sending a confirmation link to the user"
+  type        = string
+  default     = null
+}
+
+variable "verification_message_template_sms_message" {
+  description = "SMS message template. Must contain the {####} placeholder. Conflicts with sms_verification_message argument."
   type        = string
   default     = null
 }

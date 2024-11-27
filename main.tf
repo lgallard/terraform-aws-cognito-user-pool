@@ -4,8 +4,8 @@ resource "aws_cognito_user_pool" "pool" {
   alias_attributes           = var.alias_attributes
   auto_verified_attributes   = var.auto_verified_attributes
   name                       = var.user_pool_name
-  email_verification_subject = var.email_verification_subject == "" || var.email_verification_subject == null ? var.admin_create_user_config_email_subject : var.email_verification_subject
-  email_verification_message = var.email_verification_message == "" || var.email_verification_message == null ? var.admin_create_user_config_email_message : var.email_verification_message
+  email_verification_subject = local.verification_email_subject
+  email_verification_message = local.verification_email_message
   mfa_configuration          = var.mfa_configuration
   sms_authentication_message = var.sms_authentication_message
   sms_verification_message   = var.sms_verification_message
@@ -336,11 +336,21 @@ locals {
   # If no verification_message_template is provided, build a verification_message_template using the default values
   verification_message_template_default = {
     default_email_option  = lookup(var.verification_message_template, "default_email_option", null) == null ? var.verification_message_template_default_email_option : lookup(var.verification_message_template, "default_email_option")
+    email_message         = lookup(var.verification_message_template, "email_message", null) == null ? var.verification_message_template_email_message : lookup(var.verification_message_template, "email_message")
     email_message_by_link = lookup(var.verification_message_template, "email_message_by_link", null) == null ? var.verification_message_template_email_message_by_link : lookup(var.verification_message_template, "email_message_by_link")
+    email_subject         = lookup(var.verification_message_template, "email_subject", null) == null ? var.verification_message_template_email_subject : lookup(var.verification_message_template, "email_subject")
     email_subject_by_link = lookup(var.verification_message_template, "email_subject_by_link", null) == null ? var.verification_message_template_email_subject_by_link : lookup(var.verification_message_template, "email_subject_by_link")
+    sms_message           = lookup(var.verification_message_template, "sms_message", null) == null ? var.verification_message_template_sms_message : lookup(var.verification_message_template, "sms_message")
   }
 
   verification_message_template = [local.verification_message_template_default]
+
+  verification_email_subject = local.verification_message_template_default.email_subject == "" || local.verification_message_template_default.email_subject == null ? (
+    var.email_verification_subject == "" || var.email_verification_subject == null ? var.admin_create_user_config_email_subject : var.email_verification_subject
+  ) : null
+  verification_email_message = local.verification_message_template_default.email_message == "" || local.verification_message_template_default.email_message == null ? (
+    var.email_verification_message == "" || var.email_verification_message == null ? var.admin_create_user_config_email_message : var.email_verification_message
+  ) : null
 
   # software_token_mfa_configuration
   # If no software_token_mfa_configuration is provided, build a software_token_mfa_configuration using the default values
