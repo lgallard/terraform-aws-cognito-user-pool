@@ -1,3 +1,11 @@
+## 0.34.0 (February 21, 2025)
+
+ENHANCEMENTS:
+
+* Add password history size feature (thanks @DocMarten)
+* Update examples
+* Rename `password_policy_password_history_size` variable (thanks @lgallard)
+
 ## 0.33.0 (November 22, 2024)
 
 ENHANCEMENTS:
