@@ -328,7 +328,7 @@ variable "password_policy_temporary_password_validity_days" {
   default     = 7
 }
 
-variable "password_history_size" {
+variable "password_policy_password_history_size" {
   description = "The number of previous passwords that users are prevented from reusing"
   type        = number
   default     = 0
