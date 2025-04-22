@@ -3,4 +3,5 @@ resource "aws_cognito_user_pool_domain" "domain" {
   domain          = var.domain
   certificate_arn = var.domain_certificate_arn
   user_pool_id    = aws_cognito_user_pool.pool[0].id
+  managed_login_version = var.domain_managed_login_version
 }
