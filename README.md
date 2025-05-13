@@ -205,6 +205,7 @@ No modules.
 | <a name="input_device_configuration_device_only_remembered_on_user_prompt"></a> [device\_configuration\_device\_only\_remembered\_on\_user\_prompt](#input\_device\_configuration\_device\_only\_remembered\_on\_user\_prompt) | If true, a device is only remembered on user prompt | `bool` | `null` | no |
 | <a name="input_domain"></a> [domain](#input\_domain) | Cognito User Pool domain | `string` | `null` | no |
 | <a name="input_domain_certificate_arn"></a> [domain\_certificate\_arn](#input\_domain\_certificate\_arn) | The ARN of an ISSUED ACM certificate in us-east-1 for a custom domain | `string` | `null` | no |
+| <a name="input_domain_managed_login_version"></a> [domain](#input\_domain) | The version number of managed login for your domain. 1 for hosted UI (classic), 2 for the newer managed login | `number` | `1` | no |
 | <a name="input_email_configuration"></a> [email\_configuration](#input\_email\_configuration) | The Email Configuration | `map(any)` | `{}` | no |
 | <a name="input_email_configuration_configuration_set"></a> [email\_configuration\_configuration\_set](#input\_email\_configuration\_configuration\_set) | The name of the configuration set | `string` | `null` | no |
 | <a name="input_email_configuration_email_sending_account"></a> [email\_configuration\_email\_sending\_account](#input\_email\_configuration\_email\_sending\_account) | Instruct Cognito to either use its built-in functional or Amazon SES to send out emails. Allowed values: `COGNITO_DEFAULT` or `DEVELOPER` | `string` | `"COGNITO_DEFAULT"` | no |

@@ -433,6 +433,12 @@ variable "domain_certificate_arn" {
   default     = null
 }
 
+variable "domain_managed_login_version" {
+  description = "The version number of managed login for your domain. 1 for hosted UI (classic), 2 for the newer managed login"
+  type        = number
+  default     = 1
+}
+
 #
 # default_ui_customization
 #
