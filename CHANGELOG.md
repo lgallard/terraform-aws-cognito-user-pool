@@ -2,7 +2,7 @@
 
 ENHANCEMENTS:
 
-* Add variable to change hosting ui version  (thanks @DocMarten)
+* Add variable to change hosting ui version  (thanks @thedomeffm)
 
 ## 0.34.0 (February 21, 2025)
 
