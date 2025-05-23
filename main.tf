@@ -340,6 +340,8 @@ locals {
     default_email_option  = lookup(var.verification_message_template, "default_email_option", null) == null ? var.verification_message_template_default_email_option : lookup(var.verification_message_template, "default_email_option")
     email_message_by_link = lookup(var.verification_message_template, "email_message_by_link", null) == null ? var.verification_message_template_email_message_by_link : lookup(var.verification_message_template, "email_message_by_link")
     email_subject_by_link = lookup(var.verification_message_template, "email_subject_by_link", null) == null ? var.verification_message_template_email_subject_by_link : lookup(var.verification_message_template, "email_subject_by_link")
+    email_message         = lookup(var.verification_message_template, "email_message", null) == null ? var.verification_message_template_email_message : lookup(var.verification_message_template, "email_message")
+    email_subject         = lookup(var.verification_message_template, "email_subject", null) == null ? var.verification_message_template_email_subject : lookup(var.verification_message_template, "email_subject")
   }
 
   verification_message_template = [local.verification_message_template_default]
