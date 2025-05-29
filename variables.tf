@@ -427,6 +427,18 @@ variable "verification_message_template_email_subject_by_link" {
   default     = null
 }
 
+variable "verification_message_template_email_message" {
+  description = "The email message template for sending a confirmation code to the user, it must contain the `{####}` placeholder"
+  type        = string
+  default     = null
+}
+
+variable "verification_message_template_email_subject" {
+  description = "The subject line for the email message template for sending a confirmation code to the user"
+  type        = string
+  default     = null
+}
+
 #
 # aws_cognito_user_pool_domain
 #
