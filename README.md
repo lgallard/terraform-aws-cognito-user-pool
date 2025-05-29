@@ -1,153 +1,15 @@
-![Terraform](https://lgallardo.com/images/terraform.jpg)
-# terraform-aws-cognito-user-pool
-
-Terraform module to create [Amazon Cognito User Pools](https://aws.amazon.com/cognito/), configure its attributes and resources such as  **app clients**, **domain**, **resource servers**. Amazon Cognito User Pools provide a secure user directory that scales to hundreds of millions of users. As a fully managed service, User Pools are easy to set up without any worries about standing up server infrastructure.
-
-## Usage
-
-You can use this module to create a Cognito User Pool using the default values or use the detailed definition to set every aspect of the Cognito User Pool
-
-Check the [examples](examples/) where you can see the **simple** example using the default values, the **simple_extended** version which adds  **app clients**, **domain**, **resource servers** resources, or the **complete** version with a detailed example.
-
-### Example (simple)
-
-This simple example creates a AWS Cognito User Pool with the default values:
-
-```
-module "aws_cognito_user_pool_simple" {
-
-  source  = "lgallard/cognito-user-pool/aws"
-
-  user_pool_name = "mypool"
-
-  tags = {
-    Owner       = "infra"
-    Environment = "production"
-    Terraform   = true
-  }
-```
-
-### Example (conditional creation)
-
-If you need to create Cognito User Pool resources conditionally in ealierform  versions such as 0.11, 0,12 and 0.13 you can set the input variable `enabled` to false:
-
-```
-# This Cognito User Pool will not be created
-module "aws_cognito_user_pool_conditional_creation" {
-
-  source  = "lgallard/cognito-user-pool/aws"
-
-  user_pool_name = "conditional_user_pool"
-
-  enabled = false
-
-  tags = {
-    Owner       = "infra"
-    Environment = "production"
-    Terraform   = true
-  }
-
-}
-```
-
-For Terraform 0.14 and later you can use `count` inside `module` blocks, or use the input variable `enabled` as described above.
-
-### Example (complete)
-
-This more complete example creates a AWS Cognito User Pool using a detailed configuration. Please check the example folder to get the example with all options:
-
-```
-module "aws_cognito_user_pool_complete" {
-
-  source  = "lgallard/cognito-user-pool/aws"
-
-  user_pool_name           = "mypool"
-  alias_attributes         = ["email", "phone_number"]
-  auto_verified_attributes = ["email"]
-
-  deletion_protection = "ACTIVE"
-
-  admin_create_user_config = {
-    email_subject = "Here, your verification code baby"
-  }
-
-  email_configuration = {
-    email_sending_account  = "DEVELOPER"
-    reply_to_email_address = "email@example.com"
-    source_arn             = "arn:aws:ses:us-east-1:888888888888:identity/example.com"
-  }
-
-  password_policy = {
-    minimum_length    = 10
-    require_lowercase = false
-    require_numbers   = true
-    require_symbols   = true
-    require_uppercase = true
-  }
-
-  schemas = [
-    {
-      attribute_data_type      = "Boolean"
-      developer_only_attribute = false
-      mutable                  = true
-      name                     = "available"
-      required                 = false
-    },
-    {
-      attribute_data_type      = "Boolean"
-      developer_only_attribute = true
-      mutable                  = true
-      name                     = "registered"
-      required                 = false
-    }
-  ]
-
-  string_schemas = [
-    {
-      attribute_data_type      = "String"
-      developer_only_attribute = false
-      mutable                  = false
-      name                     = "email"
-      required                 = true
-
-      string_attribute_constraints = {
-        min_length = 7
-        max_length = 15
-      }
-    }
-  ]
-
-  recovery_mechanisms = [
-     {
-      name     = "verified_email"
-      priority = 1
-    },
-    {
-      name     = "verified_phone_number"
-      priority = 2
-    }
-  ]
-
-  tags = {
-    Owner       = "infra"
-    Environment = "production"
-    Terraform   = true
-  }
-
-```
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= v0.13.7 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.73 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.95 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.88.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.95 |
 
 ## Modules
 
@@ -205,14 +67,14 @@ No modules.
 | <a name="input_device_configuration_device_only_remembered_on_user_prompt"></a> [device\_configuration\_device\_only\_remembered\_on\_user\_prompt](#input\_device\_configuration\_device\_only\_remembered\_on\_user\_prompt) | If true, a device is only remembered on user prompt | `bool` | `null` | no |
 | <a name="input_domain"></a> [domain](#input\_domain) | Cognito User Pool domain | `string` | `null` | no |
 | <a name="input_domain_certificate_arn"></a> [domain\_certificate\_arn](#input\_domain\_certificate\_arn) | The ARN of an ISSUED ACM certificate in us-east-1 for a custom domain | `string` | `null` | no |
-| <a name="input_domain_managed_login_version"></a> [domain](#input\_domain) | The version number of managed login for your domain. 1 for hosted UI (classic), 2 for the newer managed login | `number` | `1` | no |
+| <a name="input_domain_managed_login_version"></a> [domain\_managed\_login\_version](#input\_domain\_managed\_login\_version) | The version number of managed login for your domain. 1 for hosted UI (classic), 2 for the newer managed login | `number` | `1` | no |
 | <a name="input_email_configuration"></a> [email\_configuration](#input\_email\_configuration) | The Email Configuration | `map(any)` | `{}` | no |
 | <a name="input_email_configuration_configuration_set"></a> [email\_configuration\_configuration\_set](#input\_email\_configuration\_configuration\_set) | The name of the configuration set | `string` | `null` | no |
 | <a name="input_email_configuration_email_sending_account"></a> [email\_configuration\_email\_sending\_account](#input\_email\_configuration\_email\_sending\_account) | Instruct Cognito to either use its built-in functional or Amazon SES to send out emails. Allowed values: `COGNITO_DEFAULT` or `DEVELOPER` | `string` | `"COGNITO_DEFAULT"` | no |
 | <a name="input_email_configuration_from_email_address"></a> [email\_configuration\_from\_email\_address](#input\_email\_configuration\_from\_email\_address) | Sender’s email address or sender’s display name with their email address (e.g. `john@example.com`, `John Smith <john@example.com>` or `"John Smith Ph.D." <john@example.com>)`. Escaped double quotes are required around display names that contain certain characters as specified in RFC 5322 | `string` | `null` | no |
 | <a name="input_email_configuration_reply_to_email_address"></a> [email\_configuration\_reply\_to\_email\_address](#input\_email\_configuration\_reply\_to\_email\_address) | The REPLY-TO email address | `string` | `""` | no |
 | <a name="input_email_configuration_source_arn"></a> [email\_configuration\_source\_arn](#input\_email\_configuration\_source\_arn) | The ARN of the email source | `string` | `""` | no |
-| <a name="email_mfa_configuration"></a> [email\_mfa\_configuration](#input\_email\_configuration\_from\_email\_address) | Configuration block for configuring email Multi-Factor Authentication (MFA); requires at least 2 account_recovery_setting entries; requires an email_configuration configuration block. | <pre>object({<br/>    message = string<br/>    subject = string<br/>  })</pre>                                                                                                                                                                                                                                                                                                          | `null` | no |
+| <a name="input_email_mfa_configuration"></a> [email\_mfa\_configuration](#input\_email\_mfa\_configuration) | Configuration block for configuring email Multi-Factor Authentication (MFA) | <pre>object({<br/>    message = string<br/>    subject = string<br/>  })</pre> | `null` | no |
 | <a name="input_email_verification_message"></a> [email\_verification\_message](#input\_email\_verification\_message) | A string representing the email verification message | `string` | `null` | no |
 | <a name="input_email_verification_subject"></a> [email\_verification\_subject](#input\_email\_verification\_subject) | A string representing the email verification subject | `string` | `null` | no |
 | <a name="input_enable_propagate_additional_user_context_data"></a> [enable\_propagate\_additional\_user\_context\_data](#input\_enable\_propagate\_additional\_user\_context\_data) | Enables the propagation of additional user context data | `bool` | `false` | no |
@@ -297,10 +159,3 @@ No modules.
 | <a name="output_last_modified_date"></a> [last\_modified\_date](#output\_last\_modified\_date) | The date the user pool was last modified |
 | <a name="output_name"></a> [name](#output\_name) | The name of the user pool |
 | <a name="output_resource_servers_scope_identifiers"></a> [resource\_servers\_scope\_identifiers](#output\_resource\_servers\_scope\_identifiers) | A list of all scopes configured in the format identifier/scope\_name |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-
-## Know issues
-### Removing all lambda triggers
-If you define lambda triggers using the `lambda_config` block or any `lambda_config_*` variable and you want to remove all triggers, define the lambda_config block with an empty map `{}` and apply the plan. Then comment the `lambda_config` block or define it as `null` and apply the plan again.
-
-This is needed because all parameters for the `lambda_config` block are optional and keeping all block attributes empty or null forces to create a `lambda_config {}` block very time a plan/apply is run.
