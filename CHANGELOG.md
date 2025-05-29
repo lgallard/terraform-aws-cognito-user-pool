@@ -1,3 +1,10 @@
+## 0.36.0 (May 29, 2025)
+
+ENHANCEMENTS:
+
+* Add support for `email_mfa_configuration` parameter (thanks @bsipiak)
+* Add example for email MFA configuration (thanks @lgallard)
+
 ## 0.35.0 (May 14, 2025)
 
 ENHANCEMENTS:
