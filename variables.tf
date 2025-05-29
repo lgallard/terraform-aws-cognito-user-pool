@@ -168,6 +168,15 @@ variable "email_configuration_from_email_address" {
   default     = null
 }
 
+variable "email_mfa_configuration" {
+  description = "Configuration block for configuring email Multi-Factor Authentication (MFA)"
+  type = object({
+    message = string
+    subject = string
+  })
+  default = null
+}
+
 # lambda_config
 variable "lambda_config" {
   description = "A container for the AWS Lambda triggers associated with the user pool"
