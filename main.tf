@@ -58,6 +58,15 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
+  # email_mfa_configuration
+  dynamic "email_mfa_configuration" {
+    for_each = local.email_mfa_configuration
+    content {
+      message = email_mfa_configuration.value.message
+      subject = email_mfa_configuration.value.subject
+    }
+  }
+
   # lambda_config
   dynamic "lambda_config" {
     for_each = local.lambda_config
@@ -277,8 +286,8 @@ locals {
     from_email_address     = lookup(var.email_configuration, "from_email_address", null) == null ? var.email_configuration_from_email_address : lookup(var.email_configuration, "from_email_address")
   }
 
-  email_configuration = [local.email_configuration_default]
-
+  email_configuration     = [local.email_configuration_default]
+  email_mfa_configuration = var.email_mfa_configuration == null ? [] : [var.email_mfa_configuration]
   # lambda_config
   # If no lambda_config is provided, build a lambda_config using the default values
   lambda_config_default = {
