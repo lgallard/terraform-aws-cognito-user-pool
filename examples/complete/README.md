@@ -193,6 +193,7 @@ module "aws_cognito_user_pool_complete_example" {
       supported_identity_providers         = []
       write_attributes                     = ["email", "gender", "locale", ]
       refresh_token_validity               = 30
+      prevent_user_existence_errors        = "ENABLED"
     }
   ]
 

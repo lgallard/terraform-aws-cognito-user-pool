@@ -153,21 +153,22 @@ module "aws_cognito_user_pool_complete_example" {
   # clients
   clients = [
     {
-      allowed_oauth_flows                  = []
-      allowed_oauth_flows_user_pool_client = false
-      allowed_oauth_scopes                 = []
-      callback_urls                        = ["https://mydomain.com/callback"]
-      default_redirect_uri                 = "https://mydomain.com/callback"
-      explicit_auth_flows                  = []
-      generate_secret                      = true
-      logout_urls                          = []
-      name                                 = "test1"
-      read_attributes                      = ["email"]
-      supported_identity_providers         = []
-      write_attributes                     = []
-      access_token_validity                = 1
-      id_token_validity                    = 1
-      refresh_token_validity               = 60
+      allowed_oauth_flows                     = []
+      allowed_oauth_flows_user_pool_client    = false
+      allowed_oauth_scopes                    = []
+      callback_urls                           = ["https://mydomain.com/callback"]
+      default_redirect_uri                    = "https://mydomain.com/callback"
+      explicit_auth_flows                     = []
+      generate_secret                         = true
+      logout_urls                             = []
+      name                                    = "test1"
+      read_attributes                         = ["email"]
+      supported_identity_providers            = []
+      write_attributes                        = []
+      access_token_validity                   = 1
+      id_token_validity                       = 1
+      refresh_token_validity                  = 60
+      client_prevent_user_existence_errors    = "ENABLED"
       token_validity_units = {
         access_token  = "hours"
         id_token      = "hours"
@@ -205,6 +206,7 @@ module "aws_cognito_user_pool_complete_example" {
       supported_identity_providers         = []
       write_attributes                     = ["email", "gender", "locale", ]
       refresh_token_validity               = 30
+      prevent_user_existence_errors        = "ENABLED"
     }
   ]
 
