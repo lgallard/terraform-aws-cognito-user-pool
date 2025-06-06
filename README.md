@@ -147,7 +147,7 @@ module "aws_cognito_user_pool_complete" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.95 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.88.0 |
 
 ## Modules
 
@@ -273,7 +273,9 @@ No modules.
 | <a name="input_username_configuration"></a> [username\_configuration](#input\_username\_configuration) | The Username Configuration. Setting `case_sensitive` specifies whether username case sensitivity will be applied for all users in the user pool through Cognito APIs | `map(any)` | `{}` | no |
 | <a name="input_verification_message_template"></a> [verification\_message\_template](#input\_verification\_message\_template) | The verification message templates configuration | `map(any)` | `{}` | no |
 | <a name="input_verification_message_template_default_email_option"></a> [verification\_message\_template\_default\_email\_option](#input\_verification\_message\_template\_default\_email\_option) | The default email option. Must be either `CONFIRM_WITH_CODE` or `CONFIRM_WITH_LINK`. Defaults to `CONFIRM_WITH_CODE` | `string` | `null` | no |
+| <a name="input_verification_message_template_email_message"></a> [verification\_message\_template\_email\_message](#input\_verification\_message\_template\_email\_message) | The email message template for sending a confirmation code to the user, it must contain the `{####}` placeholder | `string` | `null` | no |
 | <a name="input_verification_message_template_email_message_by_link"></a> [verification\_message\_template\_email\_message\_by\_link](#input\_verification\_message\_template\_email\_message\_by\_link) | The email message template for sending a confirmation link to the user, it must contain the `{##Click Here##}` placeholder | `string` | `null` | no |
+| <a name="input_verification_message_template_email_subject"></a> [verification\_message\_template\_email\_subject](#input\_verification\_message\_template\_email\_subject) | The subject line for the email message template for sending a confirmation code to the user | `string` | `null` | no |
 | <a name="input_verification_message_template_email_subject_by_link"></a> [verification\_message\_template\_email\_subject\_by\_link](#input\_verification\_message\_template\_email\_subject\_by\_link) | The subject line for the email message template for sending a confirmation link to the user | `string` | `null` | no |
 
 ## Outputs

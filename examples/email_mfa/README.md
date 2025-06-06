@@ -61,4 +61,4 @@ module "aws_cognito_user_pool_email_mfa_example" {
 - The `email_sending_account` must be set to "DEVELOPER" to use Amazon SES
 - The `source_arn` must be a valid SES ARN
 - At least two account recovery mechanisms are required when using email MFA
-- The `{####}` placeholder in the message will be replaced with the verification code 
+- The `{####}` placeholder in the message will be replaced with the verification code

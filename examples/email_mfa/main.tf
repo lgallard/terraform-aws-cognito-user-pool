@@ -6,8 +6,8 @@ module "aws_cognito_user_pool_email_mfa_example" {
   # Email configuration
   email_configuration = {
     email_sending_account = "DEVELOPER"
-    from_email_address   = "noreply@example.com"
-    source_arn           = "arn:aws:ses:us-east-1:123456789012:identity/example.com"
+    from_email_address    = "noreply@example.com"
+    source_arn            = "arn:aws:ses:us-east-1:123456789012:identity/example.com"
   }
 
   # Email MFA configuration
@@ -40,4 +40,4 @@ module "aws_cognito_user_pool_email_mfa_example" {
     Environment = "production"
     Terraform   = true
   }
-} 
+}
