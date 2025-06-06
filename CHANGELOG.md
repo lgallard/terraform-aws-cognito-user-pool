@@ -1,3 +1,9 @@
+## 0.37.0 (June 7, 2025)
+
+ENHANCEMENTS:
+
+* Add support for custom verification message template `email_message` and `email_subject` for code verification (thanks @lgallard)
+
 ## 0.36.0 (May 29, 2025)
 
 ENHANCEMENTS:
