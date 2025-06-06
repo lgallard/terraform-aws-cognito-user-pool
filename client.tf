@@ -82,7 +82,7 @@ locals {
     enable_propagate_additional_user_context_data = lookup(e, "enable_propagate_additional_user_context_data", null)
     token_validity_units                          = lookup(e, "token_validity_units", {})
     supported_identity_providers                  = lookup(e, "supported_identity_providers", null)
-    prevent_user_existence_errors                 = lookup(e, "prevent_user_existence_errors", null)
+    prevent_user_existence_errors                 = lookup(e, "prevent_user_existence_errors", lookup(e, "client_prevent_user_existence_errors", null))
     write_attributes                              = lookup(e, "write_attributes", null)
     enable_token_revocation                       = lookup(e, "enable_token_revocation", null)
     }
