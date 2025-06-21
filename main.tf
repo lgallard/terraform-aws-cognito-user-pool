@@ -269,12 +269,24 @@ locals {
   sms_configuration = lookup(local.sms_configuration_default, "external_id") == "" || lookup(local.sms_configuration_default, "sns_caller_arn") == "" ? [] : [local.sms_configuration_default]
 
   # device_configuration
-  # If no device_configuration list is provided, build a device_configuration using the default values
+  # If no device_configuration is provided, or if all values match AWS defaults (false), omit the block
+  # This prevents perpetual drift when users explicitly set values to match AWS defaults
 
-  device_configuration = length(var.device_configuration) == 0 ? [] : [{
+  device_configuration_values = length(var.device_configuration) == 0 ? {} : {
     challenge_required_on_new_device      = lookup(var.device_configuration, "challenge_required_on_new_device", null) == null ? var.device_configuration_challenge_required_on_new_device : lookup(var.device_configuration, "challenge_required_on_new_device")
     device_only_remembered_on_user_prompt = lookup(var.device_configuration, "device_only_remembered_on_user_prompt", null) == null ? var.device_configuration_device_only_remembered_on_user_prompt : lookup(var.device_configuration, "device_only_remembered_on_user_prompt")
-  }]
+  }
+
+  # Only include device configuration block if values differ from AWS defaults (both false)
+  # or if any values are null (which indicates user wants to use module defaults)
+  device_configuration_needed = length(local.device_configuration_values) > 0 && (
+    lookup(local.device_configuration_values, "challenge_required_on_new_device", null) == null ||
+    lookup(local.device_configuration_values, "device_only_remembered_on_user_prompt", null) == null ||
+    lookup(local.device_configuration_values, "challenge_required_on_new_device", false) != false ||
+    lookup(local.device_configuration_values, "device_only_remembered_on_user_prompt", false) != false
+  )
+
+  device_configuration = local.device_configuration_needed ? [local.device_configuration_values] : []
 
   # email_configuration
   # If no email_configuration is provided, build an email_configuration using the default values
