@@ -4,6 +4,13 @@ ENHANCEMENTS:
 
 * Add support for custom verification message template `email_message` and `email_subject` for code verification (thanks @lgallard)
 
+## [0.38.1](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/0.38.0...0.38.1) (2025-06-21)
+
+
+### Bug Fixes
+
+* SAML identity provider drift by ignoring AWS-managed ActiveEncryptionCertificate ([#176](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/176)) ([539a7db](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/539a7dbfefb73b71e39769361a9447e9be8be0c6))
+
 ## [0.38.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/0.37.0...0.38.0) (2025-06-21)
 
 
