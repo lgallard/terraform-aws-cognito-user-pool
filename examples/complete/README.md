@@ -33,6 +33,8 @@ module "aws_cognito_user_pool_complete_example" {
     email_sending_account  = "DEVELOPER"
     reply_to_email_address = "email@mydomain.com"
     source_arn             = "arn:aws:ses:us-east-1:123456789012:identity/myemail@mydomain.com"
+    from_email_address     = "noreply@mydomain.com"
+    configuration_set      = "my-configuration-set"
   }
 
   lambda_config = {
