@@ -75,6 +75,8 @@ module "aws_cognito_user_pool_complete" {
     email_sending_account  = "DEVELOPER"
     reply_to_email_address = "email@example.com"
     source_arn             = "arn:aws:ses:us-east-1:888888888888:identity/example.com"
+    from_email_address     = "noreply@example.com"
+    configuration_set      = "my-configuration-set"
   }
 
   password_policy = {
