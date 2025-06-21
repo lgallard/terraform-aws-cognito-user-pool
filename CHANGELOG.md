@@ -4,6 +4,13 @@ ENHANCEMENTS:
 
 * Add support for custom verification message template `email_message` and `email_subject` for code verification (thanks @lgallard)
 
+## [0.38.2](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/0.38.1...0.38.2) (2025-06-21)
+
+
+### Bug Fixes
+
+* Fix email_configuration documentation to show all available attributes ([#181](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/181)) ([c0c441e](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/c0c441e469fd4e08ab418919f7ca1263b57dcb5e))
+
 ## [0.38.1](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/0.38.0...0.38.1) (2025-06-21)
 
 
