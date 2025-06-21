@@ -1,0 +1,9 @@
+{
+  "packages": {
+    ".": {
+      "release-type": "terraform-module",
+      "changelog-path": "CHANGELOG.md",
+      "include-v-in-tag": false
+    }
+  }
+}
