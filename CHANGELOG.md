@@ -4,6 +4,13 @@ ENHANCEMENTS:
 
 * Add support for custom verification message template `email_message` and `email_subject` for code verification (thanks @lgallard)
 
+## [0.39.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/0.38.2...0.39.0) (2025-06-27)
+
+
+### Features
+
+* Fix device_configuration perpetual drift when using explicit false values (release) ([#186](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/186)) ([17cb3ac](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/17cb3accac0bb5c211a128a76c0b8188576b7bf7))
+
 ## [0.38.2](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/0.38.1...0.38.2) (2025-06-21)
 
 
