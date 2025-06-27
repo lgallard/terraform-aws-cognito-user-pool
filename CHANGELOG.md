@@ -4,6 +4,13 @@ ENHANCEMENTS:
 
 * Add support for custom verification message template `email_message` and `email_subject` for code verification (thanks @lgallard)
 
+## [0.39.1](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/0.39.0...0.39.1) (2025-06-27)
+
+
+### Bug Fixes
+
+* Remove "v" prefix from release-please release titles ([#189](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/189)) ([f703982](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/f703982bec73743b73b86d30f0902d0e426f4b1a))
+
 ## [0.39.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/0.38.2...0.39.0) (2025-06-27)
 
 
