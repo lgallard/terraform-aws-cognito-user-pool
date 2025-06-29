@@ -12,7 +12,7 @@ resource "aws_cognito_resource_server" "resource" {
     }
   }
 
-  user_pool_id = aws_cognito_user_pool.pool[0].id
+  user_pool_id = local.user_pool_id
 }
 
 locals {

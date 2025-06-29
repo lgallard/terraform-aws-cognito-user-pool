@@ -7,7 +7,7 @@ Terraform module to create [Amazon Cognito User Pools](https://aws.amazon.com/co
 
 You can use this module to create a Cognito User Pool using the default values or use the detailed definition to set every aspect of the Cognito User Pool
 
-Check the [examples](examples/) where you can see the **simple** example using the default values, the **simple_extended** version which adds  **app clients**, **domain**, **resource servers** resources, or the **complete** version with a detailed example.
+Check the [examples](examples/) where you can see the **simple** example using the default values, the **simple_extended** version which adds  **app clients**, **domain**, **resource servers** resources, or the **complete** version with a detailed example.
 
 ### Example (simple)
 
@@ -25,7 +25,7 @@ module "aws_cognito_user_pool_simple" {
     Environment = "production"
     Terraform   = true
   }
-```
+}
 
 ### Example (conditional creation)
 
@@ -136,7 +136,128 @@ module "aws_cognito_user_pool_complete" {
     Terraform   = true
   }
 
+}
+
+## Schema Management
+
+### ⚠️ **Important: Schema Perpetual Diff Fix Available**
+
+**If you're experiencing perpetual diffs with custom schemas, this module provides an opt-in fix.** The fix is disabled by default to ensure backward compatibility with existing deployments.
+
+### The Schema Perpetual Diff Problem
+
+AWS Cognito User Pool schemas cannot be modified or removed after creation. However, due to how the AWS API returns schema information (with different ordering and additional empty constraint blocks), Terraform shows perpetual diffs and attempts to recreate schemas on every plan:
+
 ```
+- schema {
+  - attribute_data_type      = "String" -> null
+  - developer_only_attribute = false -> null
+  - mutable                  = true -> null
+  - name                     = "roles" -> null
+  - required                 = false -> null
+  - string_attribute_constraints {}
+}
++ schema {
+  + attribute_data_type      = "String"
+  + developer_only_attribute = false
+  + mutable                  = true
+  + name                     = "roles"
+  + required                 = false
+}
+```
+
+This results in AWS API errors since schema attributes are immutable after creation.
+
+### ✅ **Solution: Enable Schema Change Ignore**
+
+To fix this issue, set `ignore_schema_changes = true`:
+
+```hcl
+module "aws_cognito_user_pool" {
+  source = "lgallard/cognito-user-pool/aws"
+
+  user_pool_name = "mypool"
+  
+  # Enable this to prevent perpetual diffs with custom schemas
+  ignore_schema_changes = true
+  
+  schemas = [
+    {
+      attribute_data_type      = "String"
+      developer_only_attribute = false
+      mutable                  = true
+      name                     = "roles"
+      required                 = false
+    }
+  ]
+
+  tags = {
+    Owner       = "infra"
+    Environment = "production"
+    Terraform   = true
+  }
+}
+```
+
+### 🔧 **Technical Implementation Details**
+
+**Why Terraform Doesn't Support Conditional `ignore_changes`:**
+
+Terraform's lifecycle blocks require static values because they affect dependency graph construction. According to the [official documentation](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle):
+
+> "The lifecycle settings all affect how Terraform constructs and traverses the dependency graph. As a result, only literal values can be used because the processing happens too early for arbitrary expression evaluation."
+
+This means expressions like `ignore_changes = var.ignore_schema_changes ? [schema] : []` are not supported.
+
+**Dual-Resource Approach:**
+
+To work around this limitation, the module uses a dual-resource approach:
+- One `aws_cognito_user_pool` resource without lifecycle ignore (default behavior)
+- One `aws_cognito_user_pool` resource with `lifecycle { ignore_changes = [schema] }`
+- Conditional creation based on the `ignore_schema_changes` variable
+- All other resources reference the appropriate user pool via a local value
+
+### 🔄 **Migration for Existing Deployments**
+
+If you have an existing deployment and want to enable the fix:
+
+1. **For new deployments with custom schemas**: Always set `ignore_schema_changes = true`
+
+2. **For existing deployments experiencing the issue**: 
+   ```hcl
+   # Enable the fix in your configuration
+   ignore_schema_changes = true
+   ```
+   
+   Then run:
+   ```bash
+   # Plan to see the changes
+   terraform plan
+   
+   # Apply - this will create the new resource variant
+   terraform apply
+   
+   # Import existing state to the new resource
+   terraform state mv aws_cognito_user_pool.pool[0] aws_cognito_user_pool.pool_with_schema_ignore[0]
+   ```
+
+### 📝 **Adding New Schema Attributes**
+
+**Important:** Once a schema attribute is created in Cognito, it cannot be modified or removed. Plan your schema carefully.
+
+If you need to add new schema attributes after enabling `ignore_schema_changes = true`:
+
+1. **Temporary approach**: Set `ignore_schema_changes = false`, add attributes, apply, then set back to `true`
+2. **Separate resources**: Use the `aws_cognito_user_pool_schema` resource for new attributes (AWS provider v5+)
+3. **Recreation**: Destroy and recreate the user pool (⚠️ **destroys all user data**)
+
+### 💡 **Best Practices**
+
+- **New deployments with custom schemas**: Always use `ignore_schema_changes = true`
+- **Plan your schema carefully**: Schema attributes are immutable after creation
+- **Use separate schema resources**: For maximum flexibility, consider using `aws_cognito_user_pool_schema` resources
+- **Test thoroughly**: Always run `terraform plan` to verify expected behavior
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
@@ -211,7 +332,7 @@ No modules.
 | <a name="input_email_configuration"></a> [email\_configuration](#input\_email\_configuration) | The Email Configuration | `map(any)` | `{}` | no |
 | <a name="input_email_configuration_configuration_set"></a> [email\_configuration\_configuration\_set](#input\_email\_configuration\_configuration\_set) | The name of the configuration set | `string` | `null` | no |
 | <a name="input_email_configuration_email_sending_account"></a> [email\_configuration\_email\_sending\_account](#input\_email\_configuration\_email\_sending\_account) | Instruct Cognito to either use its built-in functional or Amazon SES to send out emails. Allowed values: `COGNITO_DEFAULT` or `DEVELOPER` | `string` | `"COGNITO_DEFAULT"` | no |
-| <a name="input_email_configuration_from_email_address"></a> [email\_configuration\_from\_email\_address](#input\_email\_configuration\_from\_email\_address) | Sender’s email address or sender’s display name with their email address (e.g. `john@example.com`, `John Smith <john@example.com>` or `"John Smith Ph.D." <john@example.com>)`. Escaped double quotes are required around display names that contain certain characters as specified in RFC 5322 | `string` | `null` | no |
+| <a name="input_email_configuration_from_email_address"></a> [email\_configuration\_from\_email\_address](#input\_email\_configuration\_from\_email\_address) | Sender's email address or sender's display name with their email address (e.g. `john@example.com`, `John Smith <john@example.com>` or `"John Smith Ph.D." <john@example.com>)`. Escaped double quotes are required around display names that contain certain characters as specified in RFC 5322 | `string` | `null` | no |
 | <a name="input_email_configuration_reply_to_email_address"></a> [email\_configuration\_reply\_to\_email\_address](#input\_email\_configuration\_reply\_to\_email\_address) | The REPLY-TO email address | `string` | `""` | no |
 | <a name="input_email_configuration_source_arn"></a> [email\_configuration\_source\_arn](#input\_email\_configuration\_source\_arn) | The ARN of the email source | `string` | `""` | no |
 | <a name="input_email_mfa_configuration"></a> [email\_mfa\_configuration](#input\_email\_mfa\_configuration) | Configuration block for configuring email Multi-Factor Authentication (MFA) | <pre>object({<br/>    message = string<br/>    subject = string<br/>  })</pre> | `null` | no |
