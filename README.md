@@ -137,6 +137,52 @@ module "aws_cognito_user_pool_complete" {
   }
 
 ```
+
+## Schema Management
+
+### Schema Perpetual Diff Issue
+
+AWS Cognito User Pool schemas cannot be modified or removed after creation. Due to how the AWS API returns schema information (with different ordering and additional empty constraint blocks), this can cause Terraform to show perpetual diffs, attempting to recreate schemas on every plan.
+
+To resolve this issue, the module includes an `ignore_schema_changes` variable (defaults to `true`) that prevents Terraform from trying to update schemas after initial creation:
+
+```hcl
+module "aws_cognito_user_pool" {
+  source = "lgallard/cognito-user-pool/aws"
+
+  user_pool_name = "mypool"
+  
+  # Default behavior - ignores schema changes after creation
+  ignore_schema_changes = true
+  
+  schemas = [
+    {
+      attribute_data_type      = "String"
+      developer_only_attribute = false
+      mutable                  = true
+      name                     = "roles"
+      required                 = false
+    }
+  ]
+
+  tags = {
+    Owner       = "infra"
+    Environment = "production"
+    Terraform   = true
+  }
+}
+```
+
+### Adding New Schema Attributes
+
+If you need to add new schema attributes after the user pool is created, you have several options:
+
+1. **Temporarily disable ignore_changes**: Set `ignore_schema_changes = false`, add your new attributes, apply, then set it back to `true`
+2. **Recreate the user pool**: This will destroy all existing users and data
+3. **Use separate schema resources**: Use the `aws_cognito_user_pool_schema` resource for new attributes (available in AWS provider v5+)
+
+**Important:** Once a schema attribute is created in Cognito, it cannot be modified or removed. Plan your schema carefully before applying.
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 

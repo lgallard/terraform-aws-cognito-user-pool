@@ -1,31 +1,31 @@
 output "id" {
   description = "The id of the user pool"
-  value       = var.enabled ? aws_cognito_user_pool.pool[0].id : null
+  value       = local.user_pool_id
 }
 
 output "arn" {
   description = "The ARN of the user pool"
-  value       = var.enabled ? aws_cognito_user_pool.pool[0].arn : null
+  value       = var.enabled ? local.user_pool.arn : null
 }
 
 output "endpoint" {
   description = "The endpoint name of the user pool. Example format: cognito-idp.REGION.amazonaws.com/xxxx_yyyyy"
-  value       = var.enabled ? aws_cognito_user_pool.pool[0].endpoint : null
+  value       = var.enabled ? local.user_pool.endpoint : null
 }
 
 output "creation_date" {
   description = "The date the user pool was created"
-  value       = var.enabled ? aws_cognito_user_pool.pool[0].creation_date : null
+  value       = var.enabled ? local.user_pool.creation_date : null
 }
 
 output "last_modified_date" {
   description = "The date the user pool was last modified"
-  value       = var.enabled ? aws_cognito_user_pool.pool[0].last_modified_date : null
+  value       = var.enabled ? local.user_pool.last_modified_date : null
 }
 
 output "name" {
   description = "The name of the user pool"
-  value       = var.enabled ? aws_cognito_user_pool.pool[0].name : null
+  value       = var.enabled ? local.user_pool.name : null
 }
 
 #

@@ -19,7 +19,7 @@ resource "aws_cognito_user_pool_client" "client" {
   prevent_user_existence_errors                 = lookup(element(local.clients, count.index), "prevent_user_existence_errors", null)
   write_attributes                              = lookup(element(local.clients, count.index), "write_attributes", null)
   enable_token_revocation                       = lookup(element(local.clients, count.index), "enable_token_revocation", null)
-  user_pool_id                                  = aws_cognito_user_pool.pool[0].id
+  user_pool_id                                  = local.user_pool_id
 
   # token_validity_units
   dynamic "token_validity_units" {

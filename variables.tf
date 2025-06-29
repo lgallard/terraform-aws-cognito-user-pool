@@ -362,6 +362,13 @@ variable "number_schemas" {
   default     = []
 }
 
+# schema lifecycle management
+variable "ignore_schema_changes" {
+  description = "Whether to ignore changes to Cognito User Pool schemas after creation. This prevents perpetual diffs and AWS API errors when schemas are already created, since schema attributes cannot be modified or removed once created in Cognito."
+  type        = bool
+  default     = true
+}
+
 # sms messages
 variable "sms_authentication_message" {
   description = "A string representing the SMS authentication message"
