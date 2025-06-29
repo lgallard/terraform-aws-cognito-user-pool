@@ -10,6 +10,11 @@ module "aws_cognito_user_pool_complete_example" {
 
   deletion_protection = "ACTIVE"
 
+  # IMPORTANT: Enable schema ignore changes to prevent perpetual diffs with custom schemas
+  # This is ESSENTIAL for this example since it uses custom schemas (schemas, string_schemas, number_schemas)
+  # Without this, Terraform will attempt to recreate schemas on every plan, causing AWS API errors
+  ignore_schema_changes = true
+
   mfa_configuration = "OPTIONAL"
   software_token_mfa_configuration = {
     enabled = true

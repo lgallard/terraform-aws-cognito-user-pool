@@ -1,8 +1,15 @@
 # This is the simple example, but extended
-```
+
+This example extends the basic Cognito User Pool configuration by adding custom schemas, domain, client, user group, and resource server configurations.
+
+## Important: Schema Management
+
+⚠️ **This example uses custom schemas** (`schemas` and `string_schemas`). The `ignore_schema_changes = true` variable is **essential** to prevent perpetual diffs and AWS API errors.
+
+```hcl
 module "aws_cognito_user_pool_simple_extended_example" {
 
-  source = "../modules/terraform-aws-cognito-user-pool"
+  source = "lgallard/cognito-user-pool/aws"
 
   user_pool_name                                     = "simple_extended_pool"
   alias_attributes                                   = ["email", "phone_number"]
@@ -14,6 +21,10 @@ module "aws_cognito_user_pool_simple_extended_example" {
   password_policy_minimum_length                     = 11
   user_pool_add_ons_advanced_security_mode           = "OFF"
   verification_message_template_default_email_option = "CONFIRM_WITH_CODE"
+
+  # IMPORTANT: Enable schema ignore changes to prevent perpetual diffs with custom schemas
+  # This example uses custom schemas (schemas and string_schemas), so this prevents AWS API errors
+  ignore_schema_changes = true
 
   # schemas
   schemas = [

@@ -1,5 +1,11 @@
 # This is a complete example
 
+This example demonstrates a comprehensive AWS Cognito User Pool configuration including custom schemas, clients, domains, resource servers, and identity providers.
+
+## Important: Schema Management
+
+⚠️ **This example uses custom schemas** (`schemas`, `string_schemas`, `number_schemas`). The `ignore_schema_changes = true` variable is **essential** to prevent perpetual diffs and AWS API errors, since Cognito schema attributes cannot be modified or removed after creation.
+
 ```
 module "aws_cognito_user_pool_complete_example" {
 
@@ -12,6 +18,11 @@ module "aws_cognito_user_pool_complete_example" {
   sms_verification_message   = "This is the verification message {####}."
 
   deletion_protection = "ACTIVE"
+
+  # IMPORTANT: Enable schema ignore changes to prevent perpetual diffs with custom schemas
+  # This is ESSENTIAL for this example since it uses custom schemas (schemas, string_schemas, number_schemas)
+  # Without this, Terraform will attempt to recreate schemas on every plan, causing AWS API errors
+  ignore_schema_changes = true
 
   mfa_configuration = "OPTIONAL"
   software_token_mfa_configuration = {
