@@ -13,9 +13,8 @@ Check the [examples](examples/) where you can see the **simple** example using t
 
 This simple example creates a AWS Cognito User Pool with the default values:
 
-```
+```hcl
 module "aws_cognito_user_pool_simple" {
-
   source  = "lgallard/cognito-user-pool/aws"
 
   user_pool_name = "mypool"
@@ -26,15 +25,15 @@ module "aws_cognito_user_pool_simple" {
     Terraform   = true
   }
 }
+```
 
 ### Example (conditional creation)
 
 If you need to create Cognito User Pool resources conditionally in ealierform  versions such as 0.11, 0,12 and 0.13 you can set the input variable `enabled` to false:
 
-```
+```hcl
 # This Cognito User Pool will not be created
 module "aws_cognito_user_pool_conditional_creation" {
-
   source  = "lgallard/cognito-user-pool/aws"
 
   user_pool_name = "conditional_user_pool"
@@ -46,7 +45,6 @@ module "aws_cognito_user_pool_conditional_creation" {
     Environment = "production"
     Terraform   = true
   }
-
 }
 ```
 
@@ -56,9 +54,8 @@ For Terraform 0.14 and later you can use `count` inside `module` blocks, or use 
 
 This more complete example creates a AWS Cognito User Pool using a detailed configuration. Please check the example folder to get the example with all options:
 
-```
+```hcl
 module "aws_cognito_user_pool_complete" {
-
   source  = "lgallard/cognito-user-pool/aws"
 
   user_pool_name           = "mypool"
@@ -66,6 +63,9 @@ module "aws_cognito_user_pool_complete" {
   auto_verified_attributes = ["email"]
 
   deletion_protection = "ACTIVE"
+
+  # Enable schema ignore changes to prevent perpetual diffs with custom schemas
+  ignore_schema_changes = true
 
   admin_create_user_config = {
     email_subject = "Here, your verification code baby"
@@ -135,8 +135,8 @@ module "aws_cognito_user_pool_complete" {
     Environment = "production"
     Terraform   = true
   }
-
 }
+```
 
 ## Schema Management
 
@@ -341,6 +341,7 @@ No modules.
 | <a name="input_enable_propagate_additional_user_context_data"></a> [enable\_propagate\_additional\_user\_context\_data](#input\_enable\_propagate\_additional\_user\_context\_data) | Enables the propagation of additional user context data | `bool` | `false` | no |
 | <a name="input_enabled"></a> [enabled](#input\_enabled) | Change to false to avoid deploying any resources | `bool` | `true` | no |
 | <a name="input_identity_providers"></a> [identity\_providers](#input\_identity\_providers) | Cognito Pool Identity Providers | `list(any)` | `[]` | no |
+| <a name="input_ignore_schema_changes"></a> [ignore\_schema\_changes](#input\_ignore\_schema\_changes) | Whether to ignore changes to Cognito User Pool schemas after creation. Set to true to prevent perpetual diffs when using custom schemas. This prevents AWS API errors since schema attributes cannot be modified or removed once created in Cognito. Due to Terraform limitations with conditional lifecycle blocks, this uses a dual-resource approach. Default is false for backward compatibility - set to true to enable the fix. | `bool` | `false` | no |
 | <a name="input_lambda_config"></a> [lambda\_config](#input\_lambda\_config) | A container for the AWS Lambda triggers associated with the user pool | `any` | `{}` | no |
 | <a name="input_lambda_config_create_auth_challenge"></a> [lambda\_config\_create\_auth\_challenge](#input\_lambda\_config\_create\_auth\_challenge) | The ARN of the lambda creating an authentication challenge. | `string` | `null` | no |
 | <a name="input_lambda_config_custom_email_sender"></a> [lambda\_config\_custom\_email\_sender](#input\_lambda\_config\_custom\_email\_sender) | A custom email sender AWS Lambda trigger. | `any` | `{}` | no |
