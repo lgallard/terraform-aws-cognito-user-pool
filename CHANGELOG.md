@@ -4,6 +4,13 @@ ENHANCEMENTS:
 
 * Add support for custom verification message template `email_message` and `email_subject` for code verification (thanks @lgallard)
 
+## [0.39.3](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/0.39.2...0.39.3) (2025-06-29)
+
+
+### Bug Fixes
+
+* resolve schema perpetual diff issue with ignore_schema_changes variable ([#195](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/195)) ([896a22b](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/896a22b9c1061084769b067f474daada079bc287))
+
 ## [0.39.2](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/0.39.1...0.39.2) (2025-06-29)
 
 
