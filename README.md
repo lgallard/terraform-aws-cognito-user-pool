@@ -19,6 +19,10 @@ module "aws_cognito_user_pool_simple" {
 
   user_pool_name = "mypool"
 
+  # Recommended: Enable schema ignore changes for new deployments
+  # This prevents perpetual diffs if you plan to use custom schemas
+  ignore_schema_changes = true
+
   tags = {
     Owner       = "infra"
     Environment = "production"
@@ -39,6 +43,10 @@ module "aws_cognito_user_pool_conditional_creation" {
   user_pool_name = "conditional_user_pool"
 
   enabled = false
+
+  # Recommended: Enable schema ignore changes for new deployments
+  # This prevents perpetual diffs if you plan to use custom schemas
+  ignore_schema_changes = true
 
   tags = {
     Owner       = "infra"
@@ -64,7 +72,8 @@ module "aws_cognito_user_pool_complete" {
 
   deletion_protection = "ACTIVE"
 
-  # Enable schema ignore changes to prevent perpetual diffs with custom schemas
+  # IMPORTANT: Enable schema ignore changes to prevent perpetual diffs with custom schemas
+  # This is ESSENTIAL for new deployments using custom schemas to avoid AWS API errors
   ignore_schema_changes = true
 
   admin_create_user_config = {
@@ -142,7 +151,9 @@ module "aws_cognito_user_pool_complete" {
 
 ### ⚠️ **Important: Schema Perpetual Diff Fix Available**
 
-**If you're experiencing perpetual diffs with custom schemas, this module provides an opt-in fix.** The fix is disabled by default to ensure backward compatibility with existing deployments.
+**RECOMMENDATION FOR NEW DEPLOYMENTS: Set `ignore_schema_changes = true`** to avoid schema-related issues from the start.
+
+**If you're experiencing perpetual diffs with custom schemas, this module provides an opt-in fix.** The fix is disabled by default to ensure backward compatibility with existing deployments, but **new deployments should enable it proactively**.
 
 ### The Schema Perpetual Diff Problem
 
@@ -253,7 +264,7 @@ If you need to add new schema attributes after enabling `ignore_schema_changes =
 
 ### 💡 **Best Practices**
 
-- **New deployments with custom schemas**: Always use `ignore_schema_changes = true`
+- **🎯 NEW DEPLOYMENTS**: **Always use `ignore_schema_changes = true`** to prevent schema perpetual diffs from the start
 - **Plan your schema carefully**: Schema attributes are immutable after creation
 - **Use separate schema resources**: For maximum flexibility, consider using `aws_cognito_user_pool_schema` resources
 - **Test thoroughly**: Always run `terraform plan` to verify expected behavior
