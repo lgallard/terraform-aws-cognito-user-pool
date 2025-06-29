@@ -188,10 +188,10 @@ module "aws_cognito_user_pool" {
   source = "lgallard/cognito-user-pool/aws"
 
   user_pool_name = "mypool"
-  
+
   # Enable this to prevent perpetual diffs with custom schemas
   ignore_schema_changes = true
-  
+
   schemas = [
     {
       attribute_data_type      = "String"
@@ -234,20 +234,20 @@ If you have an existing deployment and want to enable the fix:
 
 1. **For new deployments with custom schemas**: Always set `ignore_schema_changes = true`
 
-2. **For existing deployments experiencing the issue**: 
+2. **For existing deployments experiencing the issue**:
    ```hcl
    # Enable the fix in your configuration
    ignore_schema_changes = true
    ```
-   
+
    Then run:
    ```bash
    # Plan to see the changes
    terraform plan
-   
+
    # Apply - this will create the new resource variant
    terraform apply
-   
+
    # Import existing state to the new resource
    terraform state mv aws_cognito_user_pool.pool[0] aws_cognito_user_pool.pool_with_schema_ignore[0]
    ```
@@ -295,6 +295,7 @@ No modules.
 | [aws_cognito_resource_server.resource](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_resource_server) | resource |
 | [aws_cognito_user_group.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_group) | resource |
 | [aws_cognito_user_pool.pool](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_pool) | resource |
+| [aws_cognito_user_pool.pool_with_schema_ignore](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_pool) | resource |
 | [aws_cognito_user_pool_client.client](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_pool_client) | resource |
 | [aws_cognito_user_pool_domain.domain](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_pool_domain) | resource |
 | [aws_cognito_user_pool_ui_customization.default_ui_customization](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_pool_ui_customization) | resource |
