@@ -163,7 +163,7 @@ variable "email_configuration_email_sending_account" {
 }
 
 variable "email_configuration_from_email_address" {
-  description = "Sender’s email address or sender’s display name with their email address (e.g. `john@example.com`, `John Smith <john@example.com>` or `\"John Smith Ph.D.\" <john@example.com>)`. Escaped double quotes are required around display names that contain certain characters as specified in RFC 5322"
+  description = "Sender's email address or sender's display name with their email address (e.g. `john@example.com`, `John Smith <john@example.com>` or `\"John Smith Ph.D.\" <john@example.com>)`. Escaped double quotes are required around display names that contain certain characters as specified in RFC 5322"
   type        = string
   default     = null
 }
@@ -364,9 +364,9 @@ variable "number_schemas" {
 
 # schema lifecycle management
 variable "ignore_schema_changes" {
-  description = "Whether to ignore changes to Cognito User Pool schemas after creation. This prevents perpetual diffs and AWS API errors when schemas are already created, since schema attributes cannot be modified or removed once created in Cognito."
+  description = "Whether to ignore changes to Cognito User Pool schemas after creation. Set to true to prevent perpetual diffs when using custom schemas. This prevents AWS API errors since schema attributes cannot be modified or removed once created in Cognito. Due to Terraform limitations with conditional lifecycle blocks, this uses a dual-resource approach. Default is false for backward compatibility - set to true to enable the fix."
   type        = bool
-  default     = true
+  default     = false
 }
 
 # sms messages
