@@ -3,6 +3,10 @@ module "aws_cognito_user_pool_email_mfa_example" {
 
   user_pool_name = "email_mfa_pool"
 
+  # Recommended: Enable schema ignore changes for new deployments
+  # This prevents perpetual diffs if you plan to use custom schemas
+  ignore_schema_changes = true
+
   # Email configuration
   email_configuration = {
     email_sending_account = "DEVELOPER"

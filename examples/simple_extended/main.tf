@@ -13,6 +13,10 @@ module "aws_cognito_user_pool_simple_extended_example" {
   user_pool_add_ons_advanced_security_mode           = "OFF"
   verification_message_template_default_email_option = "CONFIRM_WITH_CODE"
 
+  # IMPORTANT: Enable schema ignore changes to prevent perpetual diffs with custom schemas
+  # This example uses custom schemas (schemas and string_schemas), so this prevents AWS API errors
+  ignore_schema_changes = true
+
   # schemas
   schemas = [
     {
