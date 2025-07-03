@@ -69,6 +69,7 @@ module "aws_cognito_user_pool_complete" {
   user_pool_name           = "mypool"
   alias_attributes         = ["email", "phone_number"]
   auto_verified_attributes = ["email"]
+  user_pool_tier           = "ESSENTIALS" # Valid values: LITE, ESSENTIALS, PLUS. Default is ESSENTIALS
 
   deletion_protection = "ACTIVE"
 
