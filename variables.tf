@@ -12,6 +12,16 @@ variable "user_pool_name" {
   type        = string
 }
 
+variable "user_pool_tier" {
+  type        = string
+  description = "Cognito User Pool tier. Valid values: LITE, ESSENTIALS, PLUS."
+  default     = "ESSENTIALS"
+  validation {
+    condition     = contains(["LITE", "ESSENTIALS", "PLUS"], var.user_pool_tier)
+    error_message = "user_pool_tier must be one of: LITE, ESSENTIALS, PLUS"
+  }
+}
+
 variable "email_verification_message" {
   description = "A string representing the email verification message"
   type        = string
