@@ -1,11 +1,14 @@
 resource "aws_cognito_user_group" "main" {
-  count        = var.enabled ? length(local.groups) : 0
-  name         = lookup(element(local.groups, count.index), "name")
-  description  = lookup(element(local.groups, count.index), "description")
-  precedence   = lookup(element(local.groups, count.index), "precedence")
-  role_arn     = lookup(element(local.groups, count.index), "role_arn")
+  for_each     = var.enabled ? { for group in local.groups : group.name => group } : {}
+  name         = each.key
+  description  = lookup(each.value, "description", null)
+  precedence   = lookup(each.value, "precedence", null)
+  role_arn     = lookup(each.value, "role_arn", null)
   user_pool_id = local.user_pool_id
 }
+
+# State migration from count to for_each requires manual intervention
+# Users need to run terraform state mv commands as documented in MIGRATION_GUIDE.md
 
 locals {
   groups_default = [

@@ -87,6 +87,38 @@ output "client_secrets_map" {
 }
 
 #
+# aws_cognito_user_group
+#
+output "user_group_ids" {
+  description = "The ids of the user groups"
+  value       = var.enabled ? values(aws_cognito_user_group.main)[*].id : null
+}
+
+output "user_group_names" {
+  description = "The names of the user groups"
+  value       = var.enabled ? values(aws_cognito_user_group.main)[*].name : null
+}
+
+output "user_group_arns" {
+  description = "The ARNs of the user groups"
+  value       = var.enabled ? values(aws_cognito_user_group.main)[*].arn : null
+}
+
+output "user_groups_map" {
+  description = "A map of user group names to their properties"
+  value = var.enabled ? {
+    for k, v in aws_cognito_user_group.main : k => {
+      id          = v.id
+      name        = v.name
+      description = v.description
+      precedence  = v.precedence
+      role_arn    = v.role_arn
+      arn         = v.arn
+    }
+  } : null
+}
+
+#
 # aws_cognito_resource_servers
 #
 output "resource_servers_scope_identifiers" {
