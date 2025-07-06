@@ -5,6 +5,17 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [1.0.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/0.40.0...1.0.0) (2025-07-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* User group resource addresses have changed from count-based to for_each-based identifiers. Existing deployments require manual state migration to avoid resource recreation.
+
+### Bug Fixes
+
+* switch user groups from count to for_each to prevent unintended deletion ([#202](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/202)) ([1bc67f6](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/1bc67f63c42b95b595f51fab5e473e74e89f3f4b))
+
 ## [0.39.3](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/0.39.2...0.39.3) (2025-06-29)
 
 
