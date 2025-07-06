@@ -1,6 +1,6 @@
 module "aws_cognito_user_pool_simple_example" {
 
-  source = "lgallard/cognito-user-pool/aws"
+  source = "../../"
 
   user_pool_name = "simple_pool"
 
