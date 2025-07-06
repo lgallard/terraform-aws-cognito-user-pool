@@ -627,9 +627,9 @@ variable "user_groups" {
   description = "A container with the user_groups definitions"
   type        = list(any)
   default     = []
-  
+
   validation {
-    condition = length(var.user_groups) == 0 || length(distinct([for group in var.user_groups : lookup(group, "name", "")])) == length(var.user_groups)
+    condition     = length(var.user_groups) == 0 || length(distinct([for group in var.user_groups : lookup(group, "name", "")])) == length(var.user_groups)
     error_message = "All user group names must be unique. Duplicate names are not allowed."
   }
 }

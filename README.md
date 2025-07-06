@@ -282,7 +282,7 @@ If you need to add new schema attributes after enabling `ignore_schema_changes =
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.0.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.95 |
 
 ## Modules
 
@@ -437,6 +437,10 @@ No modules.
 | <a name="output_last_modified_date"></a> [last\_modified\_date](#output\_last\_modified\_date) | The date the user pool was last modified |
 | <a name="output_name"></a> [name](#output\_name) | The name of the user pool |
 | <a name="output_resource_servers_scope_identifiers"></a> [resource\_servers\_scope\_identifiers](#output\_resource\_servers\_scope\_identifiers) | A list of all scopes configured in the format identifier/scope\_name |
+| <a name="output_user_group_arns"></a> [user\_group\_arns](#output\_user\_group\_arns) | The ARNs of the user groups |
+| <a name="output_user_group_ids"></a> [user\_group\_ids](#output\_user\_group\_ids) | The ids of the user groups |
+| <a name="output_user_group_names"></a> [user\_group\_names](#output\_user\_group\_names) | The names of the user groups |
+| <a name="output_user_groups_map"></a> [user\_groups\_map](#output\_user\_groups\_map) | A map of user group names to their properties |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Know issues
