@@ -101,7 +101,9 @@ output "user_group_names" {
 
 output "user_group_arns" {
   description = "The ARNs of the user groups"
-  value       = var.enabled ? values(aws_cognito_user_group.main)[*].arn : null
+  value = var.enabled ? [
+    for group in values(aws_cognito_user_group.main) : "${local.user_pool.arn}/group/${group.name}"
+  ] : null
 }
 
 output "user_groups_map" {
@@ -113,7 +115,7 @@ output "user_groups_map" {
       description = v.description
       precedence  = v.precedence
       role_arn    = v.role_arn
-      arn         = v.arn
+      arn         = "${local.user_pool.arn}/group/${v.name}"
     }
   } : null
 }

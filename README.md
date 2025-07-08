@@ -282,7 +282,7 @@ If you need to add new schema attributes after enabling `ignore_schema_changes =
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.95 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.2.0 |
 
 ## Modules
 
@@ -461,7 +461,7 @@ This is needed because all parameters for the `lambda_config` block are optional
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.0.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.2.0 |
 
 ## Modules
 
@@ -585,6 +585,7 @@ No modules.
 | <a name="input_user_pool_add_ons"></a> [user\_pool\_add\_ons](#input\_user\_pool\_add\_ons) | Configuration block for user pool add-ons to enable user pool advanced security mode features | `map(any)` | `{}` | no |
 | <a name="input_user_pool_add_ons_advanced_security_mode"></a> [user\_pool\_add\_ons\_advanced\_security\_mode](#input\_user\_pool\_add\_ons\_advanced\_security\_mode) | The mode for advanced security, must be one of `OFF`, `AUDIT` or `ENFORCED` | `string` | `null` | no |
 | <a name="input_user_pool_name"></a> [user\_pool\_name](#input\_user\_pool\_name) | The name of the user pool | `string` | n/a | yes |
+| <a name="input_user_pool_tier"></a> [user\_pool\_tier](#input\_user\_pool\_tier) | Cognito User Pool tier. Valid values: LITE, ESSENTIALS, PLUS. | `string` | `"ESSENTIALS"` | no |
 | <a name="input_username_attributes"></a> [username\_attributes](#input\_username\_attributes) | Specifies whether email addresses or phone numbers can be specified as usernames when a user signs up. Conflicts with `alias_attributes` | `list(string)` | `null` | no |
 | <a name="input_username_configuration"></a> [username\_configuration](#input\_username\_configuration) | The Username Configuration. Setting `case_sensitive` specifies whether username case sensitivity will be applied for all users in the user pool through Cognito APIs | `map(any)` | `{}` | no |
 | <a name="input_verification_message_template"></a> [verification\_message\_template](#input\_verification\_message\_template) | The verification message templates configuration | `map(any)` | `{}` | no |
@@ -615,4 +616,8 @@ No modules.
 | <a name="output_last_modified_date"></a> [last\_modified\_date](#output\_last\_modified\_date) | The date the user pool was last modified |
 | <a name="output_name"></a> [name](#output\_name) | The name of the user pool |
 | <a name="output_resource_servers_scope_identifiers"></a> [resource\_servers\_scope\_identifiers](#output\_resource\_servers\_scope\_identifiers) | A list of all scopes configured in the format identifier/scope\_name |
+| <a name="output_user_group_arns"></a> [user\_group\_arns](#output\_user\_group\_arns) | The ARNs of the user groups |
+| <a name="output_user_group_ids"></a> [user\_group\_ids](#output\_user\_group\_ids) | The ids of the user groups |
+| <a name="output_user_group_names"></a> [user\_group\_names](#output\_user\_group\_names) | The names of the user groups |
+| <a name="output_user_groups_map"></a> [user\_groups\_map](#output\_user\_groups\_map) | A map of user group names to their properties |
 <!-- END_TF_DOCS -->
