@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [1.0.1](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.0.0...1.0.1) (2025-07-08)
+
+
+### Bug Fixes
+
+* resolve unsupported attribute error for user_groups_map ARN ([#206](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/206)) ([9d5a08d](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/9d5a08d1dfb40b18a0094f3585f8df2888ec19ee)), closes [#205](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/205)
+
 ## [1.0.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/0.40.0...1.0.0) (2025-07-06)
 
 
