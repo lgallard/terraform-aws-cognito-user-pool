@@ -715,3 +715,12 @@ variable "enable_propagate_additional_user_context_data" {
   type        = bool
   default     = false
 }
+
+#
+# aws_cognito_user_pool sign_in_policy
+#
+variable "sign_in_policy" {
+  description = "The sign-in policy configuration for the user pool"
+  type        = map(any)
+  default     = {}
+}
