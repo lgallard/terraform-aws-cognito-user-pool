@@ -140,6 +140,10 @@ module "aws_cognito_user_pool_complete" {
     }
   ]
 
+  sign_in_policy = {
+    allowed_first_auth_factors = ["PASSWORD", "EMAIL_OTP", "SMS_OTP"]
+  }
+
   tags = {
     Owner       = "infra"
     Environment = "production"
