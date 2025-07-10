@@ -12,6 +12,6 @@ resource "aws_cognito_identity_provider" "identity_provider" {
   # Ignore changes to provider_details that are managed by AWS
   # AWS automatically populates ActiveEncryptionCertificate for SAML providers
   lifecycle {
-    ignore_changes = [provider_details["ActiveEncryptionCertificate"], ["client_secret"]]
+    ignore_changes = [provider_details["ActiveEncryptionCertificate"], provider_details["client_secret"]]
   }
 }
