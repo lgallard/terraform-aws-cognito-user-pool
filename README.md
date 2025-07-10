@@ -140,6 +140,10 @@ module "aws_cognito_user_pool_complete" {
     }
   ]
 
+  sign_in_policy = {
+    allowed_first_auth_factors = ["PASSWORD", "EMAIL_OTP", "SMS_OTP"]
+  }
+
   tags = {
     Owner       = "infra"
     Environment = "production"
@@ -387,6 +391,8 @@ No modules.
 | <a name="input_resource_server_scope_name"></a> [resource\_server\_scope\_name](#input\_resource\_server\_scope\_name) | The scope name | `string` | `null` | no |
 | <a name="input_resource_servers"></a> [resource\_servers](#input\_resource\_servers) | A container with the user\_groups definitions | `list(any)` | `[]` | no |
 | <a name="input_schemas"></a> [schemas](#input\_schemas) | A container with the schema attributes of a user pool. Maximum of 50 attributes | `list(any)` | `[]` | no |
+| <a name="input_sign_in_policy"></a> [sign\_in\_policy](#input\_sign\_in\_policy) | Configuration block for sign-in policy. Allows configuring additional sign-in mechanisms like OTP | <pre>object({<br/>    allowed_first_auth_factors = list(string)<br/>  })</pre> | `null` | no |
+| <a name="input_sign_in_policy_allowed_first_auth_factors"></a> [sign\_in\_policy\_allowed\_first\_auth\_factors](#input\_sign\_in\_policy\_allowed\_first\_auth\_factors) | List of allowed first authentication factors. Valid values: PASSWORD, EMAIL\_OTP, SMS\_OTP | `list(string)` | `[]` | no |
 | <a name="input_sms_authentication_message"></a> [sms\_authentication\_message](#input\_sms\_authentication\_message) | A string representing the SMS authentication message | `string` | `null` | no |
 | <a name="input_sms_configuration"></a> [sms\_configuration](#input\_sms\_configuration) | The SMS Configuration | `map(any)` | `{}` | no |
 | <a name="input_sms_configuration_external_id"></a> [sms\_configuration\_external\_id](#input\_sms\_configuration\_external\_id) | The external ID used in IAM role trust relationships | `string` | `""` | no |

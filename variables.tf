@@ -715,3 +715,20 @@ variable "enable_propagate_additional_user_context_data" {
   type        = bool
   default     = false
 }
+
+#
+# sign_in_policy
+#
+variable "sign_in_policy" {
+  description = "Configuration block for sign-in policy. Allows configuring additional sign-in mechanisms like OTP"
+  type = object({
+    allowed_first_auth_factors = list(string)
+  })
+  default = null
+}
+
+variable "sign_in_policy_allowed_first_auth_factors" {
+  description = "List of allowed first authentication factors. Valid values: PASSWORD, EMAIL_OTP, SMS_OTP"
+  type        = list(string)
+  default     = []
+}

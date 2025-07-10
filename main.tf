@@ -236,6 +236,14 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
+  # sign_in_policy
+  dynamic "sign_in_policy" {
+    for_each = local.sign_in_policy
+    content {
+      allowed_first_auth_factors = lookup(sign_in_policy.value, "allowed_first_auth_factors")
+    }
+  }
+
   # tags
   tags = var.tags
 }
@@ -477,6 +485,14 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
     }
   }
 
+  # sign_in_policy
+  dynamic "sign_in_policy" {
+    for_each = local.sign_in_policy
+    content {
+      allowed_first_auth_factors = lookup(sign_in_policy.value, "allowed_first_auth_factors")
+    }
+  }
+
   # tags
   tags = var.tags
 
@@ -630,4 +646,12 @@ locals {
   # user_attribute_update_settings
   # As default, all auto_verified_attributes will become attributes_require_verification_before_update
   user_attribute_update_settings = var.user_attribute_update_settings == null ? (length(var.auto_verified_attributes) > 0 ? [{ attributes_require_verification_before_update = var.auto_verified_attributes }] : []) : [var.user_attribute_update_settings]
+
+  # sign_in_policy
+  # If no sign_in_policy is provided, build a sign_in_policy using the default values
+  sign_in_policy_default = {
+    allowed_first_auth_factors = var.sign_in_policy == null ? var.sign_in_policy_allowed_first_auth_factors : (lookup(var.sign_in_policy, "allowed_first_auth_factors", null) == null ? var.sign_in_policy_allowed_first_auth_factors : lookup(var.sign_in_policy, "allowed_first_auth_factors"))
+  }
+
+  sign_in_policy = var.sign_in_policy == null && length(var.sign_in_policy_allowed_first_auth_factors) == 0 ? [] : [local.sign_in_policy_default]
 }
