@@ -650,7 +650,7 @@ locals {
   # sign_in_policy
   # If no sign_in_policy is provided, build a sign_in_policy using the default values
   sign_in_policy_default = {
-    allowed_first_auth_factors = lookup(var.sign_in_policy, "allowed_first_auth_factors", null) == null ? var.sign_in_policy_allowed_first_auth_factors : lookup(var.sign_in_policy, "allowed_first_auth_factors")
+    allowed_first_auth_factors = var.sign_in_policy == null ? var.sign_in_policy_allowed_first_auth_factors : (lookup(var.sign_in_policy, "allowed_first_auth_factors", null) == null ? var.sign_in_policy_allowed_first_auth_factors : lookup(var.sign_in_policy, "allowed_first_auth_factors"))
   }
 
   sign_in_policy = var.sign_in_policy == null && length(var.sign_in_policy_allowed_first_auth_factors) == 0 ? [] : [local.sign_in_policy_default]
