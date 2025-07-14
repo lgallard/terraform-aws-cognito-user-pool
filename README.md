@@ -373,6 +373,31 @@ See the [with_branding example](examples/with_branding/) for a comprehensive imp
 - **Immutable Association**: Branding is linked to specific app clients
 - **Cost Implications**: Managed login branding may incur additional AWS charges
 
+### 🔒 **Security Considerations**
+
+- **Asset Scanning**: Scan all image assets for malware before deployment
+- **Content Validation**: Ensure assets contain only expected image content
+- **Source Control**: Avoid committing large binary assets to version control
+- **Access Control**: Restrict access to asset files during build/deployment
+- **Regular Updates**: Keep branding assets updated and remove unused files
+
+### 🔧 **Troubleshooting**
+
+**Provider Issues:**
+- `Error: Invalid provider configuration`: Ensure `awscc` provider is configured in your root module
+- `Error: No valid credential sources`: Configure AWS credentials for both `aws` and `awscc` providers
+- `Error: Region not supported`: Verify managed login branding is available in your target region
+
+**Asset Problems:**
+- `Error: Asset file size exceeds limit`: Reduce image file size to under 2MB
+- `Error: Invalid file format`: Use supported formats (PNG, JPG, JPEG, SVG, ICO)
+- `Error: File not found`: Verify asset file paths are correct and files exist
+
+**Resource Dependencies:**
+- `Error: Client ID not found`: Ensure the specified client exists in the user pool
+- `Error: User pool domain required`: Create a user pool domain before enabling branding
+- `Error: Circular dependency`: Use the pattern in the example to avoid dependencies
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 

@@ -21,26 +21,38 @@ mkdir -p "$(dirname "$0")"
 cd "$(dirname "$0")"
 
 echo "📝 Creating logo-light.png (200x60px, blue background, white text)..."
-convert -size 200x60 xc:"#007bff" \
+if ! convert -size 200x60 xc:"#007bff" \
         -font Arial -pointsize 16 -fill white \
         -gravity center -annotate 0 "My App" \
-        logo-light.png
+        logo-light.png 2>/dev/null; then
+    echo "❌ Failed to create logo-light.png"
+    exit 1
+fi
 
 echo "📝 Creating logo-dark.png (200x60px, white background, dark text)..."
-convert -size 200x60 xc:"#ffffff" \
+if ! convert -size 200x60 xc:"#ffffff" \
         -font Arial -pointsize 16 -fill "#212529" \
         -gravity center -annotate 0 "My App" \
-        logo-dark.png
+        logo-dark.png 2>/dev/null; then
+    echo "❌ Failed to create logo-dark.png"
+    exit 1
+fi
 
 echo "📝 Creating background.jpg (1920x1080px, gradient)..."
-convert -size 1920x1080 gradient:"#007bff"-"#0d6efd" \
-        background.jpg
+if ! convert -size 1920x1080 gradient:"#007bff"-"#0d6efd" \
+        background.jpg 2>/dev/null; then
+    echo "❌ Failed to create background.jpg"
+    exit 1
+fi
 
 echo "📝 Creating favicon.ico (32x32px, blue square)..."
-convert -size 32x32 xc:"#007bff" \
+if ! convert -size 32x32 xc:"#007bff" \
         -font Arial -pointsize 14 -fill white \
         -gravity center -annotate 0 "A" \
-        favicon.ico
+        favicon.ico 2>/dev/null; then
+    echo "❌ Failed to create favicon.ico"
+    exit 1
+fi
 
 echo "✅ Sample assets generated successfully!"
 echo ""

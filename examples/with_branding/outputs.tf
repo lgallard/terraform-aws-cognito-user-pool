@@ -10,12 +10,12 @@ output "user_pool_arn" {
 
 output "user_pool_domain" {
   description = "The domain of the user pool"
-  value       = var.domain_name != "" ? aws_cognito_user_pool_domain.main[0].domain : null
+  value       = var.domain_name
 }
 
 output "hosted_ui_url" {
   description = "The hosted UI URL"
-  value       = var.domain_name != "" ? "https://${aws_cognito_user_pool_domain.main[0].domain}.auth.${var.aws_region}.amazoncognito.com/login" : null
+  value       = var.domain_name != "" ? "https://${var.domain_name}.auth.${var.aws_region}.amazoncognito.com/login" : null
 }
 
 output "managed_login_branding" {

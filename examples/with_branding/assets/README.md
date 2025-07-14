@@ -4,10 +4,12 @@ This directory should contain the branding assets referenced in the example:
 
 ## Required Files
 
-- `logo-light.png` - Logo for light mode (recommended size: 200x60px)
-- `logo-dark.png` - Logo for dark mode (recommended size: 200x60px) 
-- `background.jpg` - Background image (recommended size: 1920x1080px)
-- `favicon.ico` - Favicon (16x16px or 32x32px)
+- `logo-light.svg` - Logo for light mode (recommended size: 200x60px)
+- `logo-dark.svg` - Logo for dark mode (recommended size: 200x60px) 
+- `background.svg` - Background image (recommended size: 1920x1080px)
+- `favicon.svg` - Favicon (16x16px or 32x32px)
+
+**Note:** This example includes sample SVG files that work out of the box. For production use, replace these with your actual brand assets.
 
 ## Asset Guidelines
 
@@ -26,7 +28,7 @@ This directory should contain the branding assets referenced in the example:
 ### Color Modes
 - `LIGHT` - Assets for light theme
 - `DARK` - Assets for dark theme  
-- `BROWSER_ADAPTIVE` - Assets that adapt to browser preference
+- `DYNAMIC` - Assets that adapt to browser preference
 
 ## Quick Start - Generate Sample Assets
 

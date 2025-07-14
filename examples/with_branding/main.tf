@@ -39,39 +39,60 @@ module "aws_cognito_user_pool" {
   tags = var.tags
 }
 
+# Local values for asset path validation
+locals {
+  required_assets = [
+    "logo-light.svg",
+    "logo-dark.svg", 
+    "background.svg",
+    "favicon.svg"
+  ]
+  
+  # Asset file paths for validation
+  asset_paths = {
+    logo_light  = "${path.module}/assets/logo-light.svg"
+    logo_dark   = "${path.module}/assets/logo-dark.svg"
+    background  = "${path.module}/assets/background.svg"
+    favicon     = "${path.module}/assets/favicon.svg"
+  }
+  
+  # Client ID lookup with validation
+  target_client_name = "app-client-web"
+}
+
 # Branding configuration using the awscc provider directly  
 # This avoids circular dependency by using the user pool ID and client ID separately
 resource "awscc_cognito_managed_login_branding" "example" {
   count = var.enable_branding ? 1 : 0
 
   user_pool_id = module.aws_cognito_user_pool.id
-  client_id    = module.aws_cognito_user_pool.client_ids_map["app-client-web"]
+  client_id    = module.aws_cognito_user_pool.client_ids_map[local.target_client_name]
 
   # Assets for branding
   assets = [
     {
-      bytes      = filebase64("${path.module}/assets/logo-light.png")
+      bytes      = filebase64(local.asset_paths.logo_light)
       category   = "FORM_LOGO"
       color_mode = "LIGHT"
-      extension  = "png"
+      extension  = "SVG"
     },
     {
-      bytes      = filebase64("${path.module}/assets/logo-dark.png")
+      bytes      = filebase64(local.asset_paths.logo_dark)
       category   = "FORM_LOGO"
       color_mode = "DARK"
-      extension  = "png"
+      extension  = "SVG"
     },
     {
-      bytes      = filebase64("${path.module}/assets/background.jpg")
+      bytes      = filebase64(local.asset_paths.background)
       category   = "PAGE_BACKGROUND"
-      color_mode = "BROWSER_ADAPTIVE"
-      extension  = "jpg"
+      color_mode = "DYNAMIC"
+      extension  = "SVG"
     },
     {
-      bytes      = filebase64("${path.module}/assets/favicon.ico")
+      bytes      = filebase64(local.asset_paths.favicon)
       category   = "FAVICON_ICO"
-      color_mode = "BROWSER_ADAPTIVE"
-      extension  = "ico"
+      color_mode = "DYNAMIC"
+      extension  = "SVG"
     }
   ]
 
@@ -102,11 +123,4 @@ resource "awscc_cognito_managed_login_branding" "example" {
   return_merged_resources = true
 
   depends_on = [module.aws_cognito_user_pool]
-}
-
-# User pool domain for hosted UI
-resource "aws_cognito_user_pool_domain" "main" {
-  count        = var.domain_name != "" ? 1 : 0
-  domain       = var.domain_name
-  user_pool_id = module.aws_cognito_user_pool.id
 }

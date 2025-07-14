@@ -7,16 +7,7 @@ resource "awscc_cognito_managed_login_branding" "branding" {
   client_id    = lookup(each.value, "client_id", null)
 
   # Assets configuration for branding images
-  dynamic "assets" {
-    for_each = lookup(each.value, "assets", [])
-    content {
-      bytes       = assets.value.bytes
-      category    = assets.value.category
-      color_mode  = assets.value.color_mode
-      extension   = assets.value.extension
-      resource_id = lookup(assets.value, "resource_id", null)
-    }
-  }
+  assets = lookup(each.value, "assets", [])
 
   # Settings as JSON for advanced branding configuration
   settings = lookup(each.value, "settings", null)
