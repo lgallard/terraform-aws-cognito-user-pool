@@ -732,3 +732,30 @@ variable "sign_in_policy_allowed_first_auth_factors" {
   type        = list(string)
   default     = []
 }
+
+#
+# Managed Login Branding
+#
+variable "managed_login_branding_enabled" {
+  description = "Whether to enable managed login branding. Requires awscc provider to be configured in root module"
+  type        = bool
+  default     = false
+}
+
+variable "managed_login_branding" {
+  description = "Configuration for managed login branding. Map of branding configurations where each key represents a branding instance"
+  type = map(object({
+    client_id = string
+    assets = optional(list(object({
+      bytes       = string
+      category    = string
+      color_mode  = string
+      extension   = string
+      resource_id = optional(string)
+    })), [])
+    settings                    = optional(string)
+    return_merged_resources     = optional(bool, false)
+    use_cognito_provided_values = optional(bool, false)
+  }))
+  default = {}
+}
