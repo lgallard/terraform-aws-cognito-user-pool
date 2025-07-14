@@ -7,7 +7,7 @@ Terraform module to create [Amazon Cognito User Pools](https://aws.amazon.com/co
 
 You can use this module to create a Cognito User Pool using the default values or use the detailed definition to set every aspect of the Cognito User Pool
 
-Check the [examples](examples/) where you can see the **simple** example using the default values, the **simple_extended** version which adds  **app clients**, **domain**, **resource servers** resources, or the **complete** version with a detailed example.
+Check the [examples](examples/) where you can see the **simple** example using the default values, the **simple_extended** version which adds  **app clients**, **domain**, **resource servers** resources, the **complete** version with a detailed example, or the **with_branding** example that demonstrates managed login branding capabilities.
 
 ### Example (simple)
 
@@ -273,6 +273,105 @@ If you need to add new schema attributes after enabling `ignore_schema_changes =
 - **Plan your schema carefully**: Schema attributes are immutable after creation
 - **Use separate schema resources**: For maximum flexibility, consider using `aws_cognito_user_pool_schema` resources
 - **Test thoroughly**: Always run `terraform plan` to verify expected behavior
+
+## Managed Login Branding
+
+This module supports AWS Cognito Managed Login Branding, which allows you to customize the hosted UI with your own logos, background images, colors, and styling. This feature requires the `awscc` provider and is available as an optional enhancement.
+
+### 🎨 **Features**
+
+- **Custom Assets**: Logos, backgrounds, favicons, and other visual elements
+- **Multi-mode Support**: Light, dark, and browser-adaptive themes
+- **JSON Settings**: Advanced styling with colors, typography, and layout
+- **Client Association**: Link branding to specific app clients
+- **Asset Management**: Support for PNG, JPG, SVG, ICO formats (max 2MB each)
+
+### 📋 **Requirements**
+
+To use managed login branding, you need:
+
+1. **AWSCC Provider**: Add to your Terraform configuration
+2. **User Pool Domain**: Required for hosted UI
+3. **App Client**: Branding is associated with specific clients
+4. **Asset Files**: Images for logos, backgrounds, etc.
+
+### 🚀 **Quick Start**
+
+```hcl
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 5.95"
+    }
+    awscc = {
+      source  = "hashicorp/awscc"
+      version = ">= 1.0"
+    }
+  }
+}
+
+module "cognito_with_branding" {
+  source = "lgallard/cognito-user-pool/aws"
+
+  user_pool_name = "my-branded-pool"
+  
+  # Enable branding
+  managed_login_branding_enabled = true
+  
+  # Branding configuration
+  managed_login_branding = {
+    "main-branding" = {
+      client_id = "your-client-id"
+      
+      assets = [
+        {
+          bytes      = filebase64("./logo.png")
+          category   = "FORM_LOGO"
+          color_mode = "LIGHT"
+          extension  = "png"
+        }
+      ]
+      
+      settings = jsonencode({
+        "colorScheme" = {
+          "light" = {
+            "primary" = "#007bff"
+          }
+        }
+      })
+    }
+  }
+}
+```
+
+### 📁 **Complete Example**
+
+See the [with_branding example](examples/with_branding/) for a comprehensive implementation including:
+
+- Provider configuration
+- Multiple asset types (logos, backgrounds, favicon)
+- Light/dark mode support
+- Custom color schemes and typography
+- Complete setup instructions
+
+### 🎯 **Asset Categories**
+
+| Category | Description | Recommended Size |
+|----------|-------------|------------------|
+| `FORM_LOGO` | Logo on login form | 200x60px |
+| `PAGE_BACKGROUND` | Page background image | 1920x1080px |
+| `FAVICON_ICO` | Browser favicon | 32x32px |
+| `PAGE_HEADER_LOGO` | Header logo | 200x60px |
+| `PAGE_FOOTER_LOGO` | Footer logo | 200x60px |
+
+### ⚠️ **Important Notes**
+
+- **Provider Dependency**: Branding requires the `awscc` provider in your root module
+- **Regional Support**: Available in most AWS regions where Cognito is supported
+- **File Limits**: Maximum 2MB per asset, Base64 encoding handled automatically
+- **Immutable Association**: Branding is linked to specific app clients
+- **Cost Implications**: Managed login branding may incur additional AWS charges
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements

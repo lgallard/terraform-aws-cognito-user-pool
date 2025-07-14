@@ -127,3 +127,18 @@ output "resource_servers_scope_identifiers" {
   description = " A list of all scopes configured in the format identifier/scope_name"
   value       = var.enabled ? aws_cognito_resource_server.resource.*.scope_identifiers : null
 }
+
+#
+# awscc_cognito_managed_login_branding
+#
+output "managed_login_branding" {
+  description = "Map of managed login branding configurations"
+  value       = local.managed_login_branding_map
+}
+
+output "managed_login_branding_ids" {
+  description = "Map of managed login branding IDs"
+  value = var.enabled && var.managed_login_branding_enabled ? {
+    for k, v in awscc_cognito_managed_login_branding.branding : k => v.managed_login_branding_id
+  } : {}
+}

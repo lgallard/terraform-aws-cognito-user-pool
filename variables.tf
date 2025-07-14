@@ -732,3 +732,65 @@ variable "sign_in_policy_allowed_first_auth_factors" {
   type        = list(string)
   default     = []
 }
+
+#
+# Managed Login Branding
+#
+variable "managed_login_branding_enabled" {
+  description = "Whether to enable managed login branding. Requires awscc provider to be configured in root module"
+  type        = bool
+  default     = false
+}
+
+variable "managed_login_branding" {
+  description = "Configuration for managed login branding. Map of branding configurations where each key represents a branding instance"
+  type = map(object({
+    client_id = string
+    assets = optional(list(object({
+      bytes       = string
+      category    = string
+      color_mode  = string
+      extension   = string
+      resource_id = optional(string)
+    })), [])
+    settings                    = optional(string)
+    return_merged_resources     = optional(bool, false)
+    use_cognito_provided_values = optional(bool, false)
+  }))
+  default = {}
+
+  validation {
+    condition = alltrue([
+      for config in values(var.managed_login_branding) : alltrue([
+        for asset in lookup(config, "assets", []) : contains([
+          "FORM_LOGO", "PAGE_BACKGROUND", "FAVICON_ICO", 
+          "PAGE_HEADER_LOGO", "PAGE_FOOTER_LOGO", "EMAIL_GRAPHIC",
+          "SMS_GRAPHIC", "AUTH_APP_GRAPHIC", "PASSWORD_GRAPHIC", "PASSKEY_GRAPHIC"
+        ], asset.category)
+      ])
+    ])
+    error_message = "Invalid asset category. Must be one of: FORM_LOGO, PAGE_BACKGROUND, FAVICON_ICO, PAGE_HEADER_LOGO, PAGE_FOOTER_LOGO, EMAIL_GRAPHIC, SMS_GRAPHIC, AUTH_APP_GRAPHIC, PASSWORD_GRAPHIC, PASSKEY_GRAPHIC"
+  }
+
+  validation {
+    condition = alltrue([
+      for config in values(var.managed_login_branding) : alltrue([
+        for asset in lookup(config, "assets", []) : contains([
+          "LIGHT", "DARK", "BROWSER_ADAPTIVE"
+        ], asset.color_mode)
+      ])
+    ])
+    error_message = "Invalid color_mode. Must be one of: LIGHT, DARK, BROWSER_ADAPTIVE"
+  }
+
+  validation {
+    condition = alltrue([
+      for config in values(var.managed_login_branding) : alltrue([
+        for asset in lookup(config, "assets", []) : contains([
+          "png", "jpg", "jpeg", "svg", "ico"
+        ], lower(asset.extension))
+      ])
+    ])
+    error_message = "Invalid file extension. Must be one of: png, jpg, jpeg, svg, ico"
+  }
+}
