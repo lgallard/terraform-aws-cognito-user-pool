@@ -20,15 +20,15 @@ output "hosted_ui_url" {
 
 output "managed_login_branding" {
   description = "The managed login branding configuration"
-  value       = module.aws_cognito_user_pool.managed_login_branding
+  value       = var.enable_branding ? awscc_cognito_managed_login_branding.example[0] : null
 }
 
-output "managed_login_branding_ids" {
-  description = "The managed login branding IDs"
-  value       = module.aws_cognito_user_pool.managed_login_branding_ids
+output "managed_login_branding_id" {
+  description = "The managed login branding ID"
+  value       = var.enable_branding ? awscc_cognito_managed_login_branding.example[0].managed_login_branding_id : null
 }
 
-output "clients" {
-  description = "Map of user pool clients"
-  value       = module.aws_cognito_user_pool.clients
+output "client_ids_map" {
+  description = "Map of user pool client IDs"
+  value       = module.aws_cognito_user_pool.client_ids_map
 }

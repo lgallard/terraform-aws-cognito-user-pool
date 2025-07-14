@@ -36,71 +36,72 @@ module "aws_cognito_user_pool" {
   # Domain configuration
   domain = var.domain_name
 
-  # Enable managed login branding
-  managed_login_branding_enabled = true
-
-  # Branding configuration for the web client
-  managed_login_branding = {
-    "web-client-branding" = {
-      client_id = module.aws_cognito_user_pool.clients["app-client-web"].id
-
-      # Assets for branding
-      assets = [
-        {
-          bytes      = filebase64("${path.module}/assets/logo-light.png")
-          category   = "FORM_LOGO"
-          color_mode = "LIGHT"
-          extension  = "png"
-        },
-        {
-          bytes      = filebase64("${path.module}/assets/logo-dark.png")
-          category   = "FORM_LOGO"
-          color_mode = "DARK"
-          extension  = "png"
-        },
-        {
-          bytes      = filebase64("${path.module}/assets/background.jpg")
-          category   = "PAGE_BACKGROUND"
-          color_mode = "BROWSER_ADAPTIVE"
-          extension  = "jpg"
-        },
-        {
-          bytes      = filebase64("${path.module}/assets/favicon.ico")
-          category   = "FAVICON_ICO"
-          color_mode = "BROWSER_ADAPTIVE"
-          extension  = "ico"
-        }
-      ]
-
-      # Custom settings as JSON
-      settings = jsonencode({
-        "colorScheme" = {
-          "light" = {
-            "primary"    = "#007bff"
-            "secondary"  = "#6c757d"
-            "background" = "#ffffff"
-          }
-          "dark" = {
-            "primary"    = "#0d6efd"
-            "secondary"  = "#adb5bd"
-            "background" = "#212529"
-          }
-        }
-        "typography" = {
-          "fontFamily" = "Arial, sans-serif"
-          "fontSize"   = "16px"
-        }
-        "layout" = {
-          "borderRadius" = "8px"
-          "spacing"      = "16px"
-        }
-      })
-
-      return_merged_resources = true
-    }
-  }
-
   tags = var.tags
+}
+
+# Branding configuration using the awscc provider directly  
+# This avoids circular dependency by using the user pool ID and client ID separately
+resource "awscc_cognito_managed_login_branding" "example" {
+  count = var.enable_branding ? 1 : 0
+
+  user_pool_id = module.aws_cognito_user_pool.id
+  client_id    = module.aws_cognito_user_pool.client_ids_map["app-client-web"]
+
+  # Assets for branding
+  assets = [
+    {
+      bytes      = filebase64("${path.module}/assets/logo-light.png")
+      category   = "FORM_LOGO"
+      color_mode = "LIGHT"
+      extension  = "png"
+    },
+    {
+      bytes      = filebase64("${path.module}/assets/logo-dark.png")
+      category   = "FORM_LOGO"
+      color_mode = "DARK"
+      extension  = "png"
+    },
+    {
+      bytes      = filebase64("${path.module}/assets/background.jpg")
+      category   = "PAGE_BACKGROUND"
+      color_mode = "BROWSER_ADAPTIVE"
+      extension  = "jpg"
+    },
+    {
+      bytes      = filebase64("${path.module}/assets/favicon.ico")
+      category   = "FAVICON_ICO"
+      color_mode = "BROWSER_ADAPTIVE"
+      extension  = "ico"
+    }
+  ]
+
+  # Custom settings as JSON
+  settings = jsonencode({
+    "colorScheme" = {
+      "light" = {
+        "primary"    = "#007bff"
+        "secondary"  = "#6c757d"
+        "background" = "#ffffff"
+      }
+      "dark" = {
+        "primary"    = "#0d6efd"
+        "secondary"  = "#adb5bd"
+        "background" = "#212529"
+      }
+    }
+    "typography" = {
+      "fontFamily" = "Arial, sans-serif"
+      "fontSize"   = "16px"
+    }
+    "layout" = {
+      "borderRadius" = "8px"
+      "spacing"      = "16px"
+    }
+  })
+
+  return_merged_resources = true
+
+  depends_on = [module.aws_cognito_user_pool]
 }
 
 # User pool domain for hosted UI

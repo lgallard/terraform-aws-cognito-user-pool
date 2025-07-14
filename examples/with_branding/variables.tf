@@ -16,6 +16,12 @@ variable "domain_name" {
   default     = ""
 }
 
+variable "enable_branding" {
+  description = "Whether to enable managed login branding"
+  type        = bool
+  default     = true
+}
+
 variable "tags" {
   description = "A map of tags to assign to the resource"
   type        = map(string)
