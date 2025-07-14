@@ -28,9 +28,20 @@ This directory should contain the branding assets referenced in the example:
 - `DARK` - Assets for dark theme  
 - `BROWSER_ADAPTIVE` - Assets that adapt to browser preference
 
-## Example Asset Creation
+## Quick Start - Generate Sample Assets
 
-You can create placeholder assets for testing:
+Use the provided script to quickly generate sample assets for testing:
+
+```bash
+# Run the asset generation script
+./generate-sample-assets.sh
+```
+
+This will create all required assets with sample branding. Customize them with your actual brand assets before production use.
+
+## Manual Asset Creation
+
+You can also create placeholder assets manually:
 
 ```bash
 # Create a simple colored rectangle as logo

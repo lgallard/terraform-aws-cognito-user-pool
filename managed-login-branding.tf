@@ -1,3 +1,5 @@
+# AWS Cloud Control API provider is required for managed login branding
+# Ensure awscc provider is configured in your root module when enabling this feature
 resource "awscc_cognito_managed_login_branding" "branding" {
   for_each = var.enabled && var.managed_login_branding_enabled ? var.managed_login_branding : {}
 
