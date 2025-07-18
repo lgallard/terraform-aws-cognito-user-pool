@@ -737,7 +737,8 @@ variable "sign_in_policy_allowed_first_auth_factors" {
 # Managed Login Branding
 #
 variable "managed_login_branding_enabled" {
-  description = "Whether to enable managed login branding. Requires awscc provider to be configured in root module"
+  description = "Whether to enable managed login branding. Requires awscc provider to be configured in root module. See README for setup instructions."
+
   type        = bool
   default     = false
 }
@@ -763,7 +764,7 @@ variable "managed_login_branding" {
     condition = alltrue([
       for config in values(var.managed_login_branding) : alltrue([
         for asset in lookup(config, "assets", []) : contains([
-          "FORM_LOGO", "PAGE_BACKGROUND", "FAVICON_ICO", 
+          "FORM_LOGO", "PAGE_BACKGROUND", "FAVICON_ICO",
           "PAGE_HEADER_LOGO", "PAGE_FOOTER_LOGO", "EMAIL_GRAPHIC",
           "SMS_GRAPHIC", "AUTH_APP_GRAPHIC", "PASSWORD_GRAPHIC", "PASSKEY_GRAPHIC"
         ], asset.category)
@@ -781,16 +782,27 @@ variable "managed_login_branding" {
       ])
     ])
     error_message = "Invalid color_mode. Must be one of: LIGHT, DARK, BROWSER_ADAPTIVE"
+
   }
 
   validation {
     condition = alltrue([
       for config in values(var.managed_login_branding) : alltrue([
         for asset in lookup(config, "assets", []) : contains([
-          "png", "jpg", "jpeg", "svg", "ico"
-        ], lower(asset.extension))
+          "PNG", "JPG", "JPEG", "SVG", "ICO", "WEBP"
+        ], upper(asset.extension))
       ])
     ])
-    error_message = "Invalid file extension. Must be one of: png, jpg, jpeg, svg, ico"
+    error_message = "Invalid file extension. Must be one of: PNG, JPG, JPEG, SVG, ICO, WEBP"
+  }
+
+  validation {
+    condition = alltrue([
+      for config in values(var.managed_login_branding) : alltrue([
+        for asset in lookup(config, "assets", []) : length(asset.bytes) <= 2796203 # 2MB base64 encoded (2MB * 4/3)
+      ])
+    ])
+    error_message = "Asset file size must not exceed 2MB when base64 encoded"
+
   }
 }

@@ -131,13 +131,38 @@ output "resource_servers_scope_identifiers" {
 #
 # awscc_cognito_managed_login_branding
 #
+output "managed_login_branding_details" {
+  description = "Complete managed login branding details"
+  value = var.enabled && var.managed_login_branding_enabled ? {
+    configurations = {
+      for k, v in awscc_cognito_managed_login_branding.branding : k => {
+        id                        = v.id
+        managed_login_branding_id = v.managed_login_branding_id
+        client_id                 = v.client_id
+        user_pool_id              = v.user_pool_id
+        assets                    = v.assets
+        settings                  = v.settings
+      }
+    }
+    ids = {
+      for k, v in awscc_cognito_managed_login_branding.branding : k => v.managed_login_branding_id
+    }
+    } : {
+    configurations = {}
+    ids            = {}
+  }
+}
+
+# Backward compatibility - keep existing outputs
 output "managed_login_branding" {
-  description = "Map of managed login branding configurations"
+  description = "Map of managed login branding configurations (deprecated - use managed_login_branding_details)"
+
   value       = local.managed_login_branding_map
 }
 
 output "managed_login_branding_ids" {
-  description = "Map of managed login branding IDs"
+  description = "Map of managed login branding IDs (deprecated - use managed_login_branding_details.ids)"
+
   value = var.enabled && var.managed_login_branding_enabled ? {
     for k, v in awscc_cognito_managed_login_branding.branding : k => v.managed_login_branding_id
   } : {}
