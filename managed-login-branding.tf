@@ -4,11 +4,10 @@ resource "awscc_cognito_managed_login_branding" "branding" {
   for_each = var.enabled && var.managed_login_branding_enabled ? var.managed_login_branding : {}
 
   user_pool_id = local.user_pool_id
-  # Support both client IDs and client names with proper validation
-  # AWS Cognito client IDs are 26-character alphanumeric strings (A-Z, a-z, 0-9 only)
-  # If the input is exactly 26 characters and alphanumeric, treat it as a literal client ID
-  # Otherwise, look it up in the client name map (will fail if not found)
-  client_id = can(regex("^[a-zA-Z0-9]{26}$", each.value.client_id)) ? each.value.client_id : local.client_name_to_id_map[each.value.client_id]
+  # Support both client IDs and client names with proper resolution
+  # Try to look up the value in the client name map first
+  # If not found, treat it as a literal client ID
+  client_id = lookup(local.client_name_to_id_map, each.value.client_id, each.value.client_id)
 
   # Assets configuration for branding images
   dynamic "assets" {
