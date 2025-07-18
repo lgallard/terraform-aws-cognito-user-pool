@@ -11,12 +11,10 @@ output "user_pool_arn" {
 output "user_pool_domain" {
   description = "The domain of the user pool"
   value       = var.domain_name
-}
 
 output "hosted_ui_url" {
   description = "The hosted UI URL"
   value       = var.domain_name != "" ? "https://${var.domain_name}.auth.${var.aws_region}.amazoncognito.com/login" : null
-}
 
 output "managed_login_branding" {
   description = "The managed login branding configuration"

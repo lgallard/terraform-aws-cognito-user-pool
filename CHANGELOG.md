@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [1.2.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.1.0...1.2.0) (2025-07-14)
+
+
+### Features
+
+* add support for managed login branding ([#212](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/212)) ([2fc7195](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/2fc7195c4367125ab316696bed7e30da40b72dfd))
+
 ## [1.1.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.0.1...1.1.0) (2025-07-10)
 
 

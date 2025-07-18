@@ -156,11 +156,13 @@ output "managed_login_branding_details" {
 # Backward compatibility - keep existing outputs
 output "managed_login_branding" {
   description = "Map of managed login branding configurations (deprecated - use managed_login_branding_details)"
+
   value       = local.managed_login_branding_map
 }
 
 output "managed_login_branding_ids" {
   description = "Map of managed login branding IDs (deprecated - use managed_login_branding_details.ids)"
+
   value = var.enabled && var.managed_login_branding_enabled ? {
     for k, v in awscc_cognito_managed_login_branding.branding : k => v.managed_login_branding_id
   } : {}
