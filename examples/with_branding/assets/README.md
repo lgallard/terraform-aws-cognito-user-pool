@@ -28,7 +28,7 @@ This directory should contain the branding assets referenced in the example:
 ### Color Modes
 - `LIGHT` - Assets for light theme
 - `DARK` - Assets for dark theme  
-- `DYNAMIC` - Assets that adapt to browser preference
+- `BROWSER_ADAPTIVE` - Assets that adapt to browser preference
 
 ## Quick Start - Generate Sample Assets
 

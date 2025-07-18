@@ -79,11 +79,11 @@ Cognito supports various asset categories:
 
 | Category | Description | Color Modes |
 |----------|-------------|-------------|
-| `FORM_LOGO` | Logo on login form | LIGHT, DARK, DYNAMIC |
-| `PAGE_BACKGROUND` | Page background | LIGHT, DARK, DYNAMIC |
-| `FAVICON_ICO` | Browser favicon | DYNAMIC |
-| `PAGE_HEADER_LOGO` | Header logo | LIGHT, DARK, DYNAMIC |
-| `PAGE_FOOTER_LOGO` | Footer logo | LIGHT, DARK, DYNAMIC |
+| `FORM_LOGO` | Logo on login form | LIGHT, DARK, BROWSER_ADAPTIVE |
+| `PAGE_BACKGROUND` | Page background | LIGHT, DARK, BROWSER_ADAPTIVE |
+| `FAVICON_ICO` | Browser favicon | BROWSER_ADAPTIVE |
+| `PAGE_HEADER_LOGO` | Header logo | LIGHT, DARK, BROWSER_ADAPTIVE |
+| `PAGE_FOOTER_LOGO` | Footer logo | LIGHT, DARK, BROWSER_ADAPTIVE |
 
 ## Outputs
 
