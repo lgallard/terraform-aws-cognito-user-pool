@@ -4,7 +4,12 @@ resource "awscc_cognito_managed_login_branding" "branding" {
   for_each = var.enabled && var.managed_login_branding_enabled ? var.managed_login_branding : {}
 
   user_pool_id = local.user_pool_id
-  client_id    = lookup(each.value, "client_id", null)
+  # Support both client IDs and client names
+  # If client_id looks like a name (alphanumeric with dashes/underscores), try to resolve it from the client map
+  # Otherwise, use it as a literal client ID
+  client_id = can(regex("^[a-zA-Z0-9_-]+$", each.value.client_id)) && !can(regex("^[a-f0-9]{26}$", each.value.client_id)) ? 
+    lookup(local.client_name_to_id_map, each.value.client_id, each.value.client_id) : 
+    each.value.client_id
 
   # Assets configuration for branding images
   assets = lookup(each.value, "assets", [])
@@ -24,6 +29,11 @@ resource "awscc_cognito_managed_login_branding" "branding" {
 }
 
 locals {
+  # Create a map of client names to client IDs for branding lookups
+  client_name_to_id_map = var.enabled ? {
+    for client in aws_cognito_user_pool_client.client : client.name => client.id
+  } : {}
+  
   # Create a map of branding configurations for outputs
   managed_login_branding_map = var.enabled && var.managed_login_branding_enabled ? {
     for k, v in awscc_cognito_managed_login_branding.branding : k => {
