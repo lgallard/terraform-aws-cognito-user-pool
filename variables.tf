@@ -777,11 +777,11 @@ variable "managed_login_branding" {
     condition = alltrue([
       for config in values(var.managed_login_branding) : alltrue([
         for asset in lookup(config, "assets", []) : contains([
-          "LIGHT", "DARK", "BROWSER_ADAPTIVE"
+          "LIGHT", "DARK", "BROWSER_ADAPTIVE", "DYNAMIC"
         ], asset.color_mode)
       ])
     ])
-    error_message = "Invalid color_mode. Must be one of: LIGHT, DARK, BROWSER_ADAPTIVE"
+    error_message = "Invalid color_mode. Must be one of: LIGHT, DARK, BROWSER_ADAPTIVE, DYNAMIC"
 
   }
 
