@@ -46,12 +46,12 @@ echo "📝 Creating background.svg (1920x1080px, gradient)..."
 cat > background.svg << 'EOF'
 <svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#007bff;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#0d6efd;stop-opacity:1" />
     </linearGradient>
   </defs>
-  <rect width="1920" height="1080" fill="url(#gradient)"/>
+  <rect width="1920" height="1080" fill="url(#grad1)"/>
 </svg>
 EOF
 
