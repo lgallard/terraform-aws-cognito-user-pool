@@ -5,14 +5,21 @@ resource "awscc_cognito_managed_login_branding" "branding" {
 
   user_pool_id = local.user_pool_id
   # Support both client IDs and client names
-  # If client_id looks like a name (alphanumeric with dashes/underscores), try to resolve it from the client map
-  # Otherwise, use it as a literal client ID
-  client_id = can(regex("^[a-zA-Z0-9_-]+$", each.value.client_id)) && !can(regex("^[a-zA-Z0-9]{26}$", each.value.client_id)) ? 
-    lookup(local.client_name_to_id_map, each.value.client_id, each.value.client_id) : 
-    each.value.client_id
+  # First check if client_id exists in the client name map (indicating it's a name)
+  # If it does, use the mapped ID; otherwise, treat it as a literal client ID
+  client_id = lookup(local.client_name_to_id_map, each.value.client_id, each.value.client_id)
 
   # Assets configuration for branding images
-  assets = lookup(each.value, "assets", [])
+  dynamic "assets" {
+    for_each = lookup(each.value, "assets", [])
+    content {
+      bytes       = assets.value.bytes
+      category    = assets.value.category
+      color_mode  = assets.value.color_mode
+      extension   = assets.value.extension
+      resource_id = lookup(assets.value, "resource_id", null)
+    }
+  }
 
   # Settings as JSON for advanced branding configuration
   settings = lookup(each.value, "settings", null)
