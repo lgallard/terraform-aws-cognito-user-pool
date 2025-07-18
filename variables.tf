@@ -764,7 +764,7 @@ variable "managed_login_branding" {
     condition = alltrue([
       for config in values(var.managed_login_branding) : alltrue([
         for asset in lookup(config, "assets", []) : contains([
-          "FORM_LOGO", "PAGE_BACKGROUND", "FAVICON_ICO", 
+          "FORM_LOGO", "PAGE_BACKGROUND", "FAVICON_ICO",
           "PAGE_HEADER_LOGO", "PAGE_FOOTER_LOGO", "EMAIL_GRAPHIC",
           "SMS_GRAPHIC", "AUTH_APP_GRAPHIC", "PASSWORD_GRAPHIC", "PASSKEY_GRAPHIC"
         ], asset.category)

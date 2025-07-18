@@ -147,9 +147,9 @@ output "managed_login_branding_details" {
     ids = {
       for k, v in awscc_cognito_managed_login_branding.branding : k => v.managed_login_branding_id
     }
-  } : {
+    } : {
     configurations = {}
-    ids           = {}
+    ids            = {}
   }
 }
 
