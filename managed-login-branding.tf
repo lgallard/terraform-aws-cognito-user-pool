@@ -7,7 +7,7 @@ resource "awscc_cognito_managed_login_branding" "branding" {
   # Support both client IDs and client names
   # If client_id looks like a name (alphanumeric with dashes/underscores), try to resolve it from the client map
   # Otherwise, use it as a literal client ID
-  client_id = can(regex("^[a-zA-Z0-9_-]+$", each.value.client_id)) && !can(regex("^[a-f0-9]{26}$", each.value.client_id)) ? 
+  client_id = can(regex("^[a-zA-Z0-9_-]+$", each.value.client_id)) && !can(regex("^[a-zA-Z0-9]{26}$", each.value.client_id)) ? 
     lookup(local.client_name_to_id_map, each.value.client_id, each.value.client_id) : 
     each.value.client_id
 

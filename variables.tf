@@ -799,7 +799,7 @@ variable "managed_login_branding" {
   validation {
     condition = alltrue([
       for config in values(var.managed_login_branding) : alltrue([
-        for asset in lookup(config, "assets", []) : length(asset.bytes) <= 2796202 # 2MB base64 encoded (2MB * 4/3)
+        for asset in lookup(config, "assets", []) : length(asset.bytes) <= 2796203 # 2MB base64 encoded (2MB * 4/3)
       ])
     ])
     error_message = "Asset file size must not exceed 2MB when base64 encoded"
