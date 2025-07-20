@@ -54,7 +54,7 @@ func TestUserPoolTierValidation(t *testing.T) {
 			t.Parallel()
 
 			terraformOptions := &terraform.Options{
-				TerraformDir: helpers.GetModulePath(),
+				TerraformDir: helpers.GetFixturePath("validation-test"),
 				Vars: map[string]interface{}{
 					"user_pool_name": helpers.GenerateUniqueUserPoolName(t, tc.name),
 					"user_pool_tier": tc.userPoolTier,
@@ -105,7 +105,7 @@ func TestRequiredVariables(t *testing.T) {
 			t.Parallel()
 
 			terraformOptions := &terraform.Options{
-				TerraformDir: helpers.GetModulePath(),
+				TerraformDir: helpers.GetFixturePath("validation-test"),
 				Vars:         tc.vars,
 				NoColor:      true,
 			}
@@ -170,7 +170,7 @@ func TestPasswordPolicyValidation(t *testing.T) {
 			t.Parallel()
 
 			terraformOptions := &terraform.Options{
-				TerraformDir: helpers.GetModulePath(),
+				TerraformDir: helpers.GetFixturePath("validation-test"),
 				Vars: map[string]interface{}{
 					"user_pool_name":  helpers.GenerateUniqueUserPoolName(t, tc.name),
 					"password_policy": tc.passwordPolicy,
@@ -226,7 +226,7 @@ func TestEnabledFlagValidation(t *testing.T) {
 			t.Parallel()
 
 			terraformOptions := &terraform.Options{
-				TerraformDir: helpers.GetModulePath(),
+				TerraformDir: helpers.GetFixturePath("validation-test"),
 				Vars: map[string]interface{}{
 					"user_pool_name": helpers.GenerateUniqueUserPoolName(t, tc.name),
 					"enabled":        tc.enabled,
