@@ -57,13 +57,13 @@ module "aws_cognito_user_pool" {
         {
           bytes      = filebase64("${path.module}/assets/background.svg")
           category   = "PAGE_BACKGROUND"
-          color_mode = "BROWSER_ADAPTIVE"
+          color_mode = "DYNAMIC"
           extension  = "SVG"
         },
         {
           bytes      = filebase64("${path.module}/assets/favicon.svg")
           category   = "FAVICON_ICO"
-          color_mode = "BROWSER_ADAPTIVE"
+          color_mode = "DYNAMIC"
           extension  = "SVG"
         }
       ]
