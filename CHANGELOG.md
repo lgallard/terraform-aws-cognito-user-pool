@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [1.4.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.3.0...1.4.0) (2025-07-20)
+
+
+### Features
+
+* Add comprehensive testing framework with Terratest ([#228](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/228)) ([14903b0](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/14903b0b476e969ce62e1db50c64cbeac1ad2cb1))
+
 ## [1.3.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.2.0...1.3.0) (2025-07-18)
 
 
