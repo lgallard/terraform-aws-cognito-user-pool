@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [1.4.2](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.4.1...1.4.2) (2025-07-20)
+
+
+### Bug Fixes
+
+* **examples:** improve with_branding example configuration and assets ([#238](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/238)) ([2616bc9](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/2616bc9c0f754d3f9ad7a428746651f759d665ab))
+
 ## [1.4.1](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.4.0...1.4.1) (2025-07-20)
 
 
