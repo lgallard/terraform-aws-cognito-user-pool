@@ -1,0 +1,205 @@
+name: Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  AWS_DEFAULT_REGION: us-east-1
+
+jobs:
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          cache-dependency-path: test/go.sum
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.6.0'
+
+      - name: Go mod download
+        working-directory: test
+        run: go mod download
+
+      - name: Run unit tests
+        working-directory: test
+        run: |
+          go test -v -timeout 10m -run TestUserPoolTierValidation ./unit/
+          go test -v -timeout 10m -run TestRequiredVariables ./unit/
+          go test -v -timeout 10m -run TestPasswordPolicyValidation ./unit/
+          go test -v -timeout 10m -run TestEnabledFlagValidation ./unit/
+          go test -v -timeout 10m -run TestConditionalResourceCreation ./unit/
+          go test -v -timeout 10m -run TestClientConfiguration ./unit/
+          go test -v -timeout 10m -run TestDomainConfiguration ./unit/
+          go test -v -timeout 10m -run TestMFAConfiguration ./unit/
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    needs: unit-tests
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'integration-test'))
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          cache-dependency-path: test/go.sum
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.6.0'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+
+      - name: Go mod download
+        working-directory: test
+        run: go mod download
+
+      - name: Run integration tests - Examples
+        working-directory: test
+        run: |
+          go test -v -timeout 15m -run TestSimpleExample ./integration/
+          go test -v -timeout 15m -run TestCompleteExample ./integration/
+          go test -v -timeout 15m -run TestEmailMFAExample ./integration/
+          go test -v -timeout 15m -run TestSimpleExtendedExample ./integration/
+          go test -v -timeout 15m -run TestWithBrandingExample ./integration/
+
+      - name: Run integration tests - Core Functionality
+        working-directory: test
+        run: |
+          go test -v -timeout 15m -run TestBasicUserPoolCreation ./integration/
+          go test -v -timeout 15m -run TestUserPoolWithClients ./integration/
+          go test -v -timeout 15m -run TestUserPoolWithDomain ./integration/
+          go test -v -timeout 15m -run TestUserPoolWithPasswordPolicy ./integration/
+          go test -v -timeout 15m -run TestUserPoolWithMFA ./integration/
+          go test -v -timeout 15m -run TestUserPoolWithUserGroups ./integration/
+          go test -v -timeout 15m -run TestUserPoolDisabled ./integration/
+
+      - name: Run integration tests - Security
+        working-directory: test
+        run: |
+          go test -v -timeout 15m -run TestMFASecurityConfigurations ./integration/
+          go test -v -timeout 15m -run TestPasswordPolicySecurityRequirements ./integration/
+          go test -v -timeout 15m -run TestAccountTakeoverPrevention ./integration/
+          go test -v -timeout 15m -run TestUserPoolSecurityAttributes ./integration/
+          go test -v -timeout 15m -run TestClientSecuritySettings ./integration/
+          go test -v -timeout 15m -run TestAdvancedSecurityFeatures ./integration/
+
+  example-validation:
+    name: Example Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    strategy:
+      matrix:
+        example: [simple, complete, email_mfa, simple_extended, with_branding]
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.6.0'
+
+      - name: Terraform fmt check
+        working-directory: examples/${{ matrix.example }}
+        run: terraform fmt -check
+
+      - name: Terraform init
+        working-directory: examples/${{ matrix.example }}
+        run: terraform init
+
+      - name: Terraform validate
+        working-directory: examples/${{ matrix.example }}
+        run: terraform validate
+
+      - name: Terraform plan
+        working-directory: examples/${{ matrix.example }}
+        run: terraform plan -var="user_pool_name=test-${{ matrix.example }}-${{ github.run_number }}"
+
+  destruction-tests:
+    name: Resource Destruction Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: integration-tests
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'destruction-test'))
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          cache-dependency-path: test/go.sum
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.6.0'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+
+      - name: Go mod download
+        working-directory: test
+        run: go mod download
+
+      - name: Run destruction tests
+        working-directory: test
+        run: go test -v -timeout 30m -run TestAllExamplesResourceDestruction ./integration/
+
+  test-summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests, example-validation, destruction-tests]
+    if: always()
+    
+    steps:
+      - name: Test Results Summary
+        run: |
+          echo "## Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "| Test Suite | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Unit Tests | ${{ needs.unit-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Integration Tests | ${{ needs.integration-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Example Validation | ${{ needs.example-validation.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Destruction Tests | ${{ needs.destruction-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ needs.unit-tests.result }}" == "success" && 
+                "${{ needs.example-validation.result }}" == "success" ]]; then
+            echo "✅ Core tests passed successfully!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Some tests failed. Please check the logs." >> $GITHUB_STEP_SUMMARY
+          fi
