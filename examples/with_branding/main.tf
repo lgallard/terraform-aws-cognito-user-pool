@@ -40,7 +40,7 @@ module "aws_cognito_user_pool" {
   managed_login_branding_enabled = var.enable_branding
   managed_login_branding = var.enable_branding ? {
     "main" = {
-      client_id = "app-client-web"  # Reference client by name
+      client_id = "app-client-web" # Reference client by name
       assets = [
         {
           bytes      = filebase64("${path.module}/assets/logo-light.svg")
