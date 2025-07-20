@@ -139,13 +139,13 @@ jobs:
       - name: Terraform plan
         working-directory: examples/${{ matrix.example }}
         run: |
-          # Different examples use different variable names
-          if [ "${{ matrix.example }}" = "simple" ] || [ "${{ matrix.example }}" = "email_mfa" ]; then
-            # Simple and email_mfa examples don't have user_pool_name variable
-            terraform plan
-          else
-            # Other examples use user_pool_name variable
+          # Only with_branding example has user_pool_name variable
+          if [ "${{ matrix.example }}" = "with_branding" ]; then
+            # with_branding example accepts user_pool_name variable
             terraform plan -var="user_pool_name=test-${{ matrix.example }}-${{ github.run_number }}"
+          else
+            # All other examples use hardcoded user pool names
+            terraform plan
           fi
 
   destruction-tests:
