@@ -1,0 +1,34 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard"
+  ],
+  "major": {
+    "dependencyDashboardApproval": true
+  },
+  "packageRules": [
+    {
+      "managers": ["terraform"],
+      "matchPackageNames": ["terraform"],
+      "enabled": true,
+      "automerge": false
+    },
+    {
+      "matchDatasources": ["terraform-provider"],
+      "enabled": true,
+      "automerge": false
+    },
+    {
+      "matchDatasources": ["terraform-module"],
+      "enabled": true,
+      "automerge": false
+    },
+    {
+      "managers": ["terraform"],
+      "matchPackagePatterns": ["^hashicorp/terraform$"],
+      "enabled": true,
+      "automerge": false
+    }
+  ]
+}
