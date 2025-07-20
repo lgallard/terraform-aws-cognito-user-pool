@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [1.5.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.4.2...1.5.0) (2025-07-20)
+
+
+### Features
+
+* add renovate dependency management ([#240](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/240)) ([0eeb896](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/0eeb896259ee83bb8548309c919de38f8dddaec9))
+
 ## [1.4.2](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.4.1...1.4.2) (2025-07-20)
 
 
