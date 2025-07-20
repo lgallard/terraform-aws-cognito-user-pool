@@ -9,26 +9,38 @@
   },
   "packageRules": [
     {
-      "managers": ["terraform"],
-      "matchPackageNames": ["terraform"],
+      "matchManagers": [
+        "terraform"
+      ],
+      "matchPackageNames": [
+        "terraform"
+      ],
       "enabled": true,
       "automerge": false
     },
     {
-      "matchDatasources": ["terraform-provider"],
+      "matchDatasources": [
+        "terraform-provider"
+      ],
       "enabled": true,
       "automerge": false
     },
     {
-      "matchDatasources": ["terraform-module"],
+      "matchDatasources": [
+        "terraform-module"
+      ],
       "enabled": true,
       "automerge": false
     },
     {
-      "managers": ["terraform"],
-      "matchPackagePatterns": ["^hashicorp/terraform$"],
+      "matchManagers": [
+        "terraform"
+      ],
       "enabled": true,
-      "automerge": false
+      "automerge": false,
+      "matchPackageNames": [
+        "/^hashicorp/terraform$/"
+      ]
     }
   ]
 }
