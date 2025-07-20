@@ -73,9 +73,9 @@ module "aws_cognito_user_pool" {
           extension  = "SVG"
         },
       ]
-# Use AWS default values for styling, just custom assets
+      # Use AWS default values for styling, just custom assets
       use_cognito_provided_values = true
-      return_merged_resources = true
+      return_merged_resources     = true
     }
   } : {}
 
