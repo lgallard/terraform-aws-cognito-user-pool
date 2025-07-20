@@ -100,5 +100,10 @@ func GetOutputAsString(t *testing.T, terraformOptions *terraform.Options, output
 
 // GetOutputAsMap gets a Terraform output as map
 func GetOutputAsMap(t *testing.T, terraformOptions *terraform.Options, outputName string) map[string]interface{} {
-	return terraform.OutputMap(t, terraformOptions, outputName)
+	outputMap := terraform.OutputMap(t, terraformOptions, outputName)
+	result := make(map[string]interface{})
+	for k, v := range outputMap {
+		result[k] = v
+	}
+	return result
 }

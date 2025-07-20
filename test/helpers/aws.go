@@ -57,11 +57,11 @@ func ValidateUserPoolClient(t *testing.T, client *cognitoidentityprovider.Cognit
 
 // ValidateUserPoolDomain checks if a user pool domain exists
 func ValidateUserPoolDomain(t *testing.T, client *cognitoidentityprovider.CognitoIdentityProvider, domain string) *cognitoidentityprovider.DomainDescriptionType {
-	input := &cognitoidentityprovider.DescribeDomainInput{
+	input := &cognitoidentityprovider.DescribeUserPoolDomainInput{
 		Domain: aws.String(domain),
 	}
 	
-	result, err := client.DescribeDomain(input)
+	result, err := client.DescribeUserPoolDomain(input)
 	require.NoError(t, err)
 	require.NotNil(t, result.DomainDescription)
 	
