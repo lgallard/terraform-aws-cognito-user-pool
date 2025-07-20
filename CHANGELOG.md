@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [1.4.1](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.4.0...1.4.1) (2025-07-20)
+
+
+### Bug Fixes
+
+* add documentation for color_mode validation requirements ([#236](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/236)) ([2138649](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/2138649db5f0cdf56df2ac66dfb661cd6a7b1a5a))
+
 ## [1.4.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.3.0...1.4.0) (2025-07-20)
 
 
