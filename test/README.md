@@ -428,4 +428,4 @@ When adding tests:
 - **Terraform**: Keep compatible with minimum version in `versions.tf`
 - **AWS Provider**: Test with latest and minimum supported versions
 - **Go**: Use stable Go version (currently 1.21)
-- **Terratest**: Keep updated for latest features and bug fixes
+- **Terratest**: Keep updated for latest features and bug fixes# Integration test trigger
