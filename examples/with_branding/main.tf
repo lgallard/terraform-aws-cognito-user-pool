@@ -44,6 +44,18 @@ module "aws_cognito_user_pool" {
       assets = [
         {
           bytes      = filebase64("${path.module}/assets/logo-light.svg")
+          category   = "PAGE_HEADER_LOGO"
+          color_mode = "LIGHT"
+          extension  = "SVG"
+        },
+        {
+          bytes      = filebase64("${path.module}/assets/logo-dark.svg")
+          category   = "PAGE_HEADER_LOGO"
+          color_mode = "DARK"
+          extension  = "SVG"
+        },
+        {
+          bytes      = filebase64("${path.module}/assets/logo-light.svg")
           category   = "FORM_LOGO"
           color_mode = "LIGHT"
           extension  = "SVG"
@@ -60,36 +72,10 @@ module "aws_cognito_user_pool" {
           color_mode = "DYNAMIC"
           extension  = "SVG"
         },
-        {
-          bytes      = filebase64("${path.module}/assets/favicon.svg")
-          category   = "FAVICON_ICO"
-          color_mode = "DYNAMIC"
-          extension  = "SVG"
-        }
       ]
-      settings = jsonencode({
-        "colorScheme" = {
-          "light" = {
-            "primary"    = "#007bff"
-            "secondary"  = "#6c757d"
-            "background" = "#ffffff"
-          }
-          "dark" = {
-            "primary"    = "#0d6efd"
-            "secondary"  = "#adb5bd"
-            "background" = "#212529"
-          }
-        }
-        "typography" = {
-          "fontFamily" = "Arial, sans-serif"
-          "fontSize"   = "16px"
-        }
-        "layout" = {
-          "borderRadius" = "8px"
-          "spacing"      = "16px"
-        }
-      })
-      return_merged_resources = true
+      # Use AWS default values for styling, just custom assets
+      use_cognito_provided_values = true
+      return_merged_resources     = true
     }
   } : {}
 
