@@ -7,12 +7,38 @@ on:
 
 jobs:
   release-please:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       release_created: ${{ steps.release_please.outputs.release_created }}
     steps:
-      - uses: googleapis/release-please-action@v4
+      - uses: googleapis/release-please-action@a02a34c4d625f9be7cb89156071d8567266a2445 # v4.2.0
         id: release_please
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           config-file: .release-please-config.json
+
+      - name: Remove v-prefix from release title
+        if: ${{ steps.release_please.outputs.release_created }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the release tag and current title
+          RELEASE_TAG="${{ steps.release_please.outputs.tag_name }}"
+          echo "Release tag: $RELEASE_TAG"
+
+          # Get current release info
+          CURRENT_RELEASE=$(gh release view "$RELEASE_TAG" --json name,tagName --repo ${{ github.repository }})
+          CURRENT_NAME=$(echo "$CURRENT_RELEASE" | jq -r '.name')
+          echo "Current release name: $CURRENT_NAME"
+
+          # Check if the release title has v-prefix but tag doesn't
+          if [[ "$CURRENT_NAME" =~ ^v[0-9] ]] && [[ ! "$RELEASE_TAG" =~ ^v[0-9] ]]; then
+            # Remove v-prefix from release title to match the clean tag
+            NEW_NAME="${CURRENT_NAME#v}"
+            echo "Updating release title from '$CURRENT_NAME' to '$NEW_NAME'"
+
+            gh release edit "$RELEASE_TAG" --title "$NEW_NAME" --repo ${{ github.repository }}
+            echo "✅ Release title updated successfully"
+          else
+            echo "ℹ️ No v-prefix found in release title or tag already has v-prefix - no changes needed"
+          fi
