@@ -4,8 +4,7 @@
       "release-type": "terraform-module",
       "changelog-path": "CHANGELOG.md",
       "include-v-in-tag": false,
-      "include-component-in-tag": false
+      "tag-separator": ""
     }
-  },
-  "pull-request-title-pattern": "chore: release ${version}"
+  }
 }
