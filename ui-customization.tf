@@ -1,5 +1,5 @@
 locals {
-  client_ids_map = { for c in aws_cognito_user_pool_client.client : c.name => c.id }
+  client_ids_map = { for c in values(aws_cognito_user_pool_client.client) : c.name => c.id }
 
   client_ui_customizations = { for c in var.clients : c.name => {
     css        = lookup(c, "ui_customization_css", null)

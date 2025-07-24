@@ -66,12 +66,12 @@ output "domain_app_version" {
 #
 output "client_ids" {
   description = "The ids of the user pool clients"
-  value       = var.enabled ? aws_cognito_user_pool_client.client.*.id : null
+  value       = var.enabled ? values(aws_cognito_user_pool_client.client)[*].id : null
 }
 
 output "client_secrets" {
   description = " The client secrets of the user pool clients"
-  value       = var.enabled ? aws_cognito_user_pool_client.client.*.client_secret : null
+  value       = var.enabled ? values(aws_cognito_user_pool_client.client)[*].client_secret : null
   sensitive   = true
 }
 
