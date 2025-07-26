@@ -29,8 +29,10 @@ resource "awscc_cognito_managed_login_branding" "branding" {
 
 locals {
   # Create a map of client names to client IDs for branding lookups
+  # Handle null/empty names by using the for_each key as fallback
   client_name_to_id_map = var.enabled ? {
-    for client in values(aws_cognito_user_pool_client.client) : client.name => client.id
+    for k, client in aws_cognito_user_pool_client.client : 
+    coalesce(client.name, k) => client.id
   } : {}
   
   # Create a map of branding configurations for outputs

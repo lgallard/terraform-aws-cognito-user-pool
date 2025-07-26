@@ -1,9 +1,17 @@
 locals {
-  client_ids_map = { for c in values(aws_cognito_user_pool_client.client) : c.name => c.id }
+  # Create a map of client names to client IDs for UI customization lookups
+  # Handle null/empty names by using the for_each key as fallback
+  client_ids_map = { 
+    for k, c in aws_cognito_user_pool_client.client : 
+    coalesce(c.name, k) => c.id 
+  }
 
-  client_ui_customizations = { for c in var.clients : c.name => {
-    css        = lookup(c, "ui_customization_css", null)
-    image_file = lookup(c, "ui_customization_image_file", null)
+  # Create UI customizations map with robust key generation to handle null/duplicate names
+  client_ui_customizations = { 
+    for idx, c in var.clients : 
+    "${coalesce(lookup(c, "name", null), "client-${idx}")}" => {
+      css        = lookup(c, "ui_customization_css", null)
+      image_file = lookup(c, "ui_customization_image_file", null)
     } if lookup(c, "ui_customization_css", null) != null || lookup(c, "ui_customization_image_file", null) != null
   }
 }
