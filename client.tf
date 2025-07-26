@@ -1,29 +1,33 @@
 resource "aws_cognito_user_pool_client" "client" {
-  count                                         = var.enabled ? length(local.clients) : 0
-  allowed_oauth_flows                           = lookup(element(local.clients, count.index), "allowed_oauth_flows", null)
-  allowed_oauth_flows_user_pool_client          = lookup(element(local.clients, count.index), "allowed_oauth_flows_user_pool_client", null)
-  allowed_oauth_scopes                          = lookup(element(local.clients, count.index), "allowed_oauth_scopes", null)
-  auth_session_validity                         = lookup(element(local.clients, count.index), "auth_session_validity", null)
-  callback_urls                                 = lookup(element(local.clients, count.index), "callback_urls", null)
-  default_redirect_uri                          = lookup(element(local.clients, count.index), "default_redirect_uri", null)
-  explicit_auth_flows                           = lookup(element(local.clients, count.index), "explicit_auth_flows", null)
-  generate_secret                               = lookup(element(local.clients, count.index), "generate_secret", null)
-  logout_urls                                   = lookup(element(local.clients, count.index), "logout_urls", null)
-  name                                          = lookup(element(local.clients, count.index), "name", null)
-  read_attributes                               = lookup(element(local.clients, count.index), "read_attributes", null)
-  access_token_validity                         = lookup(element(local.clients, count.index), "access_token_validity", null)
-  id_token_validity                             = lookup(element(local.clients, count.index), "id_token_validity", null)
-  refresh_token_validity                        = lookup(element(local.clients, count.index), "refresh_token_validity", null)
-  supported_identity_providers                  = lookup(element(local.clients, count.index), "supported_identity_providers", null)
-  enable_propagate_additional_user_context_data = lookup(element(local.clients, count.index), "enable_propagate_additional_user_context_data", null)
-  prevent_user_existence_errors                 = lookup(element(local.clients, count.index), "prevent_user_existence_errors", null)
-  write_attributes                              = lookup(element(local.clients, count.index), "write_attributes", null)
-  enable_token_revocation                       = lookup(element(local.clients, count.index), "enable_token_revocation", null)
+  for_each = var.enabled ? {
+    for idx, client in local.clients : 
+    "${lookup(client, "name", "client")}_${idx}" => client
+  } : {}
+  
+  allowed_oauth_flows                           = lookup(each.value, "allowed_oauth_flows", null)
+  allowed_oauth_flows_user_pool_client          = lookup(each.value, "allowed_oauth_flows_user_pool_client", null)
+  allowed_oauth_scopes                          = lookup(each.value, "allowed_oauth_scopes", null)
+  auth_session_validity                         = lookup(each.value, "auth_session_validity", null)
+  callback_urls                                 = lookup(each.value, "callback_urls", null)
+  default_redirect_uri                          = lookup(each.value, "default_redirect_uri", null)
+  explicit_auth_flows                           = lookup(each.value, "explicit_auth_flows", null)
+  generate_secret                               = lookup(each.value, "generate_secret", null)
+  logout_urls                                   = lookup(each.value, "logout_urls", null)
+  name                                          = lookup(each.value, "name", null)
+  read_attributes                               = lookup(each.value, "read_attributes", null)
+  access_token_validity                         = lookup(each.value, "access_token_validity", null)
+  id_token_validity                             = lookup(each.value, "id_token_validity", null)
+  refresh_token_validity                        = lookup(each.value, "refresh_token_validity", null)
+  supported_identity_providers                  = lookup(each.value, "supported_identity_providers", null)
+  enable_propagate_additional_user_context_data = lookup(each.value, "enable_propagate_additional_user_context_data", null)
+  prevent_user_existence_errors                 = lookup(each.value, "prevent_user_existence_errors", null)
+  write_attributes                              = lookup(each.value, "write_attributes", null)
+  enable_token_revocation                       = lookup(each.value, "enable_token_revocation", null)
   user_pool_id                                  = local.user_pool_id
 
   # token_validity_units
   dynamic "token_validity_units" {
-    for_each = length(lookup(element(local.clients, count.index), "token_validity_units", {})) == 0 ? [] : [lookup(element(local.clients, count.index), "token_validity_units")]
+    for_each = length(lookup(each.value, "token_validity_units", {})) == 0 ? [] : [lookup(each.value, "token_validity_units")]
     content {
       access_token  = lookup(token_validity_units.value, "access_token", null)
       id_token      = lookup(token_validity_units.value, "id_token", null)
