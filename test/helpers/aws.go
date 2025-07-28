@@ -24,7 +24,7 @@ func GetCognitoClient(t *testing.T, region string) *cognitoidentityprovider.Cogn
 		Region: aws.String(region),
 	})
 	require.NoError(t, err)
-	
+
 	return cognitoidentityprovider.New(sess)
 }
 
@@ -33,11 +33,11 @@ func ValidateUserPoolExists(t *testing.T, client *cognitoidentityprovider.Cognit
 	input := &cognitoidentityprovider.DescribeUserPoolInput{
 		UserPoolId: aws.String(userPoolID),
 	}
-	
+
 	result, err := client.DescribeUserPool(input)
 	require.NoError(t, err)
 	require.NotNil(t, result.UserPool)
-	
+
 	return result.UserPool
 }
 
@@ -47,11 +47,11 @@ func ValidateUserPoolClient(t *testing.T, client *cognitoidentityprovider.Cognit
 		UserPoolId: aws.String(userPoolID),
 		ClientId:   aws.String(clientID),
 	}
-	
+
 	result, err := client.DescribeUserPoolClient(input)
 	require.NoError(t, err)
 	require.NotNil(t, result.UserPoolClient)
-	
+
 	return result.UserPoolClient
 }
 
@@ -60,11 +60,11 @@ func ValidateUserPoolDomain(t *testing.T, client *cognitoidentityprovider.Cognit
 	input := &cognitoidentityprovider.DescribeUserPoolDomainInput{
 		Domain: aws.String(domain),
 	}
-	
+
 	result, err := client.DescribeUserPoolDomain(input)
 	require.NoError(t, err)
 	require.NotNil(t, result.DomainDescription)
-	
+
 	return result.DomainDescription
 }
 
@@ -73,7 +73,7 @@ func ValidateUserPoolDestroyed(t *testing.T, client *cognitoidentityprovider.Cog
 	input := &cognitoidentityprovider.DescribeUserPoolInput{
 		UserPoolId: aws.String(userPoolID),
 	}
-	
+
 	_, err := client.DescribeUserPool(input)
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "UserPoolNotFound")

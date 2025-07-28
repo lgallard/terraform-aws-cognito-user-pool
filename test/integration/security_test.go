@@ -53,10 +53,10 @@ func TestMFASecurityConfigurations(t *testing.T) {
 
 			helpers.ApplyAndValidate(t, terraformOptions, func(t *testing.T, opts *terraform.Options) {
 				userPoolID := helpers.GetOutputAsString(t, opts, "id")
-				
+
 				client := helpers.GetCognitoClient(t, "us-east-1")
 				userPool := helpers.ValidateUserPoolExists(t, client, userPoolID)
-				
+
 				assert.NotNil(t, userPool.MfaConfiguration)
 				assert.Equal(t, tc.expectedMFA, *userPool.MfaConfiguration)
 			})
@@ -124,17 +124,17 @@ func TestPasswordPolicySecurityRequirements(t *testing.T) {
 
 			helpers.ApplyAndValidate(t, terraformOptions, func(t *testing.T, opts *terraform.Options) {
 				userPoolID := helpers.GetOutputAsString(t, opts, "id")
-				
+
 				client := helpers.GetCognitoClient(t, "us-east-1")
 				userPool := helpers.ValidateUserPoolExists(t, client, userPoolID)
-				
+
 				assert.NotNil(t, userPool.Policies)
 				assert.NotNil(t, userPool.Policies.PasswordPolicy)
-				
+
 				policy := userPool.Policies.PasswordPolicy
 				expectedLength := int64(tc.passwordPolicy["minimum_length"].(int))
 				assert.Equal(t, expectedLength, *policy.MinimumLength)
-				
+
 				assert.Equal(t, tc.passwordPolicy["require_lowercase"].(bool), *policy.RequireLowercase)
 				assert.Equal(t, tc.passwordPolicy["require_numbers"].(bool), *policy.RequireNumbers)
 				assert.Equal(t, tc.passwordPolicy["require_symbols"].(bool), *policy.RequireSymbols)
@@ -170,10 +170,10 @@ func TestAccountTakeoverPrevention(t *testing.T) {
 
 	helpers.ApplyAndValidate(t, terraformOptions, func(t *testing.T, opts *terraform.Options) {
 		userPoolID := helpers.GetOutputAsString(t, opts, "id")
-		
+
 		client := helpers.GetCognitoClient(t, "us-east-1")
 		userPool := helpers.ValidateUserPoolExists(t, client, userPoolID)
-		
+
 		// Validate account recovery settings
 		if userPool.AccountRecoverySetting != nil {
 			assert.NotNil(t, userPool.AccountRecoverySetting.RecoveryMechanisms)
@@ -199,10 +199,10 @@ func TestUserPoolSecurityAttributes(t *testing.T) {
 
 	helpers.ApplyAndValidate(t, terraformOptions, func(t *testing.T, opts *terraform.Options) {
 		userPoolID := helpers.GetOutputAsString(t, opts, "id")
-		
+
 		client := helpers.GetCognitoClient(t, "us-east-1")
 		userPool := helpers.ValidateUserPoolExists(t, client, userPoolID)
-		
+
 		// Validate auto verified attributes
 		if userPool.AutoVerifiedAttributes != nil {
 			autoVerified := make([]string, len(userPool.AutoVerifiedAttributes))
@@ -211,7 +211,7 @@ func TestUserPoolSecurityAttributes(t *testing.T) {
 			}
 			assert.Contains(t, autoVerified, "email")
 		}
-		
+
 		// Validate username attributes
 		if userPool.UsernameAttributes != nil {
 			usernameAttrs := make([]string, len(userPool.UsernameAttributes))
@@ -220,7 +220,7 @@ func TestUserPoolSecurityAttributes(t *testing.T) {
 			}
 			assert.Contains(t, usernameAttrs, "email")
 		}
-		
+
 		// Validate deletion protection
 		assert.NotNil(t, userPool.DeletionProtection)
 		assert.Equal(t, "ACTIVE", *userPool.DeletionProtection)
@@ -256,25 +256,25 @@ func TestClientSecuritySettings(t *testing.T) {
 
 	helpers.ApplyAndValidate(t, terraformOptions, func(t *testing.T, opts *terraform.Options) {
 		userPoolID := helpers.GetOutputAsString(t, opts, "id")
-		
+
 		client := helpers.GetCognitoClient(t, "us-east-1")
 		userPool := helpers.ValidateUserPoolExists(t, client, userPoolID)
 		assert.NotNil(t, userPool.Name)
-		
+
 		// Validate client security settings
 		clientsOutput := helpers.GetOutputAsMap(t, opts, "clients")
 		assert.Contains(t, clientsOutput, "secure_client")
-		
+
 		clientData := clientsOutput["secure_client"].(map[string]interface{})
 		clientID := clientData["id"].(string)
-		
+
 		userPoolClient := helpers.ValidateUserPoolClient(t, client, userPoolID, clientID)
-		
+
 		// Validate security settings
 		assert.Equal(t, "ENABLED", *userPoolClient.PreventUserExistenceErrors)
 		assert.True(t, *userPoolClient.EnableTokenRevocation)
 		assert.True(t, *userPoolClient.EnablePropagateAdditionalUserContextData)
-		
+
 		// Validate token validity periods
 		assert.Equal(t, int64(1), *userPoolClient.AccessTokenValidity)
 		assert.Equal(t, int64(30), *userPoolClient.RefreshTokenValidity)
@@ -303,15 +303,15 @@ func TestAdvancedSecurityFeatures(t *testing.T) {
 
 	helpers.ApplyAndValidate(t, terraformOptions, func(t *testing.T, opts *terraform.Options) {
 		userPoolID := helpers.GetOutputAsString(t, opts, "id")
-		
+
 		client := helpers.GetCognitoClient(t, "us-east-1")
 		userPool := helpers.ValidateUserPoolExists(t, client, userPoolID)
-		
+
 		// Validate advanced security mode
 		if userPool.UserPoolAddOns != nil {
 			assert.Equal(t, "ENFORCED", *userPool.UserPoolAddOns.AdvancedSecurityMode)
 		}
-		
+
 		// Validate device configuration
 		if userPool.DeviceConfiguration != nil {
 			assert.True(t, *userPool.DeviceConfiguration.ChallengeRequiredOnNewDevice)

@@ -8,7 +8,7 @@ This document outlines Terraform-specific development guidelines for the terrafo
 ### File Organization
 - **main.tf** - Primary Cognito User Pool resource definitions and locals
 - **variables.tf** - Input variable definitions with validation
-- **outputs.tf** - Output value definitions  
+- **outputs.tf** - Output value definitions
 - **versions.tf** - Provider version constraints
 - **client.tf** - Cognito User Pool client configurations
 - **domain.tf** - User pool domain configurations
@@ -33,7 +33,7 @@ This document outlines Terraform-specific development guidelines for the terrafo
 # Preferred: Using for_each
 resource "aws_cognito_user_pool_client" "this" {
   for_each = var.enabled ? var.clients : {}
-  
+
   name         = each.value.name
   user_pool_id = aws_cognito_user_pool.pool[0].id
   # ...
@@ -71,10 +71,10 @@ locals {
   # Resource creation conditions
   should_create_pool   = var.enabled && var.user_pool_name != null
   should_create_domain = local.should_create_pool && var.domain != null
-  
+
   # Data processing
   clients = concat(local.default_client, var.clients)
-  
+
   # Validation helpers
   mfa_requirements_met = var.mfa_configuration != null && var.software_token_mfa_configuration != null
 }
@@ -169,13 +169,13 @@ client_configurations = flatten([
 # Example: Creating multiple user pool clients
 resource "aws_cognito_user_pool_client" "this" {
   for_each = {
-    for idx, client in var.user_pool_clients : 
+    for idx, client in var.user_pool_clients :
     "${client.name}_${idx}" => client
   }
-  
+
   user_pool_id = aws_cognito_user_pool.pool[0].id
   name         = each.value.name
-  
+
   dynamic "explicit_auth_flows" {
     for_each = each.value.explicit_auth_flows
     content {
@@ -222,7 +222,7 @@ resource "aws_cognito_user_pool_client" "this" {
 # Example provider configuration
 terraform {
   required_version = ">= 1.0"
-  
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"

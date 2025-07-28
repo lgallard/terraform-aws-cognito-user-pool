@@ -22,29 +22,29 @@ type TerraformTestCase struct {
 // GetTerraformOptions creates standard Terraform options for testing
 func GetTerraformOptions(t *testing.T, testCase TerraformTestCase) *terraform.Options {
 	terraformVars := make(map[string]interface{})
-	
+
 	// Add default vars
 	for k, v := range GetDefaultVars(t, testCase.TestName) {
 		terraformVars[k] = v
 	}
-	
+
 	// Add test-specific vars
 	for k, v := range testCase.Vars {
 		terraformVars[k] = v
 	}
-	
+
 	options := &terraform.Options{
 		TerraformDir: testCase.ModulePath,
 		Vars:         terraformVars,
 		VarFiles:     testCase.VarFiles,
 		NoColor:      true,
 	}
-	
+
 	// Add backend configuration if provided
 	if len(testCase.BackendVars) > 0 {
 		options.BackendConfig = testCase.BackendVars
 	}
-	
+
 	return options
 }
 
@@ -74,9 +74,9 @@ func GetModulePath() string {
 // ApplyAndValidate applies Terraform and validates the output
 func ApplyAndValidate(t *testing.T, terraformOptions *terraform.Options, validation func(*testing.T, *terraform.Options)) {
 	defer terraform.Destroy(t, terraformOptions)
-	
+
 	terraform.InitAndApply(t, terraformOptions)
-	
+
 	if validation != nil {
 		validation(t, terraformOptions)
 	}
@@ -85,11 +85,11 @@ func ApplyAndValidate(t *testing.T, terraformOptions *terraform.Options, validat
 // PlanAndValidate runs terraform plan and validates the plan
 func PlanAndValidate(t *testing.T, terraformOptions *terraform.Options, expectedResourceCount int) {
 	terraform.Init(t, terraformOptions)
-	
+
 	planStruct := terraform.InitAndPlan(t, terraformOptions)
-	
+
 	resourceCount := terraform.GetResourceCount(t, planStruct)
-	require.Equal(t, expectedResourceCount, resourceCount.Add, 
+	require.Equal(t, expectedResourceCount, resourceCount.Add,
 		fmt.Sprintf("Expected %d resources to be added, but got %d", expectedResourceCount, resourceCount.Add))
 }
 

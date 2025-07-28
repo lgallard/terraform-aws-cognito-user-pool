@@ -235,7 +235,7 @@ func TestEnabledFlagValidation(t *testing.T) {
 			}
 
 			_, err := terraform.InitAndPlanE(t, terraformOptions)
-			
+
 			if tc.valid {
 				assert.NoError(t, err, "Unexpected validation error for enabled flag")
 			} else {

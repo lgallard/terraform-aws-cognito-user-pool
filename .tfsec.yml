@@ -1,0 +1,57 @@
+# TFSec configuration for Cognito User Pool security scanning
+# See https://aquasecurity.github.io/tfsec/latest/getting-started/configuration/
+
+# Severity levels: CRITICAL, HIGH, MEDIUM, LOW
+minimum_severity: MEDIUM
+
+# Include specific checks for Cognito and IAM
+include:
+  # Cognito specific checks
+  - AWS048  # Cognito User Pool should define at least one attribute
+  - AWS049  # Cognito User Pool should define MFA configuration
+  - AWS050  # Cognito User Pool domain should not use deprecated domain
+  - AWS051  # Cognito User Pool should define password policy
+  - AWS052  # Cognito User Pool client should not have secret
+  - AWS053  # Cognito User Pool should define schema
+
+  # IAM security checks
+  - AWS001  # S3 Bucket has an ACL defined which allows public read access
+  - AWS002  # S3 Bucket does not have logging enabled
+  - AWS003  # AWS Classic resource usage
+  - AWS004  # Use of plain HTTP
+  - AWS005  # Load balancer is exposed to the internet
+  - AWS062  # IAM policy document is overly permissive
+  - AWS063  # IAM managed policy allows * action
+  - AWS064  # IAM policy document allows * resource
+  - AWS065  # IAM policy document allows * principal
+  - AWS066  # IAM policy document allows root user
+  - AWS067  # IAM role allows assume role from all accounts
+  - AWS068  # IAM role or user policy allows all or contains wildcards
+
+# Exclude checks that are not relevant or too restrictive for modules
+exclude:
+  - AWS018  # Resource is not encrypted - allow module flexibility
+  - AWS019  # Resource does not have encryption enabled - allow module flexibility
+  - AWS020  # CloudTrail logging is not enabled - not relevant for Cognito modules
+  - AWS021  # CloudWatch Log Group does not have retention set - allow module flexibility
+  - AWS025  # API Gateway domain name uses outdated SSL/TLS - not relevant
+  - AWS026  # SQS queue policy is wildcard - not relevant for Cognito
+  - AWS027  # SQS queue should be encrypted - not relevant for Cognito
+
+# Custom severity overrides for Cognito-specific issues
+severity_overrides:
+  AWS049: HIGH     # MFA configuration is important for security
+  AWS051: HIGH     # Password policy is critical for identity security
+  AWS062: CRITICAL # Overly permissive IAM policies are critical in identity systems
+  AWS063: CRITICAL # Wildcard actions in IAM are critical security risks
+  AWS064: HIGH     # Wildcard resources in IAM are high risk
+  AWS065: HIGH     # Wildcard principals in IAM are high risk
+
+# Enable soft fail mode to prevent CI failures during initial setup
+soft_fail: false
+
+# Output format
+format: default
+
+# Custom checks directory (if any)
+custom_check_dir: ""

@@ -32,7 +32,7 @@ locals {
   client_name_to_id_map = var.enabled ? {
     for client in aws_cognito_user_pool_client.client : client.name => client.id
   } : {}
-  
+
   # Create a map of branding configurations for outputs
   managed_login_branding_map = var.enabled && var.managed_login_branding_enabled ? {
     for k, v in awscc_cognito_managed_login_branding.branding : k => {

@@ -14,7 +14,7 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -49,7 +49,7 @@ jobs:
     timeout-minutes: 45
     needs: unit-tests
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'integration-test'))
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -110,11 +110,11 @@ jobs:
     name: Example Validation
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    
+
     strategy:
       matrix:
         example: [simple, complete, email_mfa, simple_extended, with_branding]
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -150,7 +150,7 @@ jobs:
     timeout-minutes: 30
     needs: integration-tests
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'destruction-test'))
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -186,7 +186,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [unit-tests, integration-tests, example-validation, destruction-tests]
     if: always()
-    
+
     steps:
       - name: Test Results Summary
         run: |
@@ -197,8 +197,8 @@ jobs:
           echo "| Integration Tests | ${{ needs.integration-tests.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Example Validation | ${{ needs.example-validation.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Destruction Tests | ${{ needs.destruction-tests.result }} |" >> $GITHUB_STEP_SUMMARY
-          
-          if [[ "${{ needs.unit-tests.result }}" == "success" && 
+
+          if [[ "${{ needs.unit-tests.result }}" == "success" &&
                 "${{ needs.example-validation.result }}" == "success" ]]; then
             echo "✅ Core tests passed successfully!" >> $GITHUB_STEP_SUMMARY
           else

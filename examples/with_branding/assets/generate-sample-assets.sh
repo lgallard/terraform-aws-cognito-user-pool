@@ -15,7 +15,7 @@ cd "$(dirname "$0")"
 validate_file_size() {
     local file="$1"
     local max_size=2097152  # 2MB in bytes
-    
+
     if [[ -f "$file" ]]; then
         local file_size=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file" 2>/dev/null || echo "0")
         if [[ $file_size -gt $max_size ]]; then
@@ -83,7 +83,7 @@ echo "✅ Sample assets generated successfully!"
 echo ""
 echo "📋 Generated files:"
 echo "   - logo-light.svg (200x60px) - Light theme logo"
-echo "   - logo-dark.svg (200x60px) - Dark theme logo" 
+echo "   - logo-dark.svg (200x60px) - Dark theme logo"
 echo "   - background.svg (1920x1080px) - Background image"
 echo "   - favicon.svg (32x32px) - Browser favicon"
 echo ""
