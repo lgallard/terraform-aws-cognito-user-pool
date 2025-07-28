@@ -156,58 +156,81 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
-          # Optional: Add specific tools for running tests or linting
-          # allowed_tools: "Bash(npm run test),Bash(npm run lint),Bash(npm run typecheck)"
+          # Terraform-specific tools for validation and testing
+          allowed_tools: "Bash(terraform fmt -check),Bash(terraform validate),Bash(tflint),Bash(pre-commit run --all-files)"
 
-          # Dynamic prompt based on review mode
+          # Dynamic prompt based on review mode with Cognito User Pool-specific focus
           direct_prompt: |
+            You are reviewing a Terraform AWS Cognito User Pool module. Focus on identity and access management best practices.
+
             ${{ steps.parse-command.outputs.mode == 'hunt' && format('
-            🕵️ BUG HUNT MODE - Find potential issues quickly:
+            🕵️ BUG HUNT MODE - Find Cognito User Pool issues quickly:
             - Focus on critical bugs, security vulnerabilities, and performance issues
-            - Prioritize high-impact problems over style suggestions
+            - Prioritize identity/authentication security issues
+            - Check for improper resource configurations
+            - Validate MFA and password policy settings
+            - Review client configuration and auth flows
             - Be concise and actionable
-            - Provide clear, actionable feedback
             ') || '' }}
 
             ${{ steps.parse-command.outputs.mode == 'analyze' && format('
-            📊 ANALYSIS MODE - Deep technical analysis:
-            - Analyze architecture, patterns, and design decisions
-            - Evaluate code complexity and maintainability
-            - Assess test coverage and quality
-            - Provide strategic recommendations
-            - Consider long-term implications and scalability
+            📊 ANALYSIS MODE - Deep Cognito User Pool analysis:
+            - Analyze Terraform module architecture and patterns
+            - Evaluate resource organization and dependencies
+            - Assess backward compatibility and API design
+            - Review for_each vs count usage patterns
+            - Consider scalability and maintainability
+            - Validate input variable design and validation
+            - Check output value completeness
             ') || '' }}
 
             ${{ steps.parse-command.outputs.mode == 'security' && format('
-            🔒 SECURITY MODE - Security-focused review:
-            - Identify security vulnerabilities and compliance issues
-            - Check for proper authentication and authorization
-            - Validate input sanitization and output encoding
-            - Review encryption and key management
-            - Assess data protection and privacy concerns
+            🔒 SECURITY MODE - Cognito User Pool security review:
+            - Identity and access management security patterns
+            - User authentication and authorization flows
+            - Multi-factor authentication (MFA) configuration
+            - Password policies and account lockout settings
+            - Identity provider federation security
+            - Token expiration and refresh policies
+            - User pool client security configurations
+            - Data privacy and compliance (GDPR, CCPA)
+            - Encryption at rest and in transit
+            - IAM roles and permissions validation
             ') || '' }}
 
             ${{ steps.parse-command.outputs.mode == 'performance' && format('
-            ⚡ PERFORMANCE MODE - Performance optimization review:
-            - Identify performance bottlenecks and optimization opportunities
-            - Analyze resource usage and efficiency
-            - Check for memory leaks and scalability issues
-            - Review caching strategies and database queries
-            - Consider load testing and monitoring needs
+            ⚡ PERFORMANCE MODE - Cognito User Pool performance review:
+            - Resource provisioning efficiency
+            - Terraform state management optimization
+            - Module execution performance
+            - Resource dependency optimization
+            - Consider scaling implications
+            - Review resource creation patterns
+            - Validate conditional resource creation
             ') || '' }}
 
             ${{ steps.parse-command.outputs.mode == 'review' && format('
-            📝 STANDARD REVIEW MODE - Comprehensive code review:
-            - Code quality and best practices
-            - Potential bugs or issues
-            - Performance considerations
-            - Security concerns
-            - Test coverage and quality
-
+            📝 STANDARD REVIEW MODE - Comprehensive Cognito User Pool review:
+            
+            ## Core Focus Areas:
+            - **Infrastructure as Code**: Terraform best practices and module design
+            - **Identity Security**: Authentication flows, MFA, password policies
+            - **Schema Management**: Custom attributes and user data validation
+            - **Client Configuration**: App client settings and security
+            - **UI Customization**: Branding and user experience compliance
+            - **Federation**: Identity provider integration security
+            - **Compliance**: Data privacy and regulatory requirements
+            
+            ## Terraform Module Patterns:
+            - Use for_each over count for resource management
+            - Validate input variables appropriately
+            - Maintain backward compatibility
+            - Follow CLAUDE.md development guidelines
+            
             Focus areas: {0}
             Verbose output: {1}
-
-            Be constructive and helpful.
+            
+            Be constructive and helpful with specific Cognito User Pool context.
             ', steps.parse-command.outputs.focus, steps.parse-command.outputs.verbose) || '' }}
 
           # Use sticky comments for better UX
@@ -216,20 +239,28 @@ jobs:
       - name: Workflow Summary
         if: always()
         run: |
-          echo "## 🤖 Claude Code Review Summary" >> $GITHUB_STEP_SUMMARY
+          echo "## 🤖 Claude Code Review for Cognito User Pool Module" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Review Mode:** \`${{ steps.parse-command.outputs.mode }}\`" >> $GITHUB_STEP_SUMMARY
           echo "**Focus Areas:** \`${{ steps.parse-command.outputs.focus }}\`" >> $GITHUB_STEP_SUMMARY
           echo "**Verbose Output:** \`${{ steps.parse-command.outputs.verbose }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 📝 Available Commands" >> $GITHUB_STEP_SUMMARY
-          echo "Comment any of these in PRs to trigger specific review types:" >> $GITHUB_STEP_SUMMARY
-          echo "- \`codebot hunt\` - Quick bug detection (like Bugbot)" >> $GITHUB_STEP_SUMMARY
-          echo "- \`codebot analyze\` - Deep technical analysis" >> $GITHUB_STEP_SUMMARY
-          echo "- \`codebot security\` - Security-focused review" >> $GITHUB_STEP_SUMMARY
-          echo "- \`codebot performance\` - Performance optimization review" >> $GITHUB_STEP_SUMMARY
-          echo "- \`codebot review\` - Comprehensive review" >> $GITHUB_STEP_SUMMARY
+          echo "### 📝 Available Codebot Commands" >> $GITHUB_STEP_SUMMARY
+          echo "Comment any of these in PRs to trigger Cognito User Pool-specific reviews:" >> $GITHUB_STEP_SUMMARY
+          echo "- \`codebot hunt\` - Quick bug detection for identity/auth issues" >> $GITHUB_STEP_SUMMARY
+          echo "- \`codebot analyze\` - Deep Terraform module analysis" >> $GITHUB_STEP_SUMMARY
+          echo "- \`codebot security\` - Identity & access management security review" >> $GITHUB_STEP_SUMMARY
+          echo "- \`codebot performance\` - Terraform performance optimization" >> $GITHUB_STEP_SUMMARY
+          echo "- \`codebot review\` - Comprehensive Cognito User Pool review" >> $GITHUB_STEP_SUMMARY
           echo "- \`codebot\` - Defaults to hunt mode" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔐 Cognito-Specific Focus Areas" >> $GITHUB_STEP_SUMMARY
+          echo "- Identity & authentication security patterns" >> $GITHUB_STEP_SUMMARY
+          echo "- MFA and password policy configurations" >> $GITHUB_STEP_SUMMARY
+          echo "- User pool client security settings" >> $GITHUB_STEP_SUMMARY
+          echo "- Federation and identity provider integration" >> $GITHUB_STEP_SUMMARY
+          echo "- Data privacy and compliance (GDPR, CCPA)" >> $GITHUB_STEP_SUMMARY
+          echo "- Terraform for_each vs count patterns" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🚀 Manual Triggers" >> $GITHUB_STEP_SUMMARY
           echo "Run via GitHub CLI:" >> $GITHUB_STEP_SUMMARY
