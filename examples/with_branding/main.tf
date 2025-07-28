@@ -81,5 +81,3 @@ module "aws_cognito_user_pool" {
 
   tags = var.tags
 }
-
-

@@ -23,10 +23,10 @@ func TestBasicUserPoolCreation(t *testing.T) {
 	helpers.ApplyAndValidate(t, terraformOptions, func(t *testing.T, opts *terraform.Options) {
 		userPoolID := helpers.GetOutputAsString(t, opts, "id")
 		assert.NotEmpty(t, userPoolID)
-		
+
 		client := helpers.GetCognitoClient(t, "us-east-1")
 		userPool := helpers.ValidateUserPoolExists(t, client, userPoolID)
-		
+
 		assert.NotNil(t, userPool.Name)
 		// Note: UserPoolTier field not available in AWS SDK UserPoolType struct
 	})
@@ -63,19 +63,19 @@ func TestUserPoolWithClients(t *testing.T) {
 	helpers.ApplyAndValidate(t, terraformOptions, func(t *testing.T, opts *terraform.Options) {
 		userPoolID := helpers.GetOutputAsString(t, opts, "id")
 		assert.NotEmpty(t, userPoolID)
-		
+
 		client := helpers.GetCognitoClient(t, "us-east-1")
 		userPool := helpers.ValidateUserPoolExists(t, client, userPoolID)
 		assert.NotNil(t, userPool.Name)
-		
+
 		// Validate clients
 		clientsOutput := helpers.GetOutputAsMap(t, opts, "clients")
 		assert.Len(t, clientsOutput, 2)
-		
+
 		for clientName, clientData := range clientsOutput {
 			clientInfo := clientData.(map[string]interface{})
 			clientID := clientInfo["id"].(string)
-			
+
 			userPoolClient := helpers.ValidateUserPoolClient(t, client, userPoolID, clientID)
 			assert.Equal(t, clientName, *userPoolClient.ClientName)
 		}
@@ -100,16 +100,16 @@ func TestUserPoolWithDomain(t *testing.T) {
 	helpers.ApplyAndValidate(t, terraformOptions, func(t *testing.T, opts *terraform.Options) {
 		userPoolID := helpers.GetOutputAsString(t, opts, "id")
 		assert.NotEmpty(t, userPoolID)
-		
+
 		domainOutput := helpers.GetOutputAsString(t, opts, "domain")
 		assert.Equal(t, domainName, domainOutput)
-		
+
 		client := helpers.GetCognitoClient(t, "us-east-1")
-		
+
 		// Validate user pool
 		userPool := helpers.ValidateUserPoolExists(t, client, userPoolID)
 		assert.NotNil(t, userPool.Name)
-		
+
 		// Validate domain
 		domain := helpers.ValidateUserPoolDomain(t, client, domainName)
 		assert.Equal(t, userPoolID, *domain.UserPoolId)
@@ -139,14 +139,14 @@ func TestUserPoolWithPasswordPolicy(t *testing.T) {
 	helpers.ApplyAndValidate(t, terraformOptions, func(t *testing.T, opts *terraform.Options) {
 		userPoolID := helpers.GetOutputAsString(t, opts, "id")
 		assert.NotEmpty(t, userPoolID)
-		
+
 		client := helpers.GetCognitoClient(t, "us-east-1")
 		userPool := helpers.ValidateUserPoolExists(t, client, userPoolID)
-		
+
 		// Validate password policy
 		assert.NotNil(t, userPool.Policies)
 		assert.NotNil(t, userPool.Policies.PasswordPolicy)
-		
+
 		passwordPolicy := userPool.Policies.PasswordPolicy
 		assert.Equal(t, int64(12), *passwordPolicy.MinimumLength)
 		assert.True(t, *passwordPolicy.RequireLowercase)
@@ -175,10 +175,10 @@ func TestUserPoolWithMFA(t *testing.T) {
 	helpers.ApplyAndValidate(t, terraformOptions, func(t *testing.T, opts *terraform.Options) {
 		userPoolID := helpers.GetOutputAsString(t, opts, "id")
 		assert.NotEmpty(t, userPoolID)
-		
+
 		client := helpers.GetCognitoClient(t, "us-east-1")
 		userPool := helpers.ValidateUserPoolExists(t, client, userPoolID)
-		
+
 		// Validate MFA configuration
 		assert.NotNil(t, userPool.MfaConfiguration)
 		assert.Equal(t, "OPTIONAL", *userPool.MfaConfiguration)
@@ -212,11 +212,11 @@ func TestUserPoolWithUserGroups(t *testing.T) {
 	helpers.ApplyAndValidate(t, terraformOptions, func(t *testing.T, opts *terraform.Options) {
 		userPoolID := helpers.GetOutputAsString(t, opts, "id")
 		assert.NotEmpty(t, userPoolID)
-		
+
 		client := helpers.GetCognitoClient(t, "us-east-1")
 		userPool := helpers.ValidateUserPoolExists(t, client, userPoolID)
 		assert.NotNil(t, userPool.Name)
-		
+
 		// Validate user groups output
 		userGroupsOutput := helpers.GetOutputAsMap(t, opts, "user_groups")
 		assert.Len(t, userGroupsOutput, 2)
@@ -239,7 +239,7 @@ func TestUserPoolDisabled(t *testing.T) {
 
 	terraform.Init(t, terraformOptions)
 	planStruct := terraform.Plan(t, terraformOptions)
-	
+
 	resourceCount := terraform.GetResourceCount(t, planStruct)
 	assert.Equal(t, 0, resourceCount.Add, "No resources should be created when enabled is false")
 }

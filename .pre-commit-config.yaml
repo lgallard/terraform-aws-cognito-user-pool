@@ -1,16 +1,42 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.1.0
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0  # Updated to latest stable version
     hooks:
-    -   id: trailing-whitespace
-    -   id: end-of-file-fixer
-    -   id: check-added-large-files
-    -   id: detect-aws-credentials
-- repo: https://github.com/antonbabenko/pre-commit-terraform
-  rev: v1.62.3 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
-  hooks:
-    - id: terraform_fmt
-    - id: terraform_validate
-    - id: terraform_docs
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-added-large-files
+        args: ['--maxkb=500']  # Set specific file size limit
+      - id: detect-aws-credentials
+        args: ['--allow-missing-credentials']  # Avoid false positives
+      - id: check-yaml  # Added YAML validation
+      - id: check-merge-conflict  # Added merge conflict detection
+      - id: check-json  # Added JSON validation
+      - id: check-toml  # Added TOML validation
+      - id: detect-private-key  # Added private key detection
+      - id: mixed-line-ending
+        args: ['--fix=lf']  # Ensure consistent line endings
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.83.5  # Updated to latest stable version
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_validate
+        args:
+          - --tf-init-args=-upgrade  # Ensure latest provider versions
+      - id: terraform_docs
+        args:
+          - --args=--config=.terraform-docs.yml  # Use config file for consistent documentation
+      - id: terraform_tflint  # Added terraform linter for Cognito-specific rules
+        args:
+          - --args=--config=.tflint.hcl
+      - id: terraform_tfsec  # Added security scanner for Cognito/IAM configurations
+        args:
+          - --args=--config-file=.tfsec.yml
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.16.23
+    hooks:
+      - id: typos
+        types: [markdown]
+        args: ['--format', 'brief']
+        exclude: 'CHANGELOG.md'

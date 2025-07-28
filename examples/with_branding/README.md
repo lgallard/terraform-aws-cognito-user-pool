@@ -128,3 +128,51 @@ terraform destroy
 
 - [AWS Cognito Managed Login Branding](https://docs.aws.amazon.com/cognito/latest/developerguide/managed-login-brandingeditor.html)
 - [AWSCC Provider Documentation](https://registry.terraform.io/providers/hashicorp/awscc/latest/docs/resources/cognito_managed_login_branding)
+
+<!-- BEGIN_TF_DOCS -->
+
+
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.95 |
+| <a name="requirement_awscc"></a> [awscc](#requirement\_awscc) | >= 1.0 |
+
+## Providers
+
+No providers.
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_aws_cognito_user_pool"></a> [aws\_cognito\_user\_pool](#module\_aws\_cognito\_user\_pool) | ../../ | n/a |
+
+## Resources
+
+No resources.
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS region | `string` | `"us-east-1"` | no |
+| <a name="input_domain_name"></a> [domain\_name](#input\_domain\_name) | The domain name for the hosted UI | `string` | `""` | no |
+| <a name="input_enable_branding"></a> [enable\_branding](#input\_enable\_branding) | Whether to enable managed login branding | `bool` | `true` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to assign to the resource | `map(string)` | <pre>{<br/>  "Environment": "development",<br/>  "Project": "cognito-branding-example"<br/>}</pre> | no |
+| <a name="input_user_pool_name"></a> [user\_pool\_name](#input\_user\_pool\_name) | The name of the user pool | `string` | `"example-pool-with-branding"` | no |
+| <a name="input_user_pool_tier"></a> [user\_pool\_tier](#input\_user\_pool\_tier) | The tier of the user pool | `string` | `"ESSENTIALS"` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_client_ids_map"></a> [client\_ids\_map](#output\_client\_ids\_map) | Map of user pool client IDs |
+| <a name="output_hosted_ui_url"></a> [hosted\_ui\_url](#output\_hosted\_ui\_url) | The hosted UI URL |
+| <a name="output_managed_login_branding_details"></a> [managed\_login\_branding\_details](#output\_managed\_login\_branding\_details) | The managed login branding details from the module |
+| <a name="output_user_pool_arn"></a> [user\_pool\_arn](#output\_user\_pool\_arn) | The ARN of the user pool |
+| <a name="output_user_pool_domain"></a> [user\_pool\_domain](#output\_user\_pool\_domain) | The domain of the user pool |
+| <a name="output_user_pool_id"></a> [user\_pool\_id](#output\_user\_pool\_id) | The ID of the user pool |
+<!-- END_TF_DOCS -->

@@ -33,7 +33,7 @@ client_id = can(regex("^[a-zA-Z0-9]{26}$", each.value.client_id)) ? each.value.c
 
 ## Changes Made
 
-1. **Fixed Regex Pattern**: 
+1. **Fixed Regex Pattern**:
    - Changed from `^[a-zA-Z0-9+]{26}$` to `^[a-zA-Z0-9]{26}$`
    - Removed the incorrect `+` character from the pattern
    - Updated comment to clarify the correct format

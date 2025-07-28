@@ -157,7 +157,7 @@ output "managed_login_branding_details" {
 output "managed_login_branding" {
   description = "Map of managed login branding configurations (deprecated - use managed_login_branding_details)"
 
-  value       = local.managed_login_branding_map
+  value = local.managed_login_branding_map
 }
 
 output "managed_login_branding_ids" {

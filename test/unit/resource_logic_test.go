@@ -110,12 +110,12 @@ func TestClientConfiguration(t *testing.T) {
 
 			terraform.Init(t, terraformOptions)
 			planStruct := terraform.Plan(t, terraformOptions)
-			
+
 			resourceCount := terraform.GetResourceCount(t, planStruct)
-			
+
 			// Calculate expected total resources (1 user pool + clients)
 			expectedTotal := 1 + tc.expectedClientCount
-			assert.Equal(t, expectedTotal, resourceCount.Add, 
+			assert.Equal(t, expectedTotal, resourceCount.Add,
 				"Expected %d total resources (1 user pool + %d clients)", expectedTotal, tc.expectedClientCount)
 		})
 	}
@@ -165,15 +165,15 @@ func TestDomainConfiguration(t *testing.T) {
 
 			terraform.Init(t, terraformOptions)
 			planStruct := terraform.Plan(t, terraformOptions)
-			
+
 			resourceCount := terraform.GetResourceCount(t, planStruct)
-			
+
 			expectedCount := 1 // user pool
 			if tc.shouldHaveDomain {
 				expectedCount++ // add domain resource
 			}
-			
-			assert.Equal(t, expectedCount, resourceCount.Add, 
+
+			assert.Equal(t, expectedCount, resourceCount.Add,
 				"Expected %d resources for domain configuration", expectedCount)
 		})
 	}
@@ -225,7 +225,7 @@ func TestMFAConfiguration(t *testing.T) {
 			}
 
 			_, err := terraform.InitAndPlanE(t, terraformOptions)
-			
+
 			if tc.expectedValid {
 				assert.NoError(t, err, "Unexpected error for MFA configuration: %s", tc.mfaConfiguration)
 			} else {

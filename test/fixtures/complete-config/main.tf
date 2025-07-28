@@ -8,7 +8,7 @@ module "cognito_user_pool_test" {
   password_policy = var.password_policy
 
   # MFA configuration
-  mfa_configuration = var.mfa_configuration
+  mfa_configuration                = var.mfa_configuration
   software_token_mfa_configuration = var.software_token_mfa_configuration
 
   # User pool configuration
