@@ -66,23 +66,23 @@ output "domain_app_version" {
 #
 output "client_ids" {
   description = "The ids of the user pool clients"
-  value       = var.enabled ? aws_cognito_user_pool_client.client.*.id : null
+  value       = var.enabled ? values(aws_cognito_user_pool_client.client)[*].id : null
 }
 
 output "client_secrets" {
   description = " The client secrets of the user pool clients"
-  value       = var.enabled ? aws_cognito_user_pool_client.client.*.client_secret : null
+  value       = var.enabled ? values(aws_cognito_user_pool_client.client)[*].client_secret : null
   sensitive   = true
 }
 
 output "client_ids_map" {
   description = "The ids map of the user pool clients"
-  value       = var.enabled ? { for k, v in aws_cognito_user_pool_client.client : v.name => v.id } : null
+  value       = var.enabled ? { for k, v in aws_cognito_user_pool_client.client : coalesce(v.name, k) => v.id } : null
 }
 
 output "client_secrets_map" {
   description = "The client secrets map of the user pool clients"
-  value       = var.enabled ? { for k, v in aws_cognito_user_pool_client.client : v.name => v.client_secret } : null
+  value       = var.enabled ? { for k, v in aws_cognito_user_pool_client.client : coalesce(v.name, k) => v.client_secret } : null
   sensitive   = true
 }
 
