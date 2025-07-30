@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [1.7.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.6.0...1.7.0) (2025-07-30)
+
+
+### Features
+
+* replicate security-hardened Claude Code Review workflow with PR focus ([#253](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/253)) ([b6ba6d4](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/b6ba6d44da86f15370d3160d29a43e120c158c4a))
+
 ## [1.6.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.5.1...1.6.0) (2025-07-28)
 
 
