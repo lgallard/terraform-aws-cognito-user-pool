@@ -444,6 +444,12 @@ variable "verification_message_template_email_subject_by_link" {
   default     = null
 }
 
+variable "verification_message_template_sms_message" {
+  description = "SMS message template. Must contain the {####} placeholder. Conflicts with sms_verification_message argument."
+  type        = string
+  default     = null
+}
+
 variable "verification_message_template_email_message" {
   description = "The email message template for sending a confirmation code to the user, it must contain the `{####}` placeholder"
   type        = string
