@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [1.8.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.7.0...1.8.0) (2025-08-02)
+
+
+### Features
+
+* complete verification message template support for SMS and email conflict resolution ([#255](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/255)) ([d3e0b74](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/d3e0b74a16da1b5afffd9faa4a3a7007e3860177))
+
 ## [1.7.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.6.0...1.7.0) (2025-07-30)
 
 
