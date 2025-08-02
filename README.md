@@ -561,6 +561,7 @@ No modules.
 | <a name="input_verification_message_template_email_message_by_link"></a> [verification\_message\_template\_email\_message\_by\_link](#input\_verification\_message\_template\_email\_message\_by\_link) | The email message template for sending a confirmation link to the user, it must contain the `{##Click Here##}` placeholder | `string` | `null` | no |
 | <a name="input_verification_message_template_email_subject"></a> [verification\_message\_template\_email\_subject](#input\_verification\_message\_template\_email\_subject) | The subject line for the email message template for sending a confirmation code to the user | `string` | `null` | no |
 | <a name="input_verification_message_template_email_subject_by_link"></a> [verification\_message\_template\_email\_subject\_by\_link](#input\_verification\_message\_template\_email\_subject\_by\_link) | The subject line for the email message template for sending a confirmation link to the user | `string` | `null` | no |
+| <a name="input_verification_message_template_sms_message"></a> [verification\_message\_template\_sms\_message](#input\_verification\_message\_template\_sms\_message) | SMS message template. Must contain the {####} placeholder. Conflicts with sms\_verification\_message argument. | `string` | `null` | no |
 
 ## Outputs
 
