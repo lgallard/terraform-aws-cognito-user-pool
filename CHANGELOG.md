@@ -8,6 +8,10 @@
 ## [1.9.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.8.0...1.9.0) (2025-08-05)
 
 
+### ⚠ BREAKING CHANGES
+
+* Client resource addresses have changed from count-based to for_each-based identifiers. Existing deployments require manual state migration to avoid resource recreation.
+
 ### Features
 
 * migrate aws_cognito_user_pool_client from count to for_each pattern ([#249](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/249)) ([a5e82b9](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/a5e82b97f8d072c5337be57ec3b46f711372a77a))
