@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [1.9.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.8.0...1.9.0) (2025-08-05)
+
+
+### Features
+
+* migrate aws_cognito_user_pool_client from count to for_each pattern ([#249](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/249)) ([a5e82b9](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/a5e82b97f8d072c5337be57ec3b46f711372a77a))
+
 ## [1.8.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.7.0...1.8.0) (2025-08-02)
 
 
