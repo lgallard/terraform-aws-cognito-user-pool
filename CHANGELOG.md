@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [1.10.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.9.0...1.10.0) (2025-08-07)
+
+
+### Features
+
+* add Claude dispatch workflow for repository events ([#260](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/260)) ([eff2b33](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/eff2b3394437ec08928349380823adca5eb7efc9))
+
 ## [1.9.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.8.0...1.9.0) (2025-08-05)
 
 
