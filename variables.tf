@@ -419,6 +419,12 @@ variable "user_pool_add_ons_advanced_security_mode" {
   default     = null
 }
 
+variable "user_pool_add_ons_advanced_security_additional_flows" {
+  description = "A set of authentication flows to enable advanced security for. Valid values include ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_SRP_AUTH"
+  type        = set(string)
+  default     = null
+}
+
 # verification_message_template
 variable "verification_message_template" {
   description = "The verification message templates configuration"
