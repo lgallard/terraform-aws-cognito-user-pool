@@ -196,7 +196,8 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "user_pool_add_ons" {
     for_each = local.user_pool_add_ons
     content {
-      advanced_security_mode = lookup(user_pool_add_ons.value, "advanced_security_mode")
+      advanced_security_mode            = lookup(user_pool_add_ons.value, "advanced_security_mode")
+      advanced_security_additional_flows = lookup(user_pool_add_ons.value, "advanced_security_additional_flows")
     }
   }
 
@@ -262,6 +263,7 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   sms_verification_message   = var.sms_verification_message
   username_attributes        = var.username_attributes
   deletion_protection        = var.deletion_protection
+  user_pool_tier             = var.user_pool_tier
 
   # username_configuration
   dynamic "username_configuration" {
@@ -446,7 +448,8 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "user_pool_add_ons" {
     for_each = local.user_pool_add_ons
     content {
-      advanced_security_mode = lookup(user_pool_add_ons.value, "advanced_security_mode")
+      advanced_security_mode            = lookup(user_pool_add_ons.value, "advanced_security_mode")
+      advanced_security_additional_flows = lookup(user_pool_add_ons.value, "advanced_security_additional_flows")
     }
   }
 
@@ -618,10 +621,11 @@ locals {
   # user_pool_add_ons
   # If no user_pool_add_ons is provided, build a configuration using the default values
   user_pool_add_ons_default = {
-    advanced_security_mode = lookup(var.user_pool_add_ons, "advanced_security_mode", null) == null ? var.user_pool_add_ons_advanced_security_mode : lookup(var.user_pool_add_ons, "advanced_security_mode")
+    advanced_security_mode            = lookup(var.user_pool_add_ons, "advanced_security_mode", null) == null ? var.user_pool_add_ons_advanced_security_mode : lookup(var.user_pool_add_ons, "advanced_security_mode")
+    advanced_security_additional_flows = lookup(var.user_pool_add_ons, "advanced_security_additional_flows", null) == null ? var.user_pool_add_ons_advanced_security_additional_flows : lookup(var.user_pool_add_ons, "advanced_security_additional_flows")
   }
 
-  user_pool_add_ons = var.user_pool_add_ons_advanced_security_mode == null && length(var.user_pool_add_ons) == 0 ? [] : [local.user_pool_add_ons_default]
+  user_pool_add_ons = var.user_pool_add_ons_advanced_security_mode == null && var.user_pool_add_ons_advanced_security_additional_flows == null && length(var.user_pool_add_ons) == 0 ? [] : [local.user_pool_add_ons_default]
 
   # verification_message_template
   # If no verification_message_template is provided, build a verification_message_template using the default values
