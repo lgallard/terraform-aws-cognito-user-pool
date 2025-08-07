@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [1.11.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.10.0...1.11.0) (2025-08-07)
+
+
+### Features
+
+* add support for advanced_security_additional_flows in user_pool_add_ons ([#263](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/263)) ([91dc7ec](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/91dc7ec4892d0b6973305adb53990c2f9bdf63be))
+
 ## [1.10.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.9.0...1.10.0) (2025-08-07)
 
 
