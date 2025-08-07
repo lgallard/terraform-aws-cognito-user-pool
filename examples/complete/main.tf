@@ -77,6 +77,12 @@ module "aws_cognito_user_pool_complete_example" {
     advanced_security_mode = "ENFORCED"
   }
 
+  # Enable advanced security for custom auth flows
+  user_pool_add_ons_advanced_security_additional_flows = [
+    "CUSTOM_AUTH_FLOW_ONLY",
+    "ADMIN_NO_SRP_AUTH"
+  ]
+
   verification_message_template = {
     default_email_option = "CONFIRM_WITH_CODE"
   }
