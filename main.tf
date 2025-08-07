@@ -263,6 +263,7 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   sms_verification_message   = var.sms_verification_message
   username_attributes        = var.username_attributes
   deletion_protection        = var.deletion_protection
+  user_pool_tier             = var.user_pool_tier
 
   # username_configuration
   dynamic "username_configuration" {
