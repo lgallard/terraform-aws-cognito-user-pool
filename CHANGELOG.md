@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [1.11.1](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.11.0...1.11.1) (2025-08-08)
+
+
+### Bug Fixes
+
+* correct advanced_security_additional_flows structure to use proper AWS provider block syntax ([#265](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/265)) ([5fca639](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/5fca6396d2f31591cfeececee7e58b67af47ded4))
+
 ## [1.11.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.10.0...1.11.0) (2025-08-07)
 
 
