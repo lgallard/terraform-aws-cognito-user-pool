@@ -214,6 +214,11 @@ func TestAdvancedSecurityAdditionalFlowsValidation(t *testing.T) {
 			shouldFail:                      false,
 		},
 		{
+			name:                            "InvalidEmptyString",
+			advancedSecurityAdditionalFlows: "",
+			shouldFail:                      true,
+		},
+		{
 			name:                            "InvalidLowercaseAudit",
 			advancedSecurityAdditionalFlows: "audit",
 			shouldFail:                      true,
