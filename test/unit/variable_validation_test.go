@@ -190,6 +190,82 @@ func TestPasswordPolicyValidation(t *testing.T) {
 	}
 }
 
+func TestAdvancedSecurityAdditionalFlowsValidation(t *testing.T) {
+	t.Parallel()
+
+	testCases := []struct {
+		name                                     string
+		advancedSecurityAdditionalFlows          interface{}
+		shouldFail                              bool
+	}{
+		{
+			name:                            "ValidAuditMode",
+			advancedSecurityAdditionalFlows: "AUDIT",
+			shouldFail:                      false,
+		},
+		{
+			name:                            "ValidEnforcedMode",
+			advancedSecurityAdditionalFlows: "ENFORCED",
+			shouldFail:                      false,
+		},
+		{
+			name:                            "ValidNullValue",
+			advancedSecurityAdditionalFlows: nil,
+			shouldFail:                      false,
+		},
+		{
+			name:                            "InvalidLowercaseAudit",
+			advancedSecurityAdditionalFlows: "audit",
+			shouldFail:                      true,
+		},
+		{
+			name:                            "InvalidOffMode",
+			advancedSecurityAdditionalFlows: "OFF",
+			shouldFail:                      true,
+		},
+		{
+			name:                            "InvalidStringValue",
+			advancedSecurityAdditionalFlows: "INVALID",
+			shouldFail:                      true,
+		},
+		{
+			name:                            "InvalidArrayValue",
+			advancedSecurityAdditionalFlows: []string{"ADMIN_NO_SRP_AUTH", "CUSTOM_AUTH_FLOW_ONLY"},
+			shouldFail:                      true,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			vars := map[string]interface{}{
+				"user_pool_name": helpers.GenerateUniqueUserPoolName(t, tc.name),
+				"enabled":        false,
+			}
+
+			if tc.advancedSecurityAdditionalFlows != nil {
+				vars["user_pool_add_ons_advanced_security_additional_flows"] = tc.advancedSecurityAdditionalFlows
+			}
+
+			terraformOptions := &terraform.Options{
+				TerraformDir: helpers.GetFixturePath("validation-test"),
+				Vars:         vars,
+				NoColor:      true,
+			}
+
+			if tc.shouldFail {
+				_, err := terraform.InitAndPlanE(t, terraformOptions)
+				assert.Error(t, err, "Expected validation error for advanced_security_additional_flows: %v", tc.advancedSecurityAdditionalFlows)
+			} else {
+				_, err := terraform.InitAndPlanE(t, terraformOptions)
+				assert.NoError(t, err, "Unexpected validation error for advanced_security_additional_flows: %v", tc.advancedSecurityAdditionalFlows)
+			}
+		})
+	}
+}
+
 func TestEnabledFlagValidation(t *testing.T) {
 	t.Parallel()
 
