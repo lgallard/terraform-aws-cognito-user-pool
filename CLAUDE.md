@@ -233,3 +233,78 @@ terraform {
 ```
 
 *Note: Version constraints should be chosen based on actual requirements and compatibility needs.*
+
+## MCP Server Configuration
+
+### Available MCP Servers
+This project is configured to use the following Model Context Protocol (MCP) servers for enhanced documentation access:
+
+#### Terraform MCP Server
+**Purpose**: Access up-to-date Terraform and AWS provider documentation
+**Package**: `@modelcontextprotocol/server-terraform`
+
+**Local Configuration** (`.mcp.json`):
+```json
+{
+  "mcpServers": {
+    "terraform": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-terraform@latest"]
+    }
+  }
+}
+```
+
+**Usage Examples**:
+- `Look up aws_cognito_user_pool resource documentation`
+- `Find the latest Cognito User Pool client configuration examples`  
+- `Search for AWS Cognito Terraform modules`
+- `Get documentation for aws_cognito_identity_provider resource`
+
+#### Context7 MCP Server  
+**Purpose**: Access general library and framework documentation
+**Package**: `@upstash/context7-mcp`
+
+**Local Configuration** (`.mcp.json`):
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx", 
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    }
+  }
+}
+```
+
+**Usage Examples**:
+- `Look up Go testing patterns for Terratest`
+- `Find AWS CLI cognito commands documentation`
+- `Get current Terraform best practices`
+- `Search for GitHub Actions workflow patterns`
+
+### GitHub Actions Integration
+The MCP servers are automatically available in GitHub Actions through the claude.yml workflow configuration. Claude can access the same documentation in PRs and issues as available locally.
+
+### Usage Tips
+1. **Be Specific**: When requesting documentation, specify the exact resource or concept
+2. **Version Awareness**: Both servers provide current, version-specific documentation  
+3. **Combine Sources**: Use Terraform MCP for Cognito-specific docs, Context7 for general development patterns
+4. **Local vs CI**: Same MCP servers work in both local development and GitHub Actions
+
+### Example Workflows
+
+**Cognito Resource Development**:
+```
+@claude I need to add support for Cognito advanced security features. Can you look up the latest aws_cognito_user_pool advanced_security_mode documentation and show me how to implement this feature?
+```
+
+**Testing Pattern Research**:
+```  
+@claude Look up current Terratest patterns for testing Cognito User Pools and help me add comprehensive tests for user pool clients and identity providers.
+```
+
+**Security Enhancement**:
+```
+@claude Research the latest AWS Cognito security best practices and help me implement enhanced MFA configurations in this module.
+```
