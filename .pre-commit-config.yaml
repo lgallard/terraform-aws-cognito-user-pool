@@ -24,11 +24,9 @@ repos:
       - id: terraform_validate
         args:
           - --tf-init-args=-upgrade  # Ensure latest provider versions
-      # Temporarily disabled - keeps modifying files in CI
-      # Documentation should be updated manually before commits
-      # - id: terraform_docs
-      #   args:
-      #     - --args=--config=.terraform-docs.yml
+      - id: terraform_docs
+        args:
+          - --args=--config=.terraform-docs.yml
       # Temporarily disabled due to 178 existing style warnings - will be addressed in separate PR
       # - id: terraform_tflint
       #   args:

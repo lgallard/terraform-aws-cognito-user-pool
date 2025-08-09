@@ -30,6 +30,10 @@ rule "terraform_deprecated_index" {
   enabled = true
 }
 
+rule "terraform_deprecated_lookup" {
+  enabled = true
+}
+
 rule "terraform_unused_declarations" {
   enabled = true
 }

@@ -70,11 +70,16 @@ jobs:
             curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
           fi
 
-      - name: Install tfsec
+      - name: Install Trivy
         run: |
-          if ! command -v tfsec &> /dev/null; then
-            echo "Installing tfsec..."
-            curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
+          if ! command -v trivy &> /dev/null; then
+            echo "Installing Trivy..."
+            sudo apt-get update
+            sudo apt-get install wget apt-transport-https gnupg lsb-release
+            wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+            echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+            sudo apt-get update
+            sudo apt-get install trivy
           fi
 
       - name: Install pre-commit
