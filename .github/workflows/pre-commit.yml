@@ -70,6 +70,13 @@ jobs:
             curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
           fi
 
+      - name: Install tfsec
+        run: |
+          if ! command -v tfsec &> /dev/null; then
+            echo "Installing tfsec..."
+            curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
+          fi
+
       - name: Install pre-commit
         run: |
           python -m pip install --upgrade pip
