@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [1.12.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.11.1...1.12.0) (2025-08-09)
+
+
+### Features
+
+* add MCP server support for enhanced documentation access ([#267](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/267)) ([38f6ea1](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/38f6ea1c2deddf2566b0379852ddc84ce8483e07))
+
 ## [1.11.1](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.11.0...1.11.1) (2025-08-08)
 
 
