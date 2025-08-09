@@ -420,16 +420,13 @@ variable "user_pool_add_ons_advanced_security_mode" {
 }
 
 variable "user_pool_add_ons_advanced_security_additional_flows" {
-  description = "A set of authentication flows to enable advanced security for. Valid values include ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_SRP_AUTH"
-  type        = set(string)
+  description = "Mode of threat protection operation in custom authentication. Valid values are AUDIT or ENFORCED. Default is AUDIT"
+  type        = string
   default     = null
 
   validation {
-    condition = var.user_pool_add_ons_advanced_security_additional_flows == null ? true : alltrue([
-      for flow in var.user_pool_add_ons_advanced_security_additional_flows :
-      contains(["ADMIN_NO_SRP_AUTH", "CUSTOM_AUTH_FLOW_ONLY", "USER_SRP_AUTH"], flow)
-    ])
-    error_message = "Invalid authentication flow. Valid values: ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_SRP_AUTH"
+    condition     = var.user_pool_add_ons_advanced_security_additional_flows == null ? true : contains(["AUDIT", "ENFORCED"], var.user_pool_add_ons_advanced_security_additional_flows)
+    error_message = "Invalid custom_auth_mode. Valid values: AUDIT, ENFORCED"
   }
 }
 

@@ -196,8 +196,14 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "user_pool_add_ons" {
     for_each = local.user_pool_add_ons
     content {
-      advanced_security_mode            = lookup(user_pool_add_ons.value, "advanced_security_mode")
-      advanced_security_additional_flows = lookup(user_pool_add_ons.value, "advanced_security_additional_flows")
+      advanced_security_mode = lookup(user_pool_add_ons.value, "advanced_security_mode")
+
+      dynamic "advanced_security_additional_flows" {
+        for_each = lookup(user_pool_add_ons.value, "advanced_security_additional_flows") != null ? [1] : []
+        content {
+          custom_auth_mode = lookup(user_pool_add_ons.value, "advanced_security_additional_flows")
+        }
+      }
     }
   }
 
@@ -448,8 +454,14 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "user_pool_add_ons" {
     for_each = local.user_pool_add_ons
     content {
-      advanced_security_mode            = lookup(user_pool_add_ons.value, "advanced_security_mode")
-      advanced_security_additional_flows = lookup(user_pool_add_ons.value, "advanced_security_additional_flows")
+      advanced_security_mode = lookup(user_pool_add_ons.value, "advanced_security_mode")
+
+      dynamic "advanced_security_additional_flows" {
+        for_each = lookup(user_pool_add_ons.value, "advanced_security_additional_flows") != null ? [1] : []
+        content {
+          custom_auth_mode = lookup(user_pool_add_ons.value, "advanced_security_additional_flows")
+        }
+      }
     }
   }
 
@@ -621,7 +633,7 @@ locals {
   # user_pool_add_ons
   # If no user_pool_add_ons is provided, build a configuration using the default values
   user_pool_add_ons_default = {
-    advanced_security_mode            = lookup(var.user_pool_add_ons, "advanced_security_mode", null) == null ? var.user_pool_add_ons_advanced_security_mode : lookup(var.user_pool_add_ons, "advanced_security_mode")
+    advanced_security_mode             = lookup(var.user_pool_add_ons, "advanced_security_mode", null) == null ? var.user_pool_add_ons_advanced_security_mode : lookup(var.user_pool_add_ons, "advanced_security_mode")
     advanced_security_additional_flows = lookup(var.user_pool_add_ons, "advanced_security_additional_flows", null) == null ? var.user_pool_add_ons_advanced_security_additional_flows : lookup(var.user_pool_add_ons, "advanced_security_additional_flows")
   }
 

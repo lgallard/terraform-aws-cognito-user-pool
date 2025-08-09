@@ -75,10 +75,7 @@ module "aws_cognito_user_pool_complete" {
 
   # Advanced security configuration for user pool add-ons
   user_pool_add_ons_advanced_security_mode = "ENFORCED"
-  user_pool_add_ons_advanced_security_additional_flows = [
-    "CUSTOM_AUTH_FLOW_ONLY",
-    "ADMIN_NO_SRP_AUTH"
-  ]
+  user_pool_add_ons_advanced_security_additional_flows = "AUDIT"
 
   # IMPORTANT: Enable schema ignore changes to prevent perpetual diffs with custom schemas
   # This is ESSENTIAL for new deployments using custom schemas to avoid AWS API errors
@@ -557,8 +554,8 @@ No modules.
 | <a name="input_user_group_role_arn"></a> [user\_group\_role\_arn](#input\_user\_group\_role\_arn) | The ARN of the IAM role to be associated with the user group | `string` | `null` | no |
 | <a name="input_user_groups"></a> [user\_groups](#input\_user\_groups) | A container with the user\_groups definitions | `list(any)` | `[]` | no |
 | <a name="input_user_pool_add_ons"></a> [user\_pool\_add\_ons](#input\_user\_pool\_add\_ons) | Configuration block for user pool add-ons to enable user pool advanced security mode features | `map(any)` | `{}` | no |
+| <a name="input_user_pool_add_ons_advanced_security_additional_flows"></a> [user\_pool\_add\_ons\_advanced\_security\_additional\_flows](#input\_user\_pool\_add\_ons\_advanced\_security\_additional\_flows) | Mode of threat protection operation in custom authentication. Valid values are AUDIT or ENFORCED. Default is AUDIT | `string` | `null` | no |
 | <a name="input_user_pool_add_ons_advanced_security_mode"></a> [user\_pool\_add\_ons\_advanced\_security\_mode](#input\_user\_pool\_add\_ons\_advanced\_security\_mode) | The mode for advanced security, must be one of `OFF`, `AUDIT` or `ENFORCED` | `string` | `null` | no |
-| <a name="input_user_pool_add_ons_advanced_security_additional_flows"></a> [user\_pool\_add\_ons\_advanced\_security\_additional\_flows](#input\_user\_pool\_add\_ons\_advanced\_security\_additional\_flows) | A set of authentication flows to enable advanced security for. Valid values include ADMIN\_NO\_SRP\_AUTH, CUSTOM\_AUTH\_FLOW\_ONLY, USER\_SRP\_AUTH | `set(string)` | `null` | no |
 | <a name="input_user_pool_name"></a> [user\_pool\_name](#input\_user\_pool\_name) | The name of the user pool | `string` | n/a | yes |
 | <a name="input_user_pool_tier"></a> [user\_pool\_tier](#input\_user\_pool\_tier) | Cognito User Pool tier. Valid values: LITE, ESSENTIALS, PLUS. | `string` | `"ESSENTIALS"` | no |
 | <a name="input_username_attributes"></a> [username\_attributes](#input\_username\_attributes) | Specifies whether email addresses or phone numbers can be specified as usernames when a user signs up. Conflicts with `alias_attributes` | `list(string)` | `null` | no |
