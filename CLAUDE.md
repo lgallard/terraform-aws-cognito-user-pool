@@ -216,6 +216,23 @@ resource "aws_cognito_user_pool_client" "this" {
 7. **Backward Compatibility** - Maintain compatibility when possible
 8. **Security Defaults** - Use secure defaults where appropriate
 
+## Design Decisions
+
+### Schema Change Visibility (main.tf dual resources)
+**Decision**: Maintain dual `aws_cognito_user_pool` resources despite ~252 lines of code duplication.
+
+**Rationale**: Schema change visibility in terraform plans is essential for:
+- Change review workflows and team collaboration
+- Compliance/audit requirements for new user attributes
+- Application coordination when schema attributes are added
+- Debugging and validation of configuration changes
+
+**Trade-off**: Code duplication is acceptable to preserve user choice between:
+- `ignore_schema_changes = false` → See schema additions in plans (change management)
+- `ignore_schema_changes = true` → Hide schema changes (simplicity)
+
+**Reference**: PR #271 analysis (Aug 2025) - consolidation attempt rejected to preserve workflow visibility.
+
 ## Provider Version Management
 
 ```hcl
@@ -257,11 +274,11 @@ This project is configured to use the following Model Context Protocol (MCP) ser
 
 **Usage Examples**:
 - `Look up aws_cognito_user_pool resource documentation`
-- `Find the latest Cognito User Pool client configuration examples`  
+- `Find the latest Cognito User Pool client configuration examples`
 - `Search for AWS Cognito Terraform modules`
 - `Get documentation for aws_cognito_identity_provider resource`
 
-#### Context7 MCP Server  
+#### Context7 MCP Server
 **Purpose**: Access general library and framework documentation
 **Package**: `@upstash/context7-mcp`
 
@@ -270,7 +287,7 @@ This project is configured to use the following Model Context Protocol (MCP) ser
 {
   "mcpServers": {
     "context7": {
-      "command": "npx", 
+      "command": "npx",
       "args": ["-y", "@upstash/context7-mcp@latest"]
     }
   }
@@ -288,7 +305,7 @@ The MCP servers are automatically available in GitHub Actions through the claude
 
 ### Usage Tips
 1. **Be Specific**: When requesting documentation, specify the exact resource or concept
-2. **Version Awareness**: Both servers provide current, version-specific documentation  
+2. **Version Awareness**: Both servers provide current, version-specific documentation
 3. **Combine Sources**: Use Terraform MCP for Cognito-specific docs, Context7 for general development patterns
 4. **Local vs CI**: Same MCP servers work in both local development and GitHub Actions
 
@@ -300,7 +317,7 @@ The MCP servers are automatically available in GitHub Actions through the claude
 ```
 
 **Testing Pattern Research**:
-```  
+```
 @claude Look up current Terratest patterns for testing Cognito User Pools and help me add comprehensive tests for user pool clients and identity providers.
 ```
 
