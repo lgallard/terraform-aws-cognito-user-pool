@@ -285,8 +285,8 @@ variable "mfa_configuration" {
   default     = "OFF"
 
   validation {
-    condition     = contains(["ON", "OFF", "OPTIONAL"], var.mfa_configuration)
-    error_message = "MFA configuration must be one of: ON, OFF, OPTIONAL."
+    condition     = contains(["ON", "OFF", "OPTIONAL"], upper(var.mfa_configuration))
+    error_message = "MFA configuration must be ON, OFF, or OPTIONAL (case-sensitive)."
   }
 }
 
@@ -327,12 +327,29 @@ variable "password_policy" {
 
   validation {
     condition = var.password_policy == null ? true : (
-      # Require at least 2 out of the 3 character types for reasonable security
+      # Require at least 3 out of 4 character types for strong security
       (var.password_policy.require_lowercase ? 1 : 0) +
       (var.password_policy.require_numbers ? 1 : 0) +
-      (var.password_policy.require_uppercase ? 1 : 0) >= 2
+      (var.password_policy.require_symbols ? 1 : 0) +
+      (var.password_policy.require_uppercase ? 1 : 0) >= 3
     )
-    error_message = "Password policy must require at least 2 out of 3 character types (lowercase, numbers, uppercase) for security."
+    error_message = "Password policy must require at least 3 out of 4 character types (lowercase, numbers, symbols, uppercase) for security."
+  }
+
+  validation {
+    condition = var.password_policy == null ? true : (
+      var.password_policy.temporary_password_validity_days >= 1 && 
+      var.password_policy.temporary_password_validity_days <= 365
+    )
+    error_message = "Password policy temporary_password_validity_days must be between 1 and 365 days per AWS limits."
+  }
+
+  validation {
+    condition = var.password_policy == null ? true : (
+      var.password_policy.password_history_size >= 0 && 
+      var.password_policy.password_history_size <= 24
+    )
+    error_message = "Password policy password_history_size must be between 0 and 24 per AWS limits."
   }
 }
 
@@ -512,8 +529,12 @@ variable "domain" {
   default     = null
 
   validation {
-    condition     = var.domain == null ? true : can(regex("^[a-z0-9-]+$", var.domain))
-    error_message = "Domain must contain only lowercase letters, numbers, and hyphens."
+    condition = var.domain == null ? true : (
+      can(regex("^[a-z0-9][a-z0-9-]*[a-z0-9]$", var.domain)) &&
+      length(var.domain) >= 3 &&
+      length(var.domain) <= 63
+    )
+    error_message = "Domain must be 3-63 characters, start and end with alphanumeric characters, and contain only lowercase letters, numbers, and hyphens."
   }
 }
 
@@ -681,8 +702,11 @@ variable "user_groups" {
   default     = []
 
   validation {
-    condition     = length(var.user_groups) == 0 || length(distinct([for group in var.user_groups : lookup(group, "name", "")])) == length(var.user_groups)
-    error_message = "All user group names must be unique. Duplicate names are not allowed."
+    condition = length(var.user_groups) == 0 || (
+      alltrue([for group in var.user_groups : lookup(group, "name", null) != null && lookup(group, "name", null) != ""]) &&
+      length(distinct([for group in var.user_groups : lookup(group, "name", "")])) == length(var.user_groups)
+    )
+    error_message = "All user groups must have non-empty 'name' attributes and names must be unique."
   }
 }
 
