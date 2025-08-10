@@ -327,11 +327,12 @@ variable "password_policy" {
 
   validation {
     condition = var.password_policy == null ? true : (
-      var.password_policy.require_lowercase &&
-      var.password_policy.require_numbers &&
-      var.password_policy.require_uppercase
+      # Require at least 2 out of the 3 character types for reasonable security
+      (var.password_policy.require_lowercase ? 1 : 0) +
+      (var.password_policy.require_numbers ? 1 : 0) +
+      (var.password_policy.require_uppercase ? 1 : 0) >= 2
     )
-    error_message = "Password policy must require lowercase, numbers, and uppercase for security."
+    error_message = "Password policy must require at least 2 out of 3 character types (lowercase, numbers, uppercase) for security."
   }
 }
 
