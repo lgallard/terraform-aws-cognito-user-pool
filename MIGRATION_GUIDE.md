@@ -8,7 +8,7 @@ This guide covers migrations from count-based to for_each-based implementations 
 This guide covers the migration from count-based to for_each-based user pool client implementation. This change resolves state management issues and improves resource tracking.
 
 ### What Changed
-- **Before**: User pool clients used `count` with list indexes as resource identifiers  
+- **Before**: User pool clients used `count` with list indexes as resource identifiers
 - **After**: User pool clients use `for_each` with meaningful keys as stable resource identifiers
 
 ### Key Generation Pattern
@@ -57,7 +57,7 @@ The script will:
 terraform state mv 'aws_cognito_user_pool_client.client[0]' 'aws_cognito_user_pool_client.client["web-app_0"]'
 terraform state mv 'aws_cognito_user_pool_client.client[1]' 'aws_cognito_user_pool_client.client["mobile-app_1"]'
 
-# Example 2: Clients without names  
+# Example 2: Clients without names
 # Configuration: clients = [{}, {}] (no name specified)
 terraform state mv 'aws_cognito_user_pool_client.client[0]' 'aws_cognito_user_pool_client.client["client_0"]'
 terraform state mv 'aws_cognito_user_pool_client.client[1]' 'aws_cognito_user_pool_client.client["client_1"]'

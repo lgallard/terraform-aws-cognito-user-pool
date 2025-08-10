@@ -397,6 +397,7 @@ jobs:
 
             ${{ steps.parse-command.outputs.mode == 'hunt' && format('
             🕵️ BUG HUNT MODE - Find potential issues quickly:
+            Use @terraform-cognito subagent for Cognito-specific issues, @terraform-security for security vulnerabilities
             - Focus on critical bugs, security vulnerabilities, and performance issues
             - Prioritize high-impact problems over style suggestions
             - Be concise and actionable
@@ -405,6 +406,7 @@ jobs:
 
             ${{ steps.parse-command.outputs.mode == 'analyze' && format('
             📊 ANALYSIS MODE - Deep technical analysis:
+            Use @terraform-testing subagent for test analysis, @terraform-cognito for architecture decisions
             - Analyze architecture, patterns, and design decisions
             - Evaluate code complexity and maintainability
             - Assess test coverage and quality
@@ -414,6 +416,7 @@ jobs:
 
             ${{ steps.parse-command.outputs.mode == 'security' && format('
             🔒 SECURITY MODE - Security-focused review:
+            Use @terraform-security subagent for comprehensive security analysis and hardening recommendations
             - Identify security vulnerabilities and compliance issues
             - Check for proper authentication and authorization
             - Validate input sanitization and output encoding
@@ -423,6 +426,7 @@ jobs:
 
             ${{ steps.parse-command.outputs.mode == 'performance' && format('
             ⚡ PERFORMANCE MODE - Performance optimization review:
+            Use @terraform-testing subagent for test performance and @terraform-cognito for Cognito performance optimization
             - Identify performance bottlenecks and optimization opportunities
             - Analyze resource usage and efficiency
             - Check for memory leaks and scalability issues
@@ -432,6 +436,7 @@ jobs:
 
             ${{ steps.parse-command.outputs.mode == 'review' && format('
             📝 STANDARD REVIEW MODE - Comprehensive code review:
+            Use appropriate subagents: @terraform-cognito for Cognito configs, @terraform-security for security, @terraform-testing for tests
             - Code quality and best practices
             - Potential bugs or issues
             - Performance considerations

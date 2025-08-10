@@ -73,11 +73,25 @@ jobs:
           # Optional: Trigger when specific user is assigned to an issue
           # assignee_trigger: "claude-bot"
 
-          # Optional: Add custom instructions for Claude to customize its behavior for your project
-          # custom_instructions: |
-          #   Follow our coding standards
-          #   Ensure all new code has tests
-          #   Use TypeScript for new files
+          # Subagent routing for specialized expertise
+          custom_instructions: |
+            You have access to specialized subagents for this Terraform AWS Cognito User Pool module. Use them for relevant questions:
+
+            **Subagent Routing Rules:**
+            - For Cognito User Pool configurations, resource setup, MFA, security features, authentication flows, identity providers: use @terraform-cognito
+            - For testing questions, Terratest, test development, validation, CI/CD testing: use @terraform-testing
+            - For security analysis, compliance, vulnerability assessment, hardening recommendations: use @terraform-security
+            - For migrations, upgrades, version transitions, breaking changes: use @cognito-migration
+            - For documentation, examples, README updates, user guides: use @module-documentation
+
+            **Auto-routing Keywords:**
+            - MFA, authentication, password policy, advanced security → @terraform-security
+            - test, testing, terratest, validation, CI/CD → @terraform-testing
+            - migration, upgrade, version, breaking change → @cognito-migration
+            - user pool, client, domain, identity provider, schema → @terraform-cognito
+            - documentation, example, README, guide → @module-documentation
+
+            Always leverage the specialized knowledge in these subagents for better, more accurate responses.
 
           # Optional: Custom environment variables for Claude
           # claude_env: |
