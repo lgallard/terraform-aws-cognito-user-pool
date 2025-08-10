@@ -196,14 +196,8 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "user_pool_add_ons" {
     for_each = local.user_pool_add_ons
     content {
-      advanced_security_mode = lookup(user_pool_add_ons.value, "advanced_security_mode")
-
-      dynamic "advanced_security_additional_flows" {
-        for_each = lookup(user_pool_add_ons.value, "advanced_security_additional_flows") != null ? [1] : []
-        content {
-          custom_auth_mode = lookup(user_pool_add_ons.value, "advanced_security_additional_flows")
-        }
-      }
+      advanced_security_mode             = lookup(user_pool_add_ons.value, "advanced_security_mode")
+      advanced_security_additional_flows = lookup(user_pool_add_ons.value, "advanced_security_additional_flows")
     }
   }
 
@@ -454,14 +448,8 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "user_pool_add_ons" {
     for_each = local.user_pool_add_ons
     content {
-      advanced_security_mode = lookup(user_pool_add_ons.value, "advanced_security_mode")
-
-      dynamic "advanced_security_additional_flows" {
-        for_each = lookup(user_pool_add_ons.value, "advanced_security_additional_flows") != null ? [1] : []
-        content {
-          custom_auth_mode = lookup(user_pool_add_ons.value, "advanced_security_additional_flows")
-        }
-      }
+      advanced_security_mode             = lookup(user_pool_add_ons.value, "advanced_security_mode")
+      advanced_security_additional_flows = lookup(user_pool_add_ons.value, "advanced_security_additional_flows")
     }
   }
 
