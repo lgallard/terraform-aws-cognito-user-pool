@@ -269,18 +269,33 @@ variable "lambda_config_custom_email_sender" {
   description = "A custom email sender AWS Lambda trigger."
   type        = any
   default     = {}
+
+  validation {
+    condition = length(var.lambda_config_custom_email_sender) == 0 ? true : var.lambda_config_kms_key_id != null
+    error_message = "KMS key ID must be specified when using custom email sender for security encryption."
+  }
 }
 
 variable "lambda_config_custom_sms_sender" {
   description = "A custom SMS sender AWS Lambda trigger."
   type        = any
   default     = {}
+
+  validation {
+    condition = length(var.lambda_config_custom_sms_sender) == 0 ? true : var.lambda_config_kms_key_id != null
+    error_message = "KMS key ID must be specified when using custom SMS sender for security encryption."
+  }
 }
 
 variable "mfa_configuration" {
   description = "Set to enable multi-factor authentication. Must be one of the following values (ON, OFF, OPTIONAL)"
   type        = string
   default     = "OFF"
+
+  validation {
+    condition     = contains(["ON", "OFF", "OPTIONAL"], var.mfa_configuration)
+    error_message = "MFA configuration must be one of: ON, OFF, OPTIONAL."
+  }
 }
 
 # software_token_mfa_configuration
@@ -309,6 +324,23 @@ variable "password_policy" {
     password_history_size            = number
   })
   default = null
+
+  validation {
+    condition = var.password_policy == null ? true : (
+      var.password_policy.minimum_length >= 8 && 
+      var.password_policy.minimum_length <= 99
+    )
+    error_message = "Password minimum length must be between 8 and 99 characters for security."
+  }
+
+  validation {
+    condition = var.password_policy == null ? true : (
+      var.password_policy.require_lowercase &&
+      var.password_policy.require_numbers &&
+      var.password_policy.require_uppercase
+    )
+    error_message = "Password policy must require lowercase, numbers, and uppercase for security."
+  }
 }
 
 variable "password_policy_minimum_length" {
@@ -417,6 +449,11 @@ variable "user_pool_add_ons_advanced_security_mode" {
   description = "The mode for advanced security, must be one of `OFF`, `AUDIT` or `ENFORCED`"
   type        = string
   default     = null
+
+  validation {
+    condition     = var.user_pool_add_ons_advanced_security_mode == null ? true : contains(["OFF", "AUDIT", "ENFORCED"], var.user_pool_add_ons_advanced_security_mode)
+    error_message = "Advanced security mode must be OFF, AUDIT, or ENFORCED."
+  }
 }
 
 variable "user_pool_add_ons_advanced_security_additional_flows" {
@@ -480,6 +517,11 @@ variable "domain" {
   description = "Cognito User Pool domain"
   type        = string
   default     = null
+
+  validation {
+    condition     = var.domain == null ? true : can(regex("^[a-z0-9-]+$", var.domain))
+    error_message = "Domain must contain only lowercase letters, numbers, and hyphens."
+  }
 }
 
 variable "domain_certificate_arn" {
