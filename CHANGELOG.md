@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [1.13.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.12.0...1.13.0) (2025-08-10)
+
+
+### Features
+
+* add comprehensive pre-commit workflow for automated code quality ([8c1cc44](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/8c1cc44861e4abfb8c79ac532225d6692befc86f))
+
 ## [1.12.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.11.1...1.12.0) (2025-08-09)
 
 
