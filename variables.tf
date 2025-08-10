@@ -64,6 +64,16 @@ variable "admin_create_user_config_email_message" {
   description = "The message template for email messages. Must contain `{username}` and `{####}` placeholders, for username and temporary password, respectively"
   type        = string
   default     = "{username}, your verification code is `{####}`"
+
+  validation {
+    condition = can(regex("\\{username\\}", var.admin_create_user_config_email_message)) && can(regex("\\{####\\}", var.admin_create_user_config_email_message))
+    error_message = "Email message template must contain {username} and {####} placeholders and cannot contain potentially malicious content."
+  }
+
+  validation {
+    condition = !can(regex("(?i)(script|javascript|vbscript|onload|onerror|onclick)", var.admin_create_user_config_email_message))
+    error_message = "Email message template cannot contain potentially malicious script content for security."
+  }
 }
 
 
@@ -77,6 +87,16 @@ variable "admin_create_user_config_sms_message" {
   description = "- The message template for SMS messages. Must contain `{username}` and `{####}` placeholders, for username and temporary password, respectively"
   type        = string
   default     = "Your username is {username} and temporary password is `{####}`"
+
+  validation {
+    condition = can(regex("\\{username\\}", var.admin_create_user_config_sms_message)) && can(regex("\\{####\\}", var.admin_create_user_config_sms_message))
+    error_message = "SMS message template must contain {username} and {####} placeholders and cannot contain potentially malicious content."
+  }
+
+  validation {
+    condition = length(var.admin_create_user_config_sms_message) <= 140
+    error_message = "SMS message template must not exceed 140 characters for SMS delivery compatibility."
+  }
 }
 
 variable "alias_attributes" {
@@ -94,7 +114,7 @@ variable "username_attributes" {
 variable "deletion_protection" {
   description = "When active, DeletionProtection prevents accidental deletion of your user pool. Before you can delete a user pool that you have protected against deletion, you must deactivate this feature. Valid values are `ACTIVE` and `INACTIVE`."
   type        = string
-  default     = "INACTIVE"
+  default     = "ACTIVE"
 }
 
 variable "auto_verified_attributes" {
@@ -120,6 +140,14 @@ variable "sms_configuration_sns_caller_arn" {
   description = "The ARN of the Amazon SNS caller. This is usually the IAM role that you've given Cognito permission to assume"
   type        = string
   default     = ""
+
+  validation {
+    condition = var.sms_configuration_sns_caller_arn == "" ? true : can(regex(
+      "^arn:aws:iam::[0-9]{12}:role/[a-zA-Z0-9+=,.@_-]+$",
+      var.sms_configuration_sns_caller_arn
+    ))
+    error_message = "SNS caller ARN must be a valid IAM role ARN format: arn:aws:iam::account:role/role-name."
+  }
 }
 
 # device_configuration
@@ -164,6 +192,14 @@ variable "email_configuration_source_arn" {
   description = "The ARN of the email source"
   type        = string
   default     = ""
+
+  validation {
+    condition = var.email_configuration_source_arn == "" ? true : can(regex(
+      "^arn:aws:ses:[a-z0-9-]+:[0-9]{12}:identity/.+$",
+      var.email_configuration_source_arn
+    ))
+    error_message = "Email source ARN must be a valid SES identity ARN format: arn:aws:ses:region:account:identity/domain-or-email."
+  }
 }
 
 variable "email_configuration_email_sending_account" {
@@ -198,47 +234,111 @@ variable "lambda_config_create_auth_challenge" {
   description = "The ARN of the lambda creating an authentication challenge."
   type        = string
   default     = null
+
+  validation {
+    condition = var.lambda_config_create_auth_challenge == null ? true : can(regex(
+      "^arn:aws:lambda:[a-z0-9-]+:[0-9]{12}:function:[a-zA-Z0-9-_]+(?::[a-zA-Z0-9-_]+)?$",
+      var.lambda_config_create_auth_challenge
+    ))
+    error_message = "Lambda ARN must be a valid AWS Lambda function ARN format: arn:aws:lambda:region:account:function:name[:alias]."
+  }
 }
 
 variable "lambda_config_custom_message" {
   description = "A custom Message AWS Lambda trigger."
   type        = string
   default     = null
+
+  validation {
+    condition = var.lambda_config_custom_message == null ? true : can(regex(
+      "^arn:aws:lambda:[a-z0-9-]+:[0-9]{12}:function:[a-zA-Z0-9-_]+(?::[a-zA-Z0-9-_]+)?$",
+      var.lambda_config_custom_message
+    ))
+    error_message = "Lambda ARN must be a valid AWS Lambda function ARN format: arn:aws:lambda:region:account:function:name[:alias]."
+  }
 }
 
 variable "lambda_config_define_auth_challenge" {
   description = "Defines the authentication challenge."
   type        = string
   default     = null
+
+  validation {
+    condition = var.lambda_config_define_auth_challenge == null ? true : can(regex(
+      "^arn:aws:lambda:[a-z0-9-]+:[0-9]{12}:function:[a-zA-Z0-9-_]+(?::[a-zA-Z0-9-_]+)?$",
+      var.lambda_config_define_auth_challenge
+    ))
+    error_message = "Lambda ARN must be a valid AWS Lambda function ARN format: arn:aws:lambda:region:account:function:name[:alias]."
+  }
 }
 
 variable "lambda_config_post_authentication" {
   description = "A post-authentication AWS Lambda trigger"
   type        = string
   default     = null
+
+  validation {
+    condition = var.lambda_config_post_authentication == null ? true : can(regex(
+      "^arn:aws:lambda:[a-z0-9-]+:[0-9]{12}:function:[a-zA-Z0-9-_]+(?::[a-zA-Z0-9-_]+)?$",
+      var.lambda_config_post_authentication
+    ))
+    error_message = "Lambda ARN must be a valid AWS Lambda function ARN format: arn:aws:lambda:region:account:function:name[:alias]."
+  }
 }
 
 variable "lambda_config_post_confirmation" {
   description = "A post-confirmation AWS Lambda trigger"
   type        = string
   default     = null
+
+  validation {
+    condition = var.lambda_config_post_confirmation == null ? true : can(regex(
+      "^arn:aws:lambda:[a-z0-9-]+:[0-9]{12}:function:[a-zA-Z0-9-_]+(?::[a-zA-Z0-9-_]+)?$",
+      var.lambda_config_post_confirmation
+    ))
+    error_message = "Lambda ARN must be a valid AWS Lambda function ARN format: arn:aws:lambda:region:account:function:name[:alias]."
+  }
 }
 
 variable "lambda_config_pre_authentication" {
   description = "A pre-authentication AWS Lambda trigger"
   type        = string
   default     = null
+
+  validation {
+    condition = var.lambda_config_pre_authentication == null ? true : can(regex(
+      "^arn:aws:lambda:[a-z0-9-]+:[0-9]{12}:function:[a-zA-Z0-9-_]+(?::[a-zA-Z0-9-_]+)?$",
+      var.lambda_config_pre_authentication
+    ))
+    error_message = "Lambda ARN must be a valid AWS Lambda function ARN format: arn:aws:lambda:region:account:function:name[:alias]."
+  }
 }
 variable "lambda_config_pre_sign_up" {
   description = "A pre-registration AWS Lambda trigger"
   type        = string
   default     = null
+
+  validation {
+    condition = var.lambda_config_pre_sign_up == null ? true : can(regex(
+      "^arn:aws:lambda:[a-z0-9-]+:[0-9]{12}:function:[a-zA-Z0-9-_]+(?::[a-zA-Z0-9-_]+)?$",
+      var.lambda_config_pre_sign_up
+    ))
+    error_message = "Lambda ARN must be a valid AWS Lambda function ARN format: arn:aws:lambda:region:account:function:name[:alias]."
+  }
 }
 
 variable "lambda_config_pre_token_generation" {
   description = "(deprecated) Allow to customize identity token claims before token generation"
   type        = string
   default     = null
+
+  validation {
+    condition = var.lambda_config_pre_token_generation == null ? true : can(regex(
+      "^arn:aws:lambda:[a-z0-9-]+:[0-9]{12}:function:[a-zA-Z0-9-_]+(?::[a-zA-Z0-9-_]+)?$",
+      var.lambda_config_pre_token_generation
+    ))
+    error_message = "Lambda ARN must be a valid AWS Lambda function ARN format: arn:aws:lambda:region:account:function:name[:alias]."
+  }
 }
 
 variable "lambda_config_pre_token_generation_config" {
@@ -251,18 +351,42 @@ variable "lambda_config_user_migration" {
   description = "The user migration Lambda config type"
   type        = string
   default     = null
+
+  validation {
+    condition = var.lambda_config_user_migration == null ? true : can(regex(
+      "^arn:aws:lambda:[a-z0-9-]+:[0-9]{12}:function:[a-zA-Z0-9-_]+(?::[a-zA-Z0-9-_]+)?$",
+      var.lambda_config_user_migration
+    ))
+    error_message = "Lambda ARN must be a valid AWS Lambda function ARN format: arn:aws:lambda:region:account:function:name[:alias]."
+  }
 }
 
 variable "lambda_config_verify_auth_challenge_response" {
   description = "Verifies the authentication challenge response"
   type        = string
   default     = null
+
+  validation {
+    condition = var.lambda_config_verify_auth_challenge_response == null ? true : can(regex(
+      "^arn:aws:lambda:[a-z0-9-]+:[0-9]{12}:function:[a-zA-Z0-9-_]+(?::[a-zA-Z0-9-_]+)?$",
+      var.lambda_config_verify_auth_challenge_response
+    ))
+    error_message = "Lambda ARN must be a valid AWS Lambda function ARN format: arn:aws:lambda:region:account:function:name[:alias]."
+  }
 }
 
 variable "lambda_config_kms_key_id" {
   description = "The Amazon Resource Name of Key Management Service Customer master keys. Amazon Cognito uses the key to encrypt codes and temporary passwords sent to CustomEmailSender and CustomSMSSender."
   type        = string
   default     = null
+
+  validation {
+    condition = var.lambda_config_kms_key_id == null ? true : can(regex(
+      "^arn:aws:kms:[a-z0-9-]+:[0-9]{12}:key/[a-f0-9-]{36}$|^[a-f0-9-]{36}$|^alias/[a-zA-Z0-9/_-]+$",
+      var.lambda_config_kms_key_id
+    ))
+    error_message = "KMS key must be a valid ARN (arn:aws:kms:region:account:key/key-id), key ID (UUID), or alias (alias/name)."
+  }
 }
 
 variable "lambda_config_custom_email_sender" {
@@ -282,7 +406,7 @@ variable "lambda_config_custom_sms_sender" {
 variable "mfa_configuration" {
   description = "Set to enable multi-factor authentication. Must be one of the following values (ON, OFF, OPTIONAL)"
   type        = string
-  default     = "OFF"
+  default     = "OPTIONAL"
 
   validation {
     condition     = contains(["ON", "OFF", "OPTIONAL"], upper(var.mfa_configuration))
@@ -357,6 +481,11 @@ variable "password_policy_minimum_length" {
   description = "The minimum length of the password policy that you have set"
   type        = number
   default     = 8
+
+  validation {
+    condition     = var.password_policy_minimum_length >= 8 && var.password_policy_minimum_length <= 99
+    error_message = "Password minimum length must be between 8 and 99 characters for security (legacy variable validation)."
+  }
 }
 
 variable "password_policy_require_lowercase" {
@@ -384,15 +513,25 @@ variable "password_policy_require_uppercase" {
 }
 
 variable "password_policy_temporary_password_validity_days" {
-  description = "The minimum length of the password policy that you have set"
+  description = "The user account expiration limit, in days, after which the account is no longer usable"
   type        = number
   default     = 7
+
+  validation {
+    condition     = var.password_policy_temporary_password_validity_days >= 1 && var.password_policy_temporary_password_validity_days <= 365
+    error_message = "Temporary password validity must be between 1 and 365 days per AWS limits (legacy variable validation)."
+  }
 }
 
 variable "password_policy_password_history_size" {
   description = "The number of previous passwords that users are prevented from reusing"
   type        = number
   default     = 0
+
+  validation {
+    condition     = var.password_policy_password_history_size >= 0 && var.password_policy_password_history_size <= 24
+    error_message = "Password history size must be between 0 and 24 per AWS limits (legacy variable validation)."
+  }
 }
 
 # schema
@@ -602,6 +741,15 @@ variable "client_callback_urls" {
   description = "List of allowed callback URLs for the identity providers"
   type        = list(string)
   default     = []
+
+  validation {
+    condition = length(var.client_callback_urls) == 0 || alltrue([
+      for url in var.client_callback_urls :
+      can(regex("^https://[a-zA-Z0-9][a-zA-Z0-9.-]*[a-zA-Z0-9](?::[0-9]+)?(?:/.*)?$", url)) ||
+      can(regex("^http://localhost(?::[0-9]+)?(?:/.*)?$", url))
+    ])
+    error_message = "Callback URLs must be valid HTTPS URLs (or HTTP localhost for development). URLs must start with https:// or http://localhost and have valid domain format."
+  }
 }
 
 variable "client_default_redirect_uri" {
@@ -620,6 +768,14 @@ variable "client_explicit_auth_flows" {
   description = "List of authentication flows (ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_PASSWORD_AUTH)"
   type        = list(string)
   default     = []
+
+  validation {
+    condition = alltrue([
+      for flow in var.client_explicit_auth_flows :
+      contains(["ADMIN_NO_SRP_AUTH", "CUSTOM_AUTH_FLOW_ONLY", "USER_SRP_AUTH", "ALLOW_CUSTOM_AUTH", "ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"], flow)
+    ])
+    error_message = "Authentication flows must be valid values: ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_SRP_AUTH, ALLOW_CUSTOM_AUTH, ALLOW_USER_SRP_AUTH, ALLOW_REFRESH_TOKEN_AUTH. Avoid USER_PASSWORD_AUTH for security."
+  }
 }
 
 variable "client_generate_secret" {
@@ -632,6 +788,15 @@ variable "client_logout_urls" {
   description = "List of allowed logout URLs for the identity providers"
   type        = list(string)
   default     = []
+
+  validation {
+    condition = length(var.client_logout_urls) == 0 || alltrue([
+      for url in var.client_logout_urls :
+      can(regex("^https://[a-zA-Z0-9][a-zA-Z0-9.-]*[a-zA-Z0-9](?::[0-9]+)?(?:/.*)?$", url)) ||
+      can(regex("^http://localhost(?::[0-9]+)?(?:/.*)?$", url))
+    ])
+    error_message = "Logout URLs must be valid HTTPS URLs (or HTTP localhost for development). URLs must start with https:// or http://localhost and have valid domain format."
+  }
 }
 
 variable "client_name" {
@@ -668,18 +833,33 @@ variable "client_access_token_validity" {
   description = "Time limit, between 5 minutes and 1 day, after which the access token is no longer valid and cannot be used. This value will be overridden if you have entered a value in `token_validity_units`."
   type        = number
   default     = 60
+
+  validation {
+    condition     = var.client_access_token_validity >= 5 && var.client_access_token_validity <= 1440
+    error_message = "Access token validity must be between 5 minutes and 1440 minutes (1 day) per AWS limits."
+  }
 }
 
 variable "client_id_token_validity" {
   description = "Time limit, between 5 minutes and 1 day, after which the ID token is no longer valid and cannot be used. Must be between 5 minutes and 1 day. Cannot be greater than refresh token expiration. This value will be overridden if you have entered a value in `token_validity_units`."
   type        = number
   default     = 60
+
+  validation {
+    condition     = var.client_id_token_validity >= 5 && var.client_id_token_validity <= 1440
+    error_message = "ID token validity must be between 5 minutes and 1440 minutes (1 day) per AWS limits."
+  }
 }
 
 variable "client_refresh_token_validity" {
   description = "The time limit in days refresh tokens are valid for. Must be between 60 minutes and 3650 days. This value will be overridden if you have entered a value in `token_validity_units`"
   type        = number
   default     = 30
+
+  validation {
+    condition     = var.client_refresh_token_validity >= 1 && var.client_refresh_token_validity <= 3650
+    error_message = "Refresh token validity must be between 1 and 3650 days per AWS limits."
+  }
 }
 
 variable "client_token_validity_units" {
