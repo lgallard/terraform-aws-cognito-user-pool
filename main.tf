@@ -262,16 +262,21 @@ resource "aws_cognito_user_pool" "pool" {
 }
 
 # State migration from dual-resource approach to single consolidated resource
-# These moved blocks ensure existing deployments can migrate safely
+# These moved blocks ensure existing deployments can migrate safely from both scenarios
 moved {
   from = aws_cognito_user_pool.pool_with_schema_ignore
   to   = aws_cognito_user_pool.pool
 }
 
+moved {
+  from = aws_cognito_user_pool.pool_with_schema_ignore[0]
+  to   = aws_cognito_user_pool.pool[0]
+}
+
 locals {
   # Get the user pool resource and ID from the single consolidated resource
   user_pool    = var.enabled ? aws_cognito_user_pool.pool[0] : null
-  user_pool_id = var.enabled ? local.user_pool.id : null
+  user_pool_id = var.enabled ? aws_cognito_user_pool.pool[0].id : null
   # username_configuration
   # If no username_configuration is provided return a empty list
   username_configuration_default = length(var.username_configuration) == 0 ? {} : {
