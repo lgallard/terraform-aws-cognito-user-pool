@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [1.14.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.13.0...1.14.0) (2025-08-10)
+
+
+### Features
+
+* integrate specialized subagents with GitHub Actions workflows ([#273](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/273)) ([5da717f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/5da717f59c3af40344df22f55e826848bf0b1502))
+
 ## [1.13.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/1.12.0...1.13.0) (2025-08-10)
 
 
