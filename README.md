@@ -415,12 +415,18 @@ This is needed because all parameters for the `lambda_config` block are optional
 <!-- BEGIN_TF_DOCS -->
 
 
+## ⚠️ Breaking Change Notice
+
+**Version 1.14.1+ requires AWS Provider 6.0+** due to changes in `advanced_security_additional_flows` syntax.
+
+📋 **[Migration Guide](MIGRATION.md)** - Complete upgrade instructions and troubleshooting
+
 ## Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.98 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.0 |
 
 ## Providers
 
