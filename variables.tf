@@ -270,10 +270,6 @@ variable "lambda_config_custom_email_sender" {
   type        = any
   default     = {}
 
-  validation {
-    condition = length(var.lambda_config_custom_email_sender) == 0 ? true : var.lambda_config_kms_key_id != null
-    error_message = "KMS key ID must be specified when using custom email sender for security encryption."
-  }
 }
 
 variable "lambda_config_custom_sms_sender" {
@@ -281,10 +277,6 @@ variable "lambda_config_custom_sms_sender" {
   type        = any
   default     = {}
 
-  validation {
-    condition = length(var.lambda_config_custom_sms_sender) == 0 ? true : var.lambda_config_kms_key_id != null
-    error_message = "KMS key ID must be specified when using custom SMS sender for security encryption."
-  }
 }
 
 variable "mfa_configuration" {
