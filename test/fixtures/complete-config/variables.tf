@@ -63,10 +63,10 @@ variable "user_groups" {
   default     = []
 }
 
-variable "account_recovery_setting" {
-  description = "Account recovery settings"
-  type        = map(any)
-  default     = {}
+variable "recovery_mechanisms" {
+  description = "The list of Account Recovery Options"
+  type        = list(any)
+  default     = []
 }
 
 variable "user_pool_add_ons" {

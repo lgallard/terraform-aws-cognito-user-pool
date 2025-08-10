@@ -28,27 +28,17 @@ output "endpoint" {
   value       = module.cognito_user_pool_test.endpoint
 }
 
-output "domain" {
-  description = "Holds the domain prefix if the user pool has a domain associated with it"
-  value       = module.cognito_user_pool_test.domain
+output "client_ids" {
+  description = "The ids of the user pool clients"
+  value       = module.cognito_user_pool_test.client_ids
 }
 
-output "clients" {
-  description = "User pool clients"
-  value       = module.cognito_user_pool_test.clients
-}
-
-output "user_groups" {
-  description = "User groups"
-  value       = module.cognito_user_pool_test.user_groups
+output "user_group_ids" {
+  description = "The ids of the user groups"
+  value       = module.cognito_user_pool_test.user_group_ids
 }
 
 output "managed_login_branding" {
   description = "Managed login branding"
   value       = module.cognito_user_pool_test.managed_login_branding
-}
-
-output "ui_customization" {
-  description = "UI customization"
-  value       = module.cognito_user_pool_test.ui_customization
 }

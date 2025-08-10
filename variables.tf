@@ -374,7 +374,7 @@ variable "number_schemas" {
 
 # schema lifecycle management
 variable "ignore_schema_changes" {
-  description = "Whether to ignore changes to Cognito User Pool schemas after creation. Set to true to prevent perpetual diffs when using custom schemas. This prevents AWS API errors since schema attributes cannot be modified or removed once created in Cognito. Due to Terraform limitations with conditional lifecycle blocks, this uses a dual-resource approach. Default is false for backward compatibility - set to true to enable the fix."
+  description = "Whether to ignore changes to Cognito User Pool schemas after creation. Schema changes are now ALWAYS ignored in the consolidated single resource to prevent perpetual diffs and AWS API errors, since schema attributes cannot be modified or removed once created in Cognito. This variable is kept for backward compatibility but setting it to false no longer enables schema change tracking. It is recommended to set this to true. Note: The dual-resource approach has been eliminated - there is now only one aws_cognito_user_pool resource with schema changes always ignored."
   type        = bool
   default     = false
 }
