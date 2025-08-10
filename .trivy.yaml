@@ -1,0 +1,59 @@
+# Trivy configuration for Terraform security scanning
+# https://aquasecurity.github.io/trivy/latest/docs/references/configuration/config-file/
+
+# Scan configuration
+scan:
+  # Scan types to enable
+  scanners:
+    - vuln
+    - secret
+    - misconfig
+
+  # Skip files/directories
+  skip-files:
+    - "**/.terraform/**"
+    - "**/test/**"
+    - "**/.git/**"
+
+# Output configuration
+format: table
+severity:
+  - UNKNOWN
+  - LOW
+  - MEDIUM
+  - HIGH
+  - CRITICAL
+
+# Misconfiguration settings
+misconfig:
+  # Include Terraform misconfigurations
+  include-non-failures: false
+
+  # Terraform specific settings
+  terraform:
+    # Variables files to use
+    tfvars: []
+
+    # Skip certain checks
+    skip-policy:
+      # Skip checks that might be too strict for this module
+      - "terraform.security.aws.iam.no_password_reuse"
+
+# Secret scanning settings
+secret:
+  # Skip secret scanning in test files
+  skip-paths:
+    - "test/**"
+    - "examples/**"
+
+# Vulnerability settings
+vulnerability:
+  # Type of vulnerabilities to detect
+  type:
+    - os
+    - library
+
+# Cache settings
+cache:
+  # Enable caching for faster subsequent runs
+  clear: false

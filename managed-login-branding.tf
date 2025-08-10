@@ -31,7 +31,7 @@ locals {
   # Create a map of client names to client IDs for branding lookups
   # Handle null/empty names by using the for_each key as fallback
   client_name_to_id_map = var.enabled ? {
-    for k, client in aws_cognito_user_pool_client.client : 
+    for k, client in aws_cognito_user_pool_client.client :
     coalesce(client.name, k) => client.id
   } : {}
 

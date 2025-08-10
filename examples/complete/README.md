@@ -276,3 +276,39 @@ module "aws_cognito_user_pool_complete_example" {
   }
 }
 ```
+
+<!-- BEGIN_TF_DOCS -->
+
+
+## Requirements
+
+No requirements.
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.2.0 |
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_aws_cognito_user_pool_complete_example"></a> [aws\_cognito\_user\_pool\_complete\_example](#module\_aws\_cognito\_user\_pool\_complete\_example) | ../../ | n/a |
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [aws_kms_key.lambda-custom-sender](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_env"></a> [env](#input\_env) | n/a | `map(any)` | `{}` | no |
+
+## Outputs
+
+No outputs.
+<!-- END_TF_DOCS -->

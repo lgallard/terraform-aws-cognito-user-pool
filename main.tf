@@ -17,7 +17,7 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "username_configuration" {
     for_each = local.username_configuration
     content {
-      case_sensitive = lookup(username_configuration.value, "case_sensitive")
+      case_sensitive = lookup(username_configuration.value, "case_sensitive", true)
     }
   }
 
@@ -25,14 +25,14 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "admin_create_user_config" {
     for_each = local.admin_create_user_config
     content {
-      allow_admin_create_user_only = lookup(admin_create_user_config.value, "allow_admin_create_user_only")
+      allow_admin_create_user_only = lookup(admin_create_user_config.value, "allow_admin_create_user_only", true)
 
       dynamic "invite_message_template" {
         for_each = lookup(admin_create_user_config.value, "email_message", null) == null && lookup(admin_create_user_config.value, "email_subject", null) == null && lookup(admin_create_user_config.value, "sms_message", null) == null ? [] : [1]
         content {
-          email_message = lookup(admin_create_user_config.value, "email_message")
-          email_subject = lookup(admin_create_user_config.value, "email_subject")
-          sms_message   = lookup(admin_create_user_config.value, "sms_message")
+          email_message = lookup(admin_create_user_config.value, "email_message", null)
+          email_subject = lookup(admin_create_user_config.value, "email_subject", null)
+          sms_message   = lookup(admin_create_user_config.value, "sms_message", null)
         }
       }
     }
@@ -42,8 +42,8 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "device_configuration" {
     for_each = local.device_configuration
     content {
-      challenge_required_on_new_device      = lookup(device_configuration.value, "challenge_required_on_new_device")
-      device_only_remembered_on_user_prompt = lookup(device_configuration.value, "device_only_remembered_on_user_prompt")
+      challenge_required_on_new_device      = lookup(device_configuration.value, "challenge_required_on_new_device", false)
+      device_only_remembered_on_user_prompt = lookup(device_configuration.value, "device_only_remembered_on_user_prompt", false)
     }
   }
 
@@ -51,11 +51,11 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "email_configuration" {
     for_each = local.email_configuration
     content {
-      configuration_set      = lookup(email_configuration.value, "configuration_set")
-      reply_to_email_address = lookup(email_configuration.value, "reply_to_email_address")
-      source_arn             = lookup(email_configuration.value, "source_arn")
-      email_sending_account  = lookup(email_configuration.value, "email_sending_account")
-      from_email_address     = lookup(email_configuration.value, "from_email_address")
+      configuration_set      = lookup(email_configuration.value, "configuration_set", null)
+      reply_to_email_address = lookup(email_configuration.value, "reply_to_email_address", null)
+      source_arn             = lookup(email_configuration.value, "source_arn", null)
+      email_sending_account  = lookup(email_configuration.value, "email_sending_account", "COGNITO_DEFAULT")
+      from_email_address     = lookup(email_configuration.value, "from_email_address", null)
     }
   }
 
@@ -196,8 +196,14 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "user_pool_add_ons" {
     for_each = local.user_pool_add_ons
     content {
-      advanced_security_mode            = lookup(user_pool_add_ons.value, "advanced_security_mode")
-      advanced_security_additional_flows = lookup(user_pool_add_ons.value, "advanced_security_additional_flows")
+      advanced_security_mode = lookup(user_pool_add_ons.value, "advanced_security_mode")
+
+      dynamic "advanced_security_additional_flows" {
+        for_each = lookup(user_pool_add_ons.value, "advanced_security_additional_flows") != null ? [1] : []
+        content {
+          custom_auth_mode = lookup(user_pool_add_ons.value, "advanced_security_additional_flows")
+        }
+      }
     }
   }
 
@@ -269,7 +275,7 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "username_configuration" {
     for_each = local.username_configuration
     content {
-      case_sensitive = lookup(username_configuration.value, "case_sensitive")
+      case_sensitive = lookup(username_configuration.value, "case_sensitive", true)
     }
   }
 
@@ -277,14 +283,14 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "admin_create_user_config" {
     for_each = local.admin_create_user_config
     content {
-      allow_admin_create_user_only = lookup(admin_create_user_config.value, "allow_admin_create_user_only")
+      allow_admin_create_user_only = lookup(admin_create_user_config.value, "allow_admin_create_user_only", true)
 
       dynamic "invite_message_template" {
         for_each = lookup(admin_create_user_config.value, "email_message", null) == null && lookup(admin_create_user_config.value, "email_subject", null) == null && lookup(admin_create_user_config.value, "sms_message", null) == null ? [] : [1]
         content {
-          email_message = lookup(admin_create_user_config.value, "email_message")
-          email_subject = lookup(admin_create_user_config.value, "email_subject")
-          sms_message   = lookup(admin_create_user_config.value, "sms_message")
+          email_message = lookup(admin_create_user_config.value, "email_message", null)
+          email_subject = lookup(admin_create_user_config.value, "email_subject", null)
+          sms_message   = lookup(admin_create_user_config.value, "sms_message", null)
         }
       }
     }
@@ -294,8 +300,8 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "device_configuration" {
     for_each = local.device_configuration
     content {
-      challenge_required_on_new_device      = lookup(device_configuration.value, "challenge_required_on_new_device")
-      device_only_remembered_on_user_prompt = lookup(device_configuration.value, "device_only_remembered_on_user_prompt")
+      challenge_required_on_new_device      = lookup(device_configuration.value, "challenge_required_on_new_device", false)
+      device_only_remembered_on_user_prompt = lookup(device_configuration.value, "device_only_remembered_on_user_prompt", false)
     }
   }
 
@@ -303,11 +309,11 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "email_configuration" {
     for_each = local.email_configuration
     content {
-      configuration_set      = lookup(email_configuration.value, "configuration_set")
-      reply_to_email_address = lookup(email_configuration.value, "reply_to_email_address")
-      source_arn             = lookup(email_configuration.value, "source_arn")
-      email_sending_account  = lookup(email_configuration.value, "email_sending_account")
-      from_email_address     = lookup(email_configuration.value, "from_email_address")
+      configuration_set      = lookup(email_configuration.value, "configuration_set", null)
+      reply_to_email_address = lookup(email_configuration.value, "reply_to_email_address", null)
+      source_arn             = lookup(email_configuration.value, "source_arn", null)
+      email_sending_account  = lookup(email_configuration.value, "email_sending_account", "COGNITO_DEFAULT")
+      from_email_address     = lookup(email_configuration.value, "from_email_address", null)
     }
   }
 
@@ -448,8 +454,14 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "user_pool_add_ons" {
     for_each = local.user_pool_add_ons
     content {
-      advanced_security_mode            = lookup(user_pool_add_ons.value, "advanced_security_mode")
-      advanced_security_additional_flows = lookup(user_pool_add_ons.value, "advanced_security_additional_flows")
+      advanced_security_mode = lookup(user_pool_add_ons.value, "advanced_security_mode")
+
+      dynamic "advanced_security_additional_flows" {
+        for_each = lookup(user_pool_add_ons.value, "advanced_security_additional_flows") != null ? [1] : []
+        content {
+          custom_auth_mode = lookup(user_pool_add_ons.value, "advanced_security_additional_flows")
+        }
+      }
     }
   }
 
@@ -621,7 +633,7 @@ locals {
   # user_pool_add_ons
   # If no user_pool_add_ons is provided, build a configuration using the default values
   user_pool_add_ons_default = {
-    advanced_security_mode            = lookup(var.user_pool_add_ons, "advanced_security_mode", null) == null ? var.user_pool_add_ons_advanced_security_mode : lookup(var.user_pool_add_ons, "advanced_security_mode")
+    advanced_security_mode             = lookup(var.user_pool_add_ons, "advanced_security_mode", null) == null ? var.user_pool_add_ons_advanced_security_mode : lookup(var.user_pool_add_ons, "advanced_security_mode")
     advanced_security_additional_flows = lookup(var.user_pool_add_ons, "advanced_security_additional_flows", null) == null ? var.user_pool_add_ons_advanced_security_additional_flows : lookup(var.user_pool_add_ons, "advanced_security_additional_flows")
   }
 

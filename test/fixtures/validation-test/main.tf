@@ -31,11 +31,33 @@ variable "mfa_configuration" {
   default     = "OFF"
 }
 
-# Simple validation without creating resources
+variable "user_pool_add_ons_advanced_security_additional_flows" {
+  description = "Mode of threat protection operation in custom authentication. Valid values are AUDIT or ENFORCED. Default is AUDIT"
+  type        = string
+  default     = null
+
+  validation {
+    condition     = var.user_pool_add_ons_advanced_security_additional_flows == null ? true : contains(["AUDIT", "ENFORCED"], var.user_pool_add_ons_advanced_security_additional_flows)
+    error_message = "Invalid custom_auth_mode. Valid values: AUDIT, ENFORCED"
+  }
+}
+
+# This configuration just validates the variables without creating resources
+# The key is that Terraform evaluates variable validation during planning
+
+# Trigger evaluation by using the variables in locals
 locals {
-  validation_test = "Validation passed for ${var.user_pool_name} with tier ${var.user_pool_tier}"
+  # Force evaluation of all variables to trigger validation
+  force_validation = {
+    user_pool_name                                       = var.user_pool_name
+    user_pool_tier                                       = var.user_pool_tier
+    enabled                                              = var.enabled
+    password_policy                                      = var.password_policy
+    mfa_configuration                                    = var.mfa_configuration
+    user_pool_add_ons_advanced_security_additional_flows = var.user_pool_add_ons_advanced_security_additional_flows
+  }
 }
 
 output "validation_result" {
-  value = local.validation_test
+  value = "Validation passed for ${var.user_pool_name} with tier ${var.user_pool_tier}"
 }
