@@ -56,7 +56,7 @@ while IFS= read -r resource; do
     if [[ $resource =~ aws_cognito_user_pool_client\.client\[([0-9]+)\] ]]; then
         index="${BASH_REMATCH[1]}"
         CLIENT_INDICES+=("$index")
-        
+
         echo -n "Enter the name for client[$index] (leave empty if no name is specified): "
         read -r client_name
         CLIENT_NAMES+=("$client_name")
@@ -72,7 +72,7 @@ MIGRATION_COMMANDS=()
 for i in "${!CLIENT_INDICES[@]}"; do
     index="${CLIENT_INDICES[$i]}"
     name="${CLIENT_NAMES[$i]}"
-    
+
     if [ -n "$name" ]; then
         # Client has a name
         new_key="${name}_${index}"
@@ -80,10 +80,10 @@ for i in "${!CLIENT_INDICES[@]}"; do
         # Client has no name
         new_key="client_${index}"
     fi
-    
+
     old_resource="aws_cognito_user_pool_client.client[${index}]"
     new_resource="aws_cognito_user_pool_client.client[\"${new_key}\"]"
-    
+
     migration_cmd="terraform state mv '${old_resource}' '${new_resource}'"
     MIGRATION_COMMANDS+=("$migration_cmd")
 done
@@ -120,7 +120,7 @@ read -r AUTO_RUN
 if [[ $AUTO_RUN =~ ^[Yy]$ ]]; then
     echo ""
     echo "Running migration commands..."
-    
+
     for cmd in "${MIGRATION_COMMANDS[@]}"; do
         echo "Executing: $cmd"
         if eval "$cmd"; then
@@ -131,17 +131,17 @@ if [[ $AUTO_RUN =~ ^[Yy]$ ]]; then
             exit 1
         fi
     done
-    
+
     echo ""
     echo "✓ All migration commands completed successfully!"
     echo ""
     echo "Running terraform plan to verify..."
     terraform plan
-    
+
     echo ""
     echo "Migration complete! Check the plan output above."
     echo "If you see any client resources being created/destroyed, please review your configuration."
-    
+
 else
     echo ""
     echo "Migration commands have been generated above."
