@@ -377,6 +377,11 @@ variable "ignore_schema_changes" {
   description = "Whether to ignore changes to Cognito User Pool schemas after creation. Schema changes are now ALWAYS ignored in the consolidated single resource to prevent perpetual diffs and AWS API errors, since schema attributes cannot be modified or removed once created in Cognito. This variable is kept for backward compatibility but setting it to false no longer enables schema change tracking. It is recommended to set this to true. Note: The dual-resource approach has been eliminated - there is now only one aws_cognito_user_pool resource with schema changes always ignored."
   type        = bool
   default     = false
+
+  validation {
+    condition     = var.ignore_schema_changes == true
+    error_message = "DEPRECATION WARNING: ignore_schema_changes=false is no longer supported. Schema changes are always ignored due to AWS Cognito limitations and to prevent perpetual diffs. Please set ignore_schema_changes=true to acknowledge this change and remove this warning."
+  }
 }
 
 # sms messages
