@@ -33,7 +33,7 @@ module "aws_cognito_user_pool_simple" {
 
 ### Example (conditional creation)
 
-If you need to create Cognito User Pool resources conditionally in ealierform  versions such as 0.11, 0,12 and 0.13 you can set the input variable `enabled` to false:
+If you need to create Cognito User Pool resources conditionally in earlier form versions such as 0.11, 0.12 and 0.13 you can set the input variable `enabled` to false:
 
 ```hcl
 # This Cognito User Pool will not be created
@@ -406,7 +406,7 @@ See the [with_branding example](examples/with_branding/) for a comprehensive imp
 README.md updated successfully
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
-## Know issues
+## Known issues
 ### Removing all lambda triggers
 If you define lambda triggers using the `lambda_config` block or any `lambda_config_*` variable and you want to remove all triggers, define the lambda_config block with an empty map `{}` and apply the plan. Then comment the `lambda_config` block or define it as `null` and apply the plan again.
 
