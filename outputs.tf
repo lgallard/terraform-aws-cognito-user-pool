@@ -70,7 +70,7 @@ output "client_ids" {
 }
 
 output "client_secrets" {
-  description = " The client secrets of the user pool clients"
+  description = "The client secrets of the user pool clients"
   value       = var.enabled ? values(aws_cognito_user_pool_client.client)[*].client_secret : null
   sensitive   = true
 }
@@ -124,7 +124,7 @@ output "user_groups_map" {
 # aws_cognito_resource_servers
 #
 output "resource_servers_scope_identifiers" {
-  description = " A list of all scopes configured in the format identifier/scope_name"
+  description = "A list of all scopes configured in the format identifier/scope_name"
   value       = var.enabled ? aws_cognito_resource_server.resource.*.scope_identifiers : null
 }
 
