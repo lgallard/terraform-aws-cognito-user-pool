@@ -27,7 +27,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 5.95"
+      version = ">= 6.0"
     }
     awscc = {
       source  = "hashicorp/awscc"
@@ -137,7 +137,7 @@ terraform destroy
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.95 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.0 |
 | <a name="requirement_awscc"></a> [awscc](#requirement\_awscc) | >= 1.0 |
 
 ## Providers

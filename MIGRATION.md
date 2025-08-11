@@ -9,6 +9,14 @@ This module now requires AWS Provider **6.0 or later** due to breaking changes i
 **AWS Provider 5.x** (deprecated syntax):
 ```hcl
 user_pool_add_ons {
+  advanced_security_mode              = "ENFORCED"
+  advanced_security_additional_flows = var.advanced_security_additional_flows
+}
+```
+
+**AWS Provider 6.x** (current syntax):
+```hcl
+user_pool_add_ons {
   advanced_security_mode = "ENFORCED"
   
   dynamic "advanced_security_additional_flows" {
@@ -17,14 +25,6 @@ user_pool_add_ons {
       custom_auth_mode = var.advanced_security_additional_flows
     }
   }
-}
-```
-
-**AWS Provider 6.x** (current syntax):
-```hcl
-user_pool_add_ons {
-  advanced_security_mode              = "ENFORCED"
-  advanced_security_additional_flows = var.advanced_security_additional_flows
 }
 ```
 

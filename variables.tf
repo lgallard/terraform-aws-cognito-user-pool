@@ -918,7 +918,7 @@ variable "user_group_role_arn" {
 # aws_cognito_resource_server
 #
 variable "resource_servers" {
-  description = "A container with the user_groups definitions"
+  description = "A container with the resource_servers definitions"
   type        = list(any)
   default     = []
 }
