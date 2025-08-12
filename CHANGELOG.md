@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [2.1.1](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.1.0...2.1.1) (2025-08-12)
+
+
+### Bug Fixes
+
+* add dot character to allowed character in domain variable ([#290](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/290)) ([545c76d](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/545c76db492360f44cb7eee28d9a56afe109cecf))
+
 ## [2.1.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.0.0...2.1.0) (2025-08-11)
 
 
