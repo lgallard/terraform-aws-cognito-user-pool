@@ -669,11 +669,11 @@ variable "domain" {
 
   validation {
     condition = var.domain == null ? true : (
-      can(regex("^[a-z0-9][a-z0-9-]*[a-z0-9]$", var.domain)) &&
+      can(regex("^[a-z0-9][.a-z0-9-]*[a-z0-9]$", var.domain)) &&
       length(var.domain) >= 3 &&
       length(var.domain) <= 63
     )
-    error_message = "Domain must be 3-63 characters, start and end with alphanumeric characters, and contain only lowercase letters, numbers, and hyphens."
+    error_message = "Domain must be 3-63 characters, start and end with alphanumeric characters, and contain only lowercase letters, numbers, dots, and hyphens."
   }
 }
 
