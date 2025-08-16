@@ -29,6 +29,19 @@
       "matchPackagePatterns": ["^hashicorp/terraform$"],
       "enabled": true,
       "automerge": false
+    },
+    {
+      "matchDatasources": ["golang-version"],
+      "ignoreUnstable": true,
+      "respectLatest": true,
+      "description": "Prevent pre-release Go versions in GitHub Actions workflows"
+    },
+    {
+      "managers": ["github-actions"],
+      "matchPackageNames": ["actions/setup-go"],
+      "ignoreUnstable": true,
+      "respectLatest": true,
+      "description": "Ensure setup-go action only uses stable Go versions"
     }
   ]
 }
