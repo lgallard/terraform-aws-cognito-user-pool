@@ -517,5 +517,5 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   }
 }
 
-# Locals are now organized in separate files under locals/ directory
+# Locals are now organized in separate files (locals-*.tf)
 # This improves maintainability and readability of the configuration
