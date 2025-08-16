@@ -25,8 +25,6 @@ locals {
     enabled = try(var.software_token_mfa_configuration.enabled, var.software_token_mfa_configuration_enabled)
   }
 
-  # Only include software token MFA if SMS is configured or MFA is not OFF
-  software_token_mfa_configuration = (
-    length(var.sms_configuration) == 0 || local.sms_configuration == null
-  ) && var.mfa_configuration == "OFF" ? [] : [local.software_token_mfa_configuration_default]
+  # Only include software token MFA if MFA is not OFF
+  software_token_mfa_configuration = var.mfa_configuration == "OFF" ? [] : [local.software_token_mfa_configuration_default]
 }

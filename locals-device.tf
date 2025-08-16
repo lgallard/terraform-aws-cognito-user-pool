@@ -24,10 +24,9 @@ locals {
   device_challenge_enabled = try(local.device_configuration_values.challenge_required_on_new_device, false) != false
   device_prompt_enabled = try(local.device_configuration_values.device_only_remembered_on_user_prompt, false) != false
 
-  # Only include device configuration block if values differ from AWS defaults or are explicitly set
+  # Only include device configuration block if configuration is provided and meaningful
   device_configuration_needed = local.device_config_provided && (
-    !local.device_challenge_set || !local.device_prompt_set ||
-    local.device_challenge_enabled || local.device_prompt_enabled
+    local.device_challenge_set || local.device_prompt_set
   )
 
   device_configuration = local.device_configuration_needed ? [local.device_configuration_values] : []
