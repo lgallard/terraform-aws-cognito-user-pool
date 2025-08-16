@@ -2,7 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0  # Updated to latest stable version
+    rev: v5.0.0  # Updated to latest stable version
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -18,23 +18,15 @@ repos:
       - id: mixed-line-ending
         args: ['--fix=lf']  # Ensure consistent line endings
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.83.5  # Updated to latest stable version
+    rev: v1.96.0  # Updated to latest stable version
     hooks:
       - id: terraform_fmt
       - id: terraform_validate
         args:
           - --tf-init-args=-upgrade  # Ensure latest provider versions
-      # Temporarily disabled - still modifying files in CI despite working locally
-      # Will be re-enabled once CI version consistency is resolved
-      # - id: terraform_docs
-      #   args:
-      #     - --args=--config=.terraform-docs.yml
-      # Temporarily disabled due to 178 existing style warnings - will be addressed in separate PR
-      # - id: terraform_tflint
-      #   args:
-      #     - --args=--config=.tflint.hcl
-      # Trivy integration will be added as custom hook in future PR
-      # terraform_trivy is not yet available in pre-commit-terraform
+      - id: terraform_tfsec
+        args:
+          - --args=--format json --exclude-downloaded-modules
   - repo: https://github.com/crate-ci/typos
     rev: v1.16.23
     hooks:
@@ -42,3 +34,9 @@ repos:
         types: [markdown]
         args: ['--format', 'brief']
         exclude: 'CHANGELOG.md'
+
+  - repo: https://github.com/bridgecrewio/checkov
+    rev: 3.2.0
+    hooks:
+      - id: checkov
+        args: [--framework, terraform, --skip-check, CKV_AWS_117]  # Skip Lambda DLQ check for Cognito module
