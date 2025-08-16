@@ -1038,7 +1038,6 @@ variable "managed_login_branding" {
       ])
     ])
     error_message = "Invalid color_mode. Must be one of: LIGHT, DARK, DYNAMIC"
-
   }
 
   validation {
@@ -1059,6 +1058,5 @@ variable "managed_login_branding" {
       ])
     ])
     error_message = "Asset file size must not exceed 2MB when base64 encoded"
-
   }
 }
