@@ -669,11 +669,11 @@ variable "domain" {
 
   validation {
     condition = var.domain == null ? true : (
-      can(regex("^[a-z0-9][a-z0-9-]*[a-z0-9]$", var.domain)) &&
+      can(regex("^[a-z0-9][.a-z0-9-]*[a-z0-9]$", var.domain)) &&
       length(var.domain) >= 3 &&
       length(var.domain) <= 63
     )
-    error_message = "Domain must be 3-63 characters, start and end with alphanumeric characters, and contain only lowercase letters, numbers, and hyphens."
+    error_message = "Domain must be 3-63 characters, start and end with alphanumeric characters, and contain only lowercase letters, numbers, dots, and hyphens."
   }
 }
 
@@ -1038,7 +1038,6 @@ variable "managed_login_branding" {
       ])
     ])
     error_message = "Invalid color_mode. Must be one of: LIGHT, DARK, DYNAMIC"
-
   }
 
   validation {
@@ -1059,6 +1058,5 @@ variable "managed_login_branding" {
       ])
     ])
     error_message = "Asset file size must not exceed 2MB when base64 encoded"
-
   }
 }
