@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [2.1.2](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.1.1...2.1.2) (2025-08-17)
+
+
+### Bug Fixes
+
+* configure Renovate to prevent pre-release Go versions ([#294](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/294)) ([510ca9a](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/510ca9a84ddf0908b5adea9e41512703f6d4db04))
+
 ## [2.1.1](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.1.0...2.1.1) (2025-08-12)
 
 
