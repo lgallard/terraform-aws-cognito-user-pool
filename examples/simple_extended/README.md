@@ -68,7 +68,7 @@ module "aws_cognito_user_pool_simple_extended_example" {
   user_group_name        = "mygroup"
   user_group_description = "My group"
 
-  # ressource server
+  # resource server
   resource_server_identifier        = "https://mydomain.com"
   resource_server_name              = "mydomain"
   resource_server_scope_name        = "scope"
