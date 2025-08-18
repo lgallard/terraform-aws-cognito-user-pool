@@ -26,7 +26,7 @@ module "cognito_user_pool_test" {
   user_groups = var.user_groups
 
   # Account recovery
-  account_recovery_setting = var.account_recovery_setting
+  recovery_mechanisms = var.recovery_mechanisms
 
   # Advanced security
   user_pool_add_ons = var.user_pool_add_ons
