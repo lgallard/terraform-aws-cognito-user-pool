@@ -267,15 +267,16 @@ If you have an existing deployment and want to enable the fix:
 
 If you need to add new schema attributes after enabling `ignore_schema_changes = true`:
 
-1. **Temporary approach**: Set `ignore_schema_changes = false`, add attributes, apply, then set back to `true`
-2. **Separate resources**: Use the `aws_cognito_user_pool_schema` resource for new attributes (AWS provider v5+)
-3. **Recreation**: Destroy and recreate the user pool (⚠️ **destroys all user data**)
+1. **Temporary approach**: Set `ignore_schema_changes = false`, add attributes, apply, then set back to `true` (may fail due to AWS API limitations)
+2. **Recreation**: Destroy and recreate the user pool (⚠️ **destroys all user data**)
+
+   **Note**: There is no standalone `aws_cognito_user_pool_schema` resource in the AWS provider. Schema attributes can only be managed through `schema` blocks within the `aws_cognito_user_pool` resource itself.
 
 ### 💡 **Best Practices**
 
 - **🎯 NEW DEPLOYMENTS**: **Always use `ignore_schema_changes = true`** to prevent schema perpetual diffs from the start
 - **Plan your schema carefully**: Schema attributes are immutable after creation
-- **Use separate schema resources**: For maximum flexibility, consider using `aws_cognito_user_pool_schema` resources
+- **Design for the future**: Consider using custom attributes with generic names for flexibility
 - **Test thoroughly**: Always run `terraform plan` to verify expected behavior
 
 ## Managed Login Branding
