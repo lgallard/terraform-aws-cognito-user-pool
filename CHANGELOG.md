@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [2.1.3](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.1.2...2.1.3) (2025-08-18)
+
+
+### Bug Fixes
+
+* remove incorrect aws_cognito_user_pool_schema resource reference ([#298](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/298)) ([bb18757](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/bb1875702e9dec3b21d438d5af44ed837b6ba6bc))
+
 ## [2.1.2](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.1.1...2.1.2) (2025-08-17)
 
 
