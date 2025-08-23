@@ -66,12 +66,12 @@ variable "admin_create_user_config_email_message" {
   default     = "{username}, your verification code is `{####}`"
 
   validation {
-    condition = can(regex("\\{username\\}", var.admin_create_user_config_email_message)) && can(regex("\\{####\\}", var.admin_create_user_config_email_message))
+    condition     = can(regex("\\{username\\}", var.admin_create_user_config_email_message)) && can(regex("\\{####\\}", var.admin_create_user_config_email_message))
     error_message = "Email message template must contain {username} and {####} placeholders and cannot contain potentially malicious content."
   }
 
   validation {
-    condition = !can(regex("(?i)(script|javascript|vbscript|onload|onerror|onclick)", var.admin_create_user_config_email_message))
+    condition     = !can(regex("(?i)(script|javascript|vbscript|onload|onerror|onclick)", var.admin_create_user_config_email_message))
     error_message = "Email message template cannot contain potentially malicious script content for security."
   }
 }
@@ -89,12 +89,12 @@ variable "admin_create_user_config_sms_message" {
   default     = "Your username is {username} and temporary password is `{####}`"
 
   validation {
-    condition = can(regex("\\{username\\}", var.admin_create_user_config_sms_message)) && can(regex("\\{####\\}", var.admin_create_user_config_sms_message))
+    condition     = can(regex("\\{username\\}", var.admin_create_user_config_sms_message)) && can(regex("\\{####\\}", var.admin_create_user_config_sms_message))
     error_message = "SMS message template must contain {username} and {####} placeholders and cannot contain potentially malicious content."
   }
 
   validation {
-    condition = length(var.admin_create_user_config_sms_message) <= 140
+    condition     = length(var.admin_create_user_config_sms_message) <= 140
     error_message = "SMS message template must not exceed 140 characters for SMS delivery compatibility."
   }
 }
@@ -443,7 +443,7 @@ variable "password_policy" {
 
   validation {
     condition = var.password_policy == null ? true : (
-      var.password_policy.minimum_length >= 8 && 
+      var.password_policy.minimum_length >= 8 &&
       var.password_policy.minimum_length <= 99
     )
     error_message = "Password minimum length must be between 8 and 99 characters for security."
@@ -462,7 +462,7 @@ variable "password_policy" {
 
   validation {
     condition = var.password_policy == null ? true : (
-      var.password_policy.temporary_password_validity_days >= 1 && 
+      var.password_policy.temporary_password_validity_days >= 1 &&
       var.password_policy.temporary_password_validity_days <= 365
     )
     error_message = "Password policy temporary_password_validity_days must be between 1 and 365 days per AWS limits."
@@ -470,7 +470,7 @@ variable "password_policy" {
 
   validation {
     condition = var.password_policy == null ? true : (
-      var.password_policy.password_history_size >= 0 && 
+      var.password_policy.password_history_size >= 0 &&
       var.password_policy.password_history_size <= 24
     )
     error_message = "Password policy password_history_size must be between 0 and 24 per AWS limits."
