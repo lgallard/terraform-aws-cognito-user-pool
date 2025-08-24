@@ -23,38 +23,111 @@ on:
         default: false
         type: boolean
 
+# Prevent concurrent executions to avoid race conditions
+concurrency:
+  group: feature-discovery-${{ github.repository }}
+  cancel-in-progress: false
+
 jobs:
   discover-cognito-features:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # Minimal permissions following least privilege principle
     permissions:
       contents: write
       issues: write
-      pull-requests: read
-      id-token: write
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        # Pin to specific SHA for supply chain security
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           fetch-depth: 1
 
-      - name: Create feature tracker directory
+      - name: Validate inputs
         run: |
+          set -euo pipefail
+
+          # Validate provider_version input to prevent command injection
+          if [[ ! "${{ inputs.provider_version || 'latest' }}" =~ ^(latest|[0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+            echo "::error::Invalid provider_version format. Must be 'latest' or semantic version (e.g., '5.82.0')"
+            exit 1
+          fi
+
+          # Validate boolean inputs
+          if [[ "${{ inputs.dry_run }}" != "true" && "${{ inputs.dry_run }}" != "false" ]]; then
+            echo "::error::Invalid dry_run value. Must be 'true' or 'false'"
+            exit 1
+          fi
+
+          if [[ "${{ inputs.force_scan }}" != "true" && "${{ inputs.force_scan }}" != "false" ]]; then
+            echo "::error::Invalid force_scan value. Must be 'true' or 'false'"
+            exit 1
+          fi
+
+          echo "✅ All inputs validated successfully"
+          echo "Provider version: ${{ inputs.provider_version || 'latest' }}"
+          echo "Dry run mode: ${{ inputs.dry_run }}"
+          echo "Force scan: ${{ inputs.force_scan }}"
+
+      - name: Create and validate feature tracker
+        run: |
+          set -euo pipefail
+
           mkdir -p .github/feature-tracker
 
           # Create initial tracker file if it doesn't exist
           if [ ! -f .github/feature-tracker/cognito-features.json ]; then
-            cat > .github/feature-tracker/cognito-features.json << 'EOF'
+            # Create temporary file for atomic operation
+            cat > .github/feature-tracker/cognito-features.json.tmp << 'EOF'
           {
-            "last_scan": "1970-01-01T00:00:00Z",
-            "provider_version": "0.0.0",
+            "metadata": {
+              "module_name": "terraform-aws-cognito-user-pool",
+              "last_scan": "1970-01-01T00:00:00Z",
+              "provider_version": "0.0.0",
+              "scan_count": 0
+            },
             "scan_history": [],
-            "features": {},
-            "issues_created": []
+            "current_implementation": {
+              "resources": {},
+              "data_sources": {},
+              "examples": {}
+            },
+            "discovered_features": {
+              "new_resources": {},
+              "new_arguments": {},
+              "new_data_sources": {},
+              "deprecated_items": {},
+              "bug_fixes": {}
+            },
+            "issues_created": [],
+            "statistics": {
+              "total_scans": 0,
+              "total_features_discovered": 0,
+              "total_issues_created": 0,
+              "average_features_per_scan": 0,
+              "last_feature_discovery": "never"
+            }
           }
           EOF
-            echo "Created initial feature tracker file"
+
+            # Validate JSON syntax
+            if jq empty .github/feature-tracker/cognito-features.json.tmp; then
+              # Atomic move to final location
+              mv .github/feature-tracker/cognito-features.json.tmp .github/feature-tracker/cognito-features.json
+              echo "✅ Created initial feature tracker file with valid JSON"
+            else
+              echo "::error::Invalid JSON in tracker file template"
+              rm -f .github/feature-tracker/cognito-features.json.tmp
+              exit 1
+            fi
+          else
+            # Validate existing file
+            if ! jq empty .github/feature-tracker/cognito-features.json; then
+              echo "::error::Existing feature tracker file contains invalid JSON"
+              exit 1
+            fi
+            echo "✅ Existing feature tracker file validated"
           fi
 
       - name: Run Claude Code Feature Discovery
@@ -64,6 +137,7 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
           # MCP Configuration for Terraform and Context7 documentation access
+          # Dependencies pinned to specific versions for supply chain security
           mcp_config: |
             {
               "mcpServers": {
@@ -71,14 +145,14 @@ jobs:
                   "command": "npx",
                   "args": [
                     "-y",
-                    "@modelcontextprotocol/server-terraform@latest"
+                    "@modelcontextprotocol/server-terraform@0.6.0"
                   ]
                 },
                 "context7": {
                   "command": "npx",
                   "args": [
                     "-y",
-                    "@upstash/context7-mcp@latest"
+                    "@upstash/context7-mcp@1.0.0"
                   ]
                 }
               }
@@ -234,49 +308,92 @@ jobs:
         run: |
           set -euo pipefail
 
+          # Validate JSON before committing
+          if ! jq empty .github/feature-tracker/cognito-features.json; then
+            echo "::error::Feature tracker JSON is invalid after processing"
+            exit 1
+          fi
+
           # Check if there are changes to commit
           if git diff --quiet .github/feature-tracker/; then
-            echo "No changes to feature tracker detected"
+            echo "✅ No changes to feature tracker detected"
             exit 0
           fi
 
-          # Configure git
+          # Configure git with safe defaults
           git config --global user.name "Cognito Feature Discovery Bot"
           git config --global user.email "actions@github.com"
 
-          # Commit changes
+          # Sanitize inputs for commit message (additional security layer)
+          PROVIDER_VERSION="${{ inputs.provider_version || 'latest' }}"
+          # Remove any potentially dangerous characters
+          PROVIDER_VERSION=$(echo "$PROVIDER_VERSION" | tr -cd '[:alnum:].-')
+
+          # Stage changes
           git add .github/feature-tracker/
+
+          # Create commit with sanitized message
           git commit -m "chore: update Cognito User Pool feature discovery tracker
 
           - Updated feature tracking database
           - Scan completed: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-          - Provider version: ${{ inputs.provider_version || 'latest' }}
+          - Provider version: ${PROVIDER_VERSION}
 
           [skip ci]"
 
-          # Push changes
-          git push origin HEAD
+          # Attempt to push with retry logic
+          max_retries=3
+          retry_count=0
 
-          echo "Feature tracker updated successfully"
+          while [ $retry_count -lt $max_retries ]; do
+            if git push origin HEAD; then
+              echo "✅ Feature tracker updated successfully"
+              exit 0
+            else
+              retry_count=$((retry_count + 1))
+              if [ $retry_count -lt $max_retries ]; then
+                echo "Push failed, retrying in 5 seconds... (attempt $retry_count/$max_retries)"
+                sleep 5
+                git pull --rebase origin HEAD || echo "Rebase failed, continuing with retry"
+              else
+                echo "::error::Failed to push after $max_retries attempts"
+                exit 1
+              fi
+            fi
+          done
 
       - name: Workflow Summary
         if: always()
         run: |
+          set -euo pipefail
+
+          # Sanitize inputs for display
+          PROVIDER_VERSION="${{ inputs.provider_version || 'latest' }}"
+          PROVIDER_VERSION=$(echo "$PROVIDER_VERSION" | tr -cd '[:alnum:].-')
+
           echo "## 🔍 Cognito User Pool Feature Discovery Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          # Configuration
+          # Configuration (with sanitized values)
           echo "### ⚙️ Configuration" >> $GITHUB_STEP_SUMMARY
-          echo "- **Provider Version**: \`${{ inputs.provider_version || 'latest' }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Provider Version**: \`${PROVIDER_VERSION}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Dry Run Mode**: \`${{ inputs.dry_run }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Force Scan**: \`${{ inputs.force_scan }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Triggered**: \`${{ github.event_name }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          # MCP Configuration
+          # Security improvements
+          echo "### 🔒 Security Features" >> $GITHUB_STEP_SUMMARY
+          echo "- **Input Validation**: ✅ Enabled" >> $GITHUB_STEP_SUMMARY
+          echo "- **Dependency Pinning**: ✅ MCP servers pinned to specific versions" >> $GITHUB_STEP_SUMMARY
+          echo "- **Concurrency Control**: ✅ Race condition prevention active" >> $GITHUB_STEP_SUMMARY
+          echo "- **JSON Validation**: ✅ Atomic operations with validation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # MCP Configuration (showing pinned versions)
           echo "### 🔗 MCP Servers" >> $GITHUB_STEP_SUMMARY
-          echo "- **Terraform MCP**: \`@modelcontextprotocol/server-terraform@latest\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Context7 MCP**: \`@upstash/context7-mcp@latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Terraform MCP**: \`@modelcontextprotocol/server-terraform@0.6.0\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Context7 MCP**: \`@upstash/context7-mcp@1.0.0\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           # Status
@@ -286,6 +403,15 @@ jobs:
           else
             echo "- ❌ **Feature Discovery**: Failed" >> $GITHUB_STEP_SUMMARY
           fi
+
+          if [ -f .github/feature-tracker/cognito-features.json ]; then
+            if jq empty .github/feature-tracker/cognito-features.json; then
+              echo "- ✅ **JSON Validation**: Feature tracker file is valid" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "- ❌ **JSON Validation**: Feature tracker file is invalid" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
+
           echo "" >> $GITHUB_STEP_SUMMARY
 
           # Available Commands
