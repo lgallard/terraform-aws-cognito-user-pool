@@ -44,31 +44,41 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Validate inputs
+      - name: Validate and secure inputs
+        env:
+          # Use environment variables for input isolation and security
+          PROVIDER_VERSION_INPUT: ${{ inputs.provider_version || 'latest' }}
+          DRY_RUN_INPUT: ${{ inputs.dry_run }}
+          FORCE_SCAN_INPUT: ${{ inputs.force_scan }}
         run: |
           set -euo pipefail
 
           # Validate provider_version input to prevent command injection
-          if [[ ! "${{ inputs.provider_version || 'latest' }}" =~ ^(latest|[0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+          if [[ ! "$PROVIDER_VERSION_INPUT" =~ ^(latest|[0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
             echo "::error::Invalid provider_version format. Must be 'latest' or semantic version (e.g., '5.82.0')"
             exit 1
           fi
 
           # Validate boolean inputs
-          if [[ "${{ inputs.dry_run }}" != "true" && "${{ inputs.dry_run }}" != "false" ]]; then
+          if [[ "$DRY_RUN_INPUT" != "true" && "$DRY_RUN_INPUT" != "false" ]]; then
             echo "::error::Invalid dry_run value. Must be 'true' or 'false'"
             exit 1
           fi
 
-          if [[ "${{ inputs.force_scan }}" != "true" && "${{ inputs.force_scan }}" != "false" ]]; then
+          if [[ "$FORCE_SCAN_INPUT" != "true" && "$FORCE_SCAN_INPUT" != "false" ]]; then
             echo "::error::Invalid force_scan value. Must be 'true' or 'false'"
             exit 1
           fi
 
-          echo "✅ All inputs validated successfully"
-          echo "Provider version: ${{ inputs.provider_version || 'latest' }}"
-          echo "Dry run mode: ${{ inputs.dry_run }}"
-          echo "Force scan: ${{ inputs.force_scan }}"
+          # Set validated environment variables for subsequent steps
+          echo "VALIDATED_PROVIDER_VERSION=$PROVIDER_VERSION_INPUT" >> $GITHUB_ENV
+          echo "VALIDATED_DRY_RUN=$DRY_RUN_INPUT" >> $GITHUB_ENV
+          echo "VALIDATED_FORCE_SCAN=$FORCE_SCAN_INPUT" >> $GITHUB_ENV
+
+          echo "✅ All inputs validated and secured successfully"
+          printf "Provider version: %q\\n" "$PROVIDER_VERSION_INPUT"
+          printf "Dry run mode: %q\\n" "$DRY_RUN_INPUT"
+          printf "Force scan: %q\\n" "$FORCE_SCAN_INPUT"
 
       - name: Create and validate feature tracker
         run: |
@@ -132,7 +142,8 @@ jobs:
 
       - name: Run Claude Code Feature Discovery
         id: claude-discovery
-        uses: anthropics/claude-code-action@beta
+        # Pin to specific version for supply chain security
+        uses: anthropics/claude-code-action@v1.0.0
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
@@ -175,6 +186,7 @@ jobs:
             Bash(echo)
 
           # Direct prompt for Claude Code to perform feature discovery
+          # Use environment variables for secure parameter passing
           direct_prompt: |
             # Cognito User Pool Feature Discovery Analysis
 
@@ -187,9 +199,9 @@ jobs:
             3. **Bug Fixes**: Important fixes mentioned in provider changelogs
 
             ## Configuration
-            - Provider Version: ${{ inputs.provider_version || 'latest' }}
-            - Dry Run Mode: ${{ inputs.dry_run }}
-            - Force Scan: ${{ inputs.force_scan }}
+            - Provider Version: ${{ env.VALIDATED_PROVIDER_VERSION }}
+            - Dry Run Mode: ${{ env.VALIDATED_DRY_RUN }}
+            - Force Scan: ${{ env.VALIDATED_FORCE_SCAN }}
 
             ## Process
 
@@ -206,7 +218,7 @@ jobs:
                - providerName: "aws"
                - providerNamespace: "hashicorp"
                - serviceSlug: "cognito"
-               - providerVersion: "${{ inputs.provider_version || 'latest' }}"
+               - providerVersion: "${{ env.VALIDATED_PROVIDER_VERSION }}"
                - providerDataType: "resources"
 
             2. Get documentation for all Cognito resources (aws_cognito_*)
@@ -253,7 +265,7 @@ jobs:
             ### Step 5: Issue Creation
             For each significant finding:
 
-            **If NOT in dry run mode (${{ inputs.dry_run }} == false):**
+            **If NOT in dry run mode (${{ env.VALIDATED_DRY_RUN }} == false):**
 
             Create GitHub issues using templates:
 
@@ -324,10 +336,9 @@ jobs:
           git config --global user.name "Cognito Feature Discovery Bot"
           git config --global user.email "actions@github.com"
 
-          # Sanitize inputs for commit message (additional security layer)
-          PROVIDER_VERSION="${{ inputs.provider_version || 'latest' }}"
-          # Remove any potentially dangerous characters
-          PROVIDER_VERSION=$(echo "$PROVIDER_VERSION" | tr -cd '[:alnum:].-')
+          # Use validated environment variables for commit message
+          # Additional sanitization as defense in depth
+          PROVIDER_VERSION=$(echo "$VALIDATED_PROVIDER_VERSION" | tr -cd '[:alnum:].-')
 
           # Stage changes
           git add .github/feature-tracker/
@@ -367,18 +378,18 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Sanitize inputs for display
-          PROVIDER_VERSION="${{ inputs.provider_version || 'latest' }}"
-          PROVIDER_VERSION=$(echo "$PROVIDER_VERSION" | tr -cd '[:alnum:].-')
+          # Use validated environment variables for display
+          # Additional sanitization as defense in depth
+          PROVIDER_VERSION=$(echo "$VALIDATED_PROVIDER_VERSION" | tr -cd '[:alnum:].-')
 
           echo "## 🔍 Cognito User Pool Feature Discovery Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          # Configuration (with sanitized values)
+          # Configuration (with validated values)
           echo "### ⚙️ Configuration" >> $GITHUB_STEP_SUMMARY
           echo "- **Provider Version**: \`${PROVIDER_VERSION}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Dry Run Mode**: \`${{ inputs.dry_run }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Force Scan**: \`${{ inputs.force_scan }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Dry Run Mode**: \`${VALIDATED_DRY_RUN}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Force Scan**: \`${VALIDATED_FORCE_SCAN}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Triggered**: \`${{ github.event_name }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
