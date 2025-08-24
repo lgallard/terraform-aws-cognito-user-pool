@@ -19,10 +19,10 @@ locals {
   } : {}
 
   # Check if device configuration differs from AWS defaults or has null values
-  device_challenge_set = try(local.device_configuration_values.challenge_required_on_new_device, null) != null
-  device_prompt_set = try(local.device_configuration_values.device_only_remembered_on_user_prompt, null) != null
+  device_challenge_set     = try(local.device_configuration_values.challenge_required_on_new_device, null) != null
+  device_prompt_set        = try(local.device_configuration_values.device_only_remembered_on_user_prompt, null) != null
   device_challenge_enabled = try(local.device_configuration_values.challenge_required_on_new_device, false) != false
-  device_prompt_enabled = try(local.device_configuration_values.device_only_remembered_on_user_prompt, false) != false
+  device_prompt_enabled    = try(local.device_configuration_values.device_only_remembered_on_user_prompt, false) != false
 
   # Only include device configuration block if configuration is provided and meaningful
   device_configuration_needed = local.device_config_provided && (

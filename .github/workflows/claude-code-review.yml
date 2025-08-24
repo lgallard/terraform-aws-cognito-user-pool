@@ -191,7 +191,8 @@ jobs:
           done
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        # Pin to specific SHA for supply chain security
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           fetch-depth: 0  # Full history for reliable diff comparisons
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -586,7 +587,8 @@ jobs:
       - name: Run Claude Code Review
         id: claude
         timeout-minutes: 10
-        uses: anthropics/claude-code-action@beta
+        # Pin to specific version for supply chain security
+        uses: anthropics/claude-code-action@v1.0.0
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 

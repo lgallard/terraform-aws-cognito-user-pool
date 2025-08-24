@@ -18,7 +18,7 @@ user_pool_add_ons {
 ```hcl
 user_pool_add_ons {
   advanced_security_mode = "ENFORCED"
-  
+
   dynamic "advanced_security_additional_flows" {
     for_each = var.advanced_security_additional_flows != null ? [1] : []
     content {
@@ -53,7 +53,7 @@ Update to the latest module version in your configuration:
 module "cognito_user_pool" {
   source = "lgallard/cognito-user-pool/aws"
   version = "1.14.1"  # or latest version
-  
+
   # Your existing configuration remains the same
   user_pool_name = "my-pool"
   # ... other settings
@@ -89,7 +89,7 @@ If you use `user_pool_add_ons_advanced_security_additional_flows`:
 ```hcl
 module "cognito_user_pool" {
   source = "lgallard/cognito-user-pool/aws"
-  
+
   user_pool_name = "my-pool"
   user_pool_add_ons_advanced_security_mode              = "ENFORCED"
   user_pool_add_ons_advanced_security_additional_flows = "AUDIT"
@@ -100,7 +100,7 @@ module "cognito_user_pool" {
 ```hcl
 module "cognito_user_pool" {
   source = "lgallard/cognito-user-pool/aws"
-  
+
   user_pool_name = "my-pool"
   user_pool_add_ons_advanced_security_mode              = "ENFORCED"
   user_pool_add_ons_advanced_security_additional_flows = "AUDIT"
@@ -119,7 +119,7 @@ Error: Module requires aws provider version >= 6.0
 #### Error: "Invalid argument - advanced_security_additional_flows"
 This indicates you're still using AWS provider 5.x.
 
-**Solution**: 
+**Solution**:
 1. Update provider version in your `versions.tf` or main configuration
 2. Run `terraform init -upgrade`
 3. Run `terraform plan` and `terraform apply`
@@ -144,7 +144,7 @@ If you encounter issues during migration:
 3. **Validate configuration** with `terraform validate`
 4. **Open an issue** on [GitHub](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues) with:
    - Your Terraform version
-   - Your AWS provider version  
+   - Your AWS provider version
    - Full error message
    - Minimal reproduction case
 

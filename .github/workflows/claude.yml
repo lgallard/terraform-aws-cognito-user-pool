@@ -26,13 +26,15 @@ jobs:
       actions: read # Required for Claude to read CI results on PRs
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        # Pin to specific SHA for supply chain security
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           fetch-depth: 1
 
       - name: Run Claude Code
         id: claude
-        uses: anthropics/claude-code-action@beta
+        # Pin to specific version for supply chain security
+        uses: anthropics/claude-code-action@v1.0.0
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
@@ -41,6 +43,7 @@ jobs:
             actions: read
 
           # MCP Configuration for Terraform and Context7 documentation access
+          # Dependencies pinned to specific versions for supply chain security
           mcp_config: |
             {
               "mcpServers": {
@@ -48,14 +51,14 @@ jobs:
                   "command": "npx",
                   "args": [
                     "-y",
-                    "@modelcontextprotocol/server-terraform@latest"
+                    "@modelcontextprotocol/server-terraform@0.6.0"
                   ]
                 },
                 "context7": {
                   "command": "npx",
                   "args": [
                     "-y",
-                    "@upstash/context7-mcp@latest"
+                    "@upstash/context7-mcp@1.0.0"
                   ]
                 }
               }
