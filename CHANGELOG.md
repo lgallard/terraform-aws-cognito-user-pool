@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [2.2.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.1.4...2.2.0) (2025-08-24)
+
+
+### Features
+
+* Add automated Cognito User Pool feature discovery system ([#303](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/303)) ([e400e56](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/e400e56140c56fcc45e838e54a22f35e792f00a3))
+
 ## [2.1.4](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.1.3...2.1.4) (2025-08-18)
 
 
