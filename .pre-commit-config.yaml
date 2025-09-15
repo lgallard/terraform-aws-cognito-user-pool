@@ -26,7 +26,7 @@ repos:
           - --tf-init-args=-upgrade  # Ensure latest provider versions
       - id: terraform_tfsec
         args:
-          - --args=--format json --exclude-downloaded-modules
+          - --args=--exclude-downloaded-modules
   - repo: https://github.com/crate-ci/typos
     rev: v1.16.23
     hooks:
@@ -39,4 +39,4 @@ repos:
     rev: 3.2.0
     hooks:
       - id: checkov
-        args: [--framework, terraform, --skip-check, CKV_AWS_117]  # Skip Lambda DLQ check for Cognito module
+        args: [--framework, terraform]
