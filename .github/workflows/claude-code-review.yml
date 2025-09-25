@@ -347,6 +347,22 @@ jobs:
 
           echo "Security: Input validation and sanitization completed"
 
+      - name: Add eyes reaction to show codebot is working
+        if: github.event_name == 'issue_comment' && contains(github.event.comment.body, 'codebot')
+        timeout-minutes: 1
+        run: |
+          set -euo pipefail
+          echo "👀 Adding eyes reaction to show codebot is working..."
+
+          # Add eyes emoji reaction to the comment
+          gh api repos/${{ github.repository }}/issues/comments/${{ github.event.comment.id }}/reactions \
+            --method POST \
+            --field content='eyes' || echo "⚠️  Failed to add reaction, but continuing..."
+
+          echo "✅ Eyes reaction added successfully"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Get PR information
         id: pr-info
         timeout-minutes: 3
@@ -591,6 +607,7 @@ jobs:
         uses: anthropics/claude-code-action@v1.0.0
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          trigger_phrase: "codebot"
 
           # Dynamic prompt based on review mode
           prompt: |
