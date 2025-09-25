@@ -592,11 +592,8 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
-          # Allow Bash permissions for pre-commit hooks and documentation updates
-          allowed_tools: "Bash(pre-commit run --files),Bash(terraform fmt),Bash(terraform validate),Bash(terraform-docs)"
-
           # Dynamic prompt based on review mode
-          direct_prompt: |
+          prompt: |
             🔄 **COMMIT ANALYSIS CONTEXT**
             - **Commit SHA**: `${{ steps.verify-state.outputs.current_sha }}`
             - **Review ID**: `${{ steps.verify-state.outputs.review_id }}`
@@ -676,7 +673,6 @@ jobs:
 
           # Use sticky comments with commit-specific cache invalidation
           use_sticky_comment: true
-          # Note: The commit SHA and review ID in the prompt help ensure fresh analysis
 
       - name: Workflow Summary
         if: always()
