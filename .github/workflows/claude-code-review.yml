@@ -39,19 +39,19 @@ on:
         type: boolean
 
 jobs:
-  # Handle comment-based triggers with correct branch context
-  comment-dispatch:
+  # Add eyes reaction to show codebot is working
+  eyes-reaction:
     if: |
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, 'codebot')) ||
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, 'codebot'))
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 2
     permissions:
       contents: read
       pull-requests: read
-      issues: read
+      issues: write  # needed for reactions
     steps:
-      - name: Add eyes reaction to show codebot is working
+      - name: Add eyes reaction
         timeout-minutes: 1
         run: |
           set -euo pipefail
@@ -77,103 +77,6 @@ jobs:
           echo "✅ Eyes reaction added successfully"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Get PR information
-        id: pr-info
-        timeout-minutes: 2
-        run: |
-          set -euo pipefail
-
-          # Get PR number based on event type
-          if [ "${{ github.event_name }}" = "issue_comment" ]; then
-            PR_NUMBER="${{ github.event.issue.number }}"
-          elif [ "${{ github.event_name }}" = "pull_request_review_comment" ]; then
-            PR_NUMBER="${{ github.event.pull_request.number }}"
-          else
-            echo "Error: Unsupported event type"
-            exit 1
-          fi
-
-          # Validate PR number
-          if ! [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
-            echo "Error: Invalid PR number: $PR_NUMBER"
-            exit 1
-          fi
-
-          echo "Getting PR details for #$PR_NUMBER"
-
-          # Get PR head ref for correct branch context
-          PR_DATA=$(gh api repos/${{ github.repository }}/pulls/$PR_NUMBER \
-            --jq '{head_ref: .head.ref, head_sha: .head.sha, base_ref: .base.ref}')
-
-          HEAD_REF=$(echo "$PR_DATA" | jq -r '.head_ref')
-          HEAD_SHA=$(echo "$PR_DATA" | jq -r '.head_sha')
-          BASE_REF=$(echo "$PR_DATA" | jq -r '.base_ref')
-
-          # Validate data
-          if [ -z "$HEAD_REF" ] || [ "$HEAD_REF" = "null" ] || [ -z "$HEAD_SHA" ] || [ "$HEAD_SHA" = "null" ]; then
-            echo "Error: Failed to get PR head information"
-            exit 1
-          fi
-
-          echo "PR Head: $HEAD_REF ($HEAD_SHA)"
-          echo "PR Base: $BASE_REF"
-
-          # Output for next step
-          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
-          echo "head_ref=$HEAD_REF" >> $GITHUB_OUTPUT
-          echo "head_sha=$HEAD_SHA" >> $GITHUB_OUTPUT
-          echo "base_ref=$BASE_REF" >> $GITHUB_OUTPUT
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Trigger repository dispatch
-        timeout-minutes: 2
-        run: |
-          set -euo pipefail
-
-          # Parse comment body for command
-          COMMENT_BODY="${{ github.event.comment.body }}"
-          SAFE_COMMENT=$(echo "$COMMENT_BODY" | tr -d '`$(){}[]|;&<>' | head -c 500)
-
-          # Determine review mode
-          MODE="hunt"
-          if echo "$SAFE_COMMENT" | grep -qiF "codebot analyze"; then
-            MODE="analyze"
-          elif echo "$SAFE_COMMENT" | grep -qiF "codebot security"; then
-            MODE="security"
-          elif echo "$SAFE_COMMENT" | grep -qiF "codebot performance"; then
-            MODE="performance"
-          elif echo "$SAFE_COMMENT" | grep -qiF "codebot review"; then
-            MODE="review"
-          fi
-
-          # Check for full analysis flag
-          FULL_ANALYSIS="false"
-          if echo "$SAFE_COMMENT" | grep -qiF -- "--full"; then
-            FULL_ANALYSIS="true"
-          fi
-
-          echo "Review mode: $MODE, Full analysis: $FULL_ANALYSIS"
-
-          # Trigger repository dispatch with PR context
-          gh api repos/${{ github.repository }}/dispatches \
-            --method POST \
-            --field event_type='codebot-review' \
-            --field client_payload="{
-              \"pr_number\": ${{ steps.pr-info.outputs.pr_number }},
-              \"head_ref\": \"${{ steps.pr-info.outputs.head_ref }}\",
-              \"head_sha\": \"${{ steps.pr-info.outputs.head_sha }}\",
-              \"base_ref\": \"${{ steps.pr-info.outputs.base_ref }}\",
-              \"review_mode\": \"$MODE\",
-              \"full_analysis\": \"$FULL_ANALYSIS\",
-              \"comment_id\": \"${{ github.event.comment.id }}\",
-              \"comment_body\": $(echo "$SAFE_COMMENT" | jq -Rs .)
-            }"
-
-          echo "✅ Repository dispatch triggered successfully"
-        env:
-          GITHUB_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
   # Handle workflow_dispatch by creating a comment to trigger Claude
   dispatch-trigger:
@@ -266,9 +169,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   claude:
-    # Run on repository dispatch (from comment-dispatch), pull_request events, or direct issue comments (fallback)
+    # Run directly on codebot comments (simpler approach like claude.yml)
     if: |
-      (github.event_name == 'repository_dispatch' && github.event.action == 'codebot-review') ||
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, 'codebot')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, 'codebot')) ||
       (github.event_name == 'pull_request' && (
         github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' ||
         contains(github.event.pull_request.title, '[auto-review]')
@@ -290,50 +194,11 @@ jobs:
       ACTIONS_RUNNER_DEBUG: true
 
     steps:
-      - name: Get checkout reference
-        id: checkout-ref
-        timeout-minutes: 2
-        run: |
-          set -euo pipefail
-
-          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
-            # For repository dispatch, use the head ref from the payload
-            HEAD_REF="${{ github.event.client_payload.head_ref }}"
-            HEAD_SHA="${{ github.event.client_payload.head_sha }}"
-
-            if [ -z "$HEAD_REF" ] || [ "$HEAD_REF" = "null" ]; then
-              echo "Error: Missing head_ref in dispatch payload"
-              exit 1
-            fi
-
-            echo "Using dispatch payload - Head ref: $HEAD_REF ($HEAD_SHA)"
-            echo "checkout_ref=$HEAD_REF" >> $GITHUB_OUTPUT
-            echo "head_sha=$HEAD_SHA" >> $GITHUB_OUTPUT
-
-          elif [ "${{ github.event_name }}" = "pull_request" ]; then
-            # For pull_request events, use the head ref directly
-            HEAD_REF="${{ github.event.pull_request.head.ref }}"
-            HEAD_SHA="${{ github.event.pull_request.head.sha }}"
-
-            echo "Using PR event - Head ref: $HEAD_REF ($HEAD_SHA)"
-            echo "checkout_ref=$HEAD_REF" >> $GITHUB_OUTPUT
-            echo "head_sha=$HEAD_SHA" >> $GITHUB_OUTPUT
-
-          else
-            # Fallback to default branch
-            echo "Using default ref: ${{ github.ref }}"
-            echo "checkout_ref=${{ github.ref }}" >> $GITHUB_OUTPUT
-            echo "head_sha=${{ github.sha }}" >> $GITHUB_OUTPUT
-          fi
-
       - name: Checkout repository
-        # Pin to specific SHA for supply chain security
+        # Pin to specific SHA for supply chain security (simple approach like claude.yml)
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           fetch-depth: 0  # Full history for reliable diff comparisons
-          token: ${{ secrets.GITHUB_TOKEN }}
-          # Use the determined checkout reference
-          ref: ${{ steps.checkout-ref.outputs.checkout_ref }}
 
 
       - name: Refresh git state
@@ -420,22 +285,40 @@ jobs:
           set -euo pipefail
 
           # Default values
-          echo "mode=review" >> $GITHUB_OUTPUT
-          echo "focus=code-quality,security,performance" >> $GITHUB_OUTPUT
+          echo "mode=hunt" >> $GITHUB_OUTPUT
+          echo "focus=bugs,security,performance" >> $GITHUB_OUTPUT
           echo "verbose=false" >> $GITHUB_OUTPUT
           echo "include_tests=true" >> $GITHUB_OUTPUT
           echo "full_analysis=false" >> $GITHUB_OUTPUT
 
-          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
-            # For repository dispatch, use the parsed values from the payload
-            MODE="${{ github.event.client_payload.review_mode }}"
-            FULL_ANALYSIS="${{ github.event.client_payload.full_analysis }}"
+          # Parse comment body for codebot commands
+          if [ "${{ github.event_name }}" = "issue_comment" ] || [ "${{ github.event_name }}" = "pull_request_review_comment" ]; then
+            COMMENT_BODY="${{ github.event.comment.body }}"
+            SAFE_COMMENT=$(echo "$COMMENT_BODY" | tr -d '`$(){}[]|;&<>' | head -c 500)
 
-            echo "mode=${MODE:-review}" >> $GITHUB_OUTPUT
-            echo "full_analysis=${FULL_ANALYSIS:-false}" >> $GITHUB_OUTPUT
+            # Determine review mode
+            MODE="hunt"
+            if echo "$SAFE_COMMENT" | grep -qiF "codebot analyze"; then
+              MODE="analyze"
+            elif echo "$SAFE_COMMENT" | grep -qiF "codebot security"; then
+              MODE="security"
+            elif echo "$SAFE_COMMENT" | grep -qiF "codebot performance"; then
+              MODE="performance"
+            elif echo "$SAFE_COMMENT" | grep -qiF "codebot review"; then
+              MODE="review"
+            fi
+
+            # Check for full analysis flag
+            FULL_ANALYSIS="false"
+            if echo "$SAFE_COMMENT" | grep -qiF -- "--full"; then
+              FULL_ANALYSIS="true"
+            fi
+
+            echo "mode=$MODE" >> $GITHUB_OUTPUT
+            echo "full_analysis=$FULL_ANALYSIS" >> $GITHUB_OUTPUT
 
             # Set focus and verbose based on mode
-            case "${MODE:-review}" in
+            case "$MODE" in
               hunt)
                 echo "focus=bugs,security,performance" >> $GITHUB_OUTPUT
                 echo "verbose=false" >> $GITHUB_OUTPUT
@@ -458,7 +341,7 @@ jobs:
                 ;;
             esac
 
-            echo "Repository dispatch: mode=${MODE:-review}, full_analysis=${FULL_ANALYSIS:-false}"
+            echo "Comment-based: mode=$MODE, full_analysis=$FULL_ANALYSIS"
 
           elif [ "${{ github.event_name }}" = "pull_request" ]; then
             # For pull_request events, use defaults or infer from title
@@ -478,23 +361,19 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Initialize variables
-          PR_NUMBER=""
-          BASE_REF=""
-
           # Handle different trigger types with validation
-          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
-            # For repository dispatch, get PR info from payload
-            PR_NUMBER="${{ github.event.client_payload.pr_number }}"
-            BASE_REF="${{ github.event.client_payload.base_ref }}"
+          if [ "${{ github.event_name }}" = "issue_comment" ]; then
+            PR_NUMBER="${{ github.event.issue.number }}"
+            # Get base ref from the PR
+            BASE_REF=$(gh api repos/${{ github.repository }}/pulls/$PR_NUMBER --jq '.base.ref')
 
-            echo "Repository dispatch: PR #$PR_NUMBER, base: $BASE_REF"
+          elif [ "${{ github.event_name }}" = "pull_request_review_comment" ]; then
+            PR_NUMBER="${{ github.event.pull_request.number }}"
+            BASE_REF="${{ github.event.pull_request.base.ref }}"
 
           elif [ "${{ github.event_name }}" = "pull_request" ]; then
             PR_NUMBER="${{ github.event.pull_request.number }}"
             BASE_REF="${{ github.event.pull_request.base.ref }}"
-
-            echo "Pull request event: PR #$PR_NUMBER, base: $BASE_REF"
 
           else
             echo "Error: Unsupported event type: ${{ github.event_name }}"
@@ -514,15 +393,11 @@ jobs:
             exit 1
           fi
 
-          # Sanitize branch name for security (allow underscores, dots, and forward slashes)
-          if ! [[ "$BASE_REF" =~ ^[a-zA-Z0-9/_.-]+$ ]]; then
-            echo "Error: Invalid base ref format: $BASE_REF"
-            exit 1
-          fi
-
           echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
           echo "base_ref=$BASE_REF" >> $GITHUB_OUTPUT
           echo "✅ PR information validated: #$PR_NUMBER (base: $BASE_REF)"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get changed files
         id: changes
