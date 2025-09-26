@@ -159,7 +159,7 @@ jobs:
 
           echo "✅ Repository dispatch triggered successfully"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
   # Handle workflow_dispatch by creating a comment to trigger Claude
   dispatch-trigger:
