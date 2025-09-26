@@ -78,8 +78,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get PR information and trigger dispatch
-        timeout-minutes: 3
+      - name: Get PR information
+        id: pr-info
+        timeout-minutes: 2
         run: |
           set -euo pipefail
 
@@ -118,6 +119,19 @@ jobs:
           echo "PR Head: $HEAD_REF ($HEAD_SHA)"
           echo "PR Base: $BASE_REF"
 
+          # Output for next step
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          echo "head_ref=$HEAD_REF" >> $GITHUB_OUTPUT
+          echo "head_sha=$HEAD_SHA" >> $GITHUB_OUTPUT
+          echo "base_ref=$BASE_REF" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trigger repository dispatch
+        timeout-minutes: 2
+        run: |
+          set -euo pipefail
+
           # Parse comment body for command
           COMMENT_BODY="${{ github.event.comment.body }}"
           SAFE_COMMENT=$(echo "$COMMENT_BODY" | tr -d '`$(){}[]|;&<>' | head -c 500)
@@ -147,10 +161,10 @@ jobs:
             --method POST \
             --field event_type='codebot-review' \
             --field client_payload="{
-              \"pr_number\": $PR_NUMBER,
-              \"head_ref\": \"$HEAD_REF\",
-              \"head_sha\": \"$HEAD_SHA\",
-              \"base_ref\": \"$BASE_REF\",
+              \"pr_number\": ${{ steps.pr-info.outputs.pr_number }},
+              \"head_ref\": \"${{ steps.pr-info.outputs.head_ref }}\",
+              \"head_sha\": \"${{ steps.pr-info.outputs.head_sha }}\",
+              \"base_ref\": \"${{ steps.pr-info.outputs.base_ref }}\",
               \"review_mode\": \"$MODE\",
               \"full_analysis\": \"$FULL_ANALYSIS\",
               \"comment_id\": \"${{ github.event.comment.id }}\",
