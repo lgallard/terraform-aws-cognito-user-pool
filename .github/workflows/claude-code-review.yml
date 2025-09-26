@@ -9,6 +9,10 @@ on:
   pull_request:
     types: [opened, synchronize]
 
+  # Repository dispatch for correct branch context
+  repository_dispatch:
+    types: [codebot-review]
+
   # Manual triggers via GitHub CLI
   workflow_dispatch:
     inputs:
@@ -35,6 +39,128 @@ on:
         type: boolean
 
 jobs:
+  # Handle comment-based triggers with correct branch context
+  comment-dispatch:
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, 'codebot')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, 'codebot'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+    steps:
+      - name: Add eyes reaction to show codebot is working
+        timeout-minutes: 1
+        run: |
+          set -euo pipefail
+
+          # Add eyes emoji reaction to indicate codebot is processing
+          if [ "${{ github.event_name }}" = "issue_comment" ]; then
+            COMMENT_ID="${{ github.event.comment.id }}"
+          elif [ "${{ github.event_name }}" = "pull_request_review_comment" ]; then
+            COMMENT_ID="${{ github.event.comment.id }}"
+          else
+            echo "No comment to react to for event type: ${{ github.event_name }}"
+            exit 0
+          fi
+
+          echo "Adding 👀 reaction to comment ID: $COMMENT_ID"
+          gh api repos/${{ github.repository }}/issues/comments/$COMMENT_ID/reactions \
+            --method POST \
+            --field content='eyes' || {
+            echo "Failed to add reaction - this might be expected for some comment types"
+            exit 0
+          }
+
+          echo "✅ Eyes reaction added successfully"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get PR information and trigger dispatch
+        timeout-minutes: 3
+        run: |
+          set -euo pipefail
+
+          # Get PR number based on event type
+          if [ "${{ github.event_name }}" = "issue_comment" ]; then
+            PR_NUMBER="${{ github.event.issue.number }}"
+          elif [ "${{ github.event_name }}" = "pull_request_review_comment" ]; then
+            PR_NUMBER="${{ github.event.pull_request.number }}"
+          else
+            echo "Error: Unsupported event type"
+            exit 1
+          fi
+
+          # Validate PR number
+          if ! [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
+            echo "Error: Invalid PR number: $PR_NUMBER"
+            exit 1
+          fi
+
+          echo "Getting PR details for #$PR_NUMBER"
+
+          # Get PR head ref for correct branch context
+          PR_DATA=$(gh api repos/${{ github.repository }}/pulls/$PR_NUMBER \
+            --jq '{head_ref: .head.ref, head_sha: .head.sha, base_ref: .base.ref}')
+
+          HEAD_REF=$(echo "$PR_DATA" | jq -r '.head_ref')
+          HEAD_SHA=$(echo "$PR_DATA" | jq -r '.head_sha')
+          BASE_REF=$(echo "$PR_DATA" | jq -r '.base_ref')
+
+          # Validate data
+          if [ -z "$HEAD_REF" ] || [ "$HEAD_REF" = "null" ] || [ -z "$HEAD_SHA" ] || [ "$HEAD_SHA" = "null" ]; then
+            echo "Error: Failed to get PR head information"
+            exit 1
+          fi
+
+          echo "PR Head: $HEAD_REF ($HEAD_SHA)"
+          echo "PR Base: $BASE_REF"
+
+          # Parse comment body for command
+          COMMENT_BODY="${{ github.event.comment.body }}"
+          SAFE_COMMENT=$(echo "$COMMENT_BODY" | tr -d '`$(){}[]|;&<>' | head -c 500)
+
+          # Determine review mode
+          MODE="hunt"
+          if echo "$SAFE_COMMENT" | grep -qiF "codebot analyze"; then
+            MODE="analyze"
+          elif echo "$SAFE_COMMENT" | grep -qiF "codebot security"; then
+            MODE="security"
+          elif echo "$SAFE_COMMENT" | grep -qiF "codebot performance"; then
+            MODE="performance"
+          elif echo "$SAFE_COMMENT" | grep -qiF "codebot review"; then
+            MODE="review"
+          fi
+
+          # Check for full analysis flag
+          FULL_ANALYSIS="false"
+          if echo "$SAFE_COMMENT" | grep -qiF -- "--full"; then
+            FULL_ANALYSIS="true"
+          fi
+
+          echo "Review mode: $MODE, Full analysis: $FULL_ANALYSIS"
+
+          # Trigger repository dispatch with PR context
+          gh api repos/${{ github.repository }}/dispatches \
+            --method POST \
+            --field event_type='codebot-review' \
+            --field client_payload="{
+              \"pr_number\": $PR_NUMBER,
+              \"head_ref\": \"$HEAD_REF\",
+              \"head_sha\": \"$HEAD_SHA\",
+              \"base_ref\": \"$BASE_REF\",
+              \"review_mode\": \"$MODE\",
+              \"full_analysis\": \"$FULL_ANALYSIS\",
+              \"comment_id\": \"${{ github.event.comment.id }}\",
+              \"comment_body\": $(echo "$SAFE_COMMENT" | jq -Rs .)
+            }"
+
+          echo "✅ Repository dispatch triggered successfully"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   # Handle workflow_dispatch by creating a comment to trigger Claude
   dispatch-trigger:
     if: github.event_name == 'workflow_dispatch'
@@ -126,10 +252,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   claude:
-    # Run on codebot comment triggers or specific PR conditions
+    # Run on repository dispatch (from comment-dispatch), pull_request events, or direct issue comments (fallback)
     if: |
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, 'codebot')) ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, 'codebot')) ||
+      (github.event_name == 'repository_dispatch' && github.event.action == 'codebot-review') ||
       (github.event_name == 'pull_request' && (
         github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' ||
         contains(github.event.pull_request.title, '[auto-review]')
@@ -151,51 +276,41 @@ jobs:
       ACTIONS_RUNNER_DEBUG: true
 
     steps:
-      - name: Get PR information for checkout
-        id: pr-checkout-info
-        if: github.event_name == 'issue_comment'
+      - name: Get checkout reference
+        id: checkout-ref
         timeout-minutes: 2
         run: |
           set -euo pipefail
 
-          PR_NUMBER="${{ github.event.issue.number }}"
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            # For repository dispatch, use the head ref from the payload
+            HEAD_REF="${{ github.event.client_payload.head_ref }}"
+            HEAD_SHA="${{ github.event.client_payload.head_sha }}"
 
-          # Validate PR number
-          if ! [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
-            echo "Error: Invalid PR number: $PR_NUMBER"
-            exit 1
-          fi
-
-          echo "Fetching PR #$PR_NUMBER details for checkout"
-
-          # Get PR head ref with retry logic
-          for attempt in {1..3}; do
-            if PR_DATA=$(curl -sS --max-time 30 --retry 2 \
-              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              -H "Accept: application/vnd.github.v3+json" \
-              "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER"); then
-
-              if echo "$PR_DATA" | jq empty 2>/dev/null; then
-                HEAD_REF=$(echo "$PR_DATA" | jq -r '.head.ref // empty')
-                HEAD_SHA=$(echo "$PR_DATA" | jq -r '.head.sha // empty')
-
-                if [ -n "$HEAD_REF" ] && [ "$HEAD_REF" != "null" ] && [ -n "$HEAD_SHA" ] && [ "$HEAD_SHA" != "null" ]; then
-                  echo "pr_head_ref=$HEAD_REF" >> $GITHUB_OUTPUT
-                  echo "pr_head_sha=$HEAD_SHA" >> $GITHUB_OUTPUT
-                  echo "Found PR branch: $HEAD_REF ($HEAD_SHA)"
-                  break
-                fi
-              fi
-            fi
-
-            if [ $attempt -eq 3 ]; then
-              echo "Error: Failed to fetch PR data for checkout"
+            if [ -z "$HEAD_REF" ] || [ "$HEAD_REF" = "null" ]; then
+              echo "Error: Missing head_ref in dispatch payload"
               exit 1
             fi
 
-            echo "Retrying in $((2 ** attempt)) seconds..."
-            sleep $((2 ** attempt))
-          done
+            echo "Using dispatch payload - Head ref: $HEAD_REF ($HEAD_SHA)"
+            echo "checkout_ref=$HEAD_REF" >> $GITHUB_OUTPUT
+            echo "head_sha=$HEAD_SHA" >> $GITHUB_OUTPUT
+
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+            # For pull_request events, use the head ref directly
+            HEAD_REF="${{ github.event.pull_request.head.ref }}"
+            HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+
+            echo "Using PR event - Head ref: $HEAD_REF ($HEAD_SHA)"
+            echo "checkout_ref=$HEAD_REF" >> $GITHUB_OUTPUT
+            echo "head_sha=$HEAD_SHA" >> $GITHUB_OUTPUT
+
+          else
+            # Fallback to default branch
+            echo "Using default ref: ${{ github.ref }}"
+            echo "checkout_ref=${{ github.ref }}" >> $GITHUB_OUTPUT
+            echo "head_sha=${{ github.sha }}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Checkout repository
         # Pin to specific SHA for supply chain security
@@ -203,38 +318,9 @@ jobs:
         with:
           fetch-depth: 0  # Full history for reliable diff comparisons
           token: ${{ secrets.GITHUB_TOKEN }}
-          # For issue_comment events, checkout the PR branch
-          ref: ${{ github.event_name == 'issue_comment' && steps.pr-checkout-info.outputs.pr_head_ref || github.ref }}
+          # Use the determined checkout reference
+          ref: ${{ steps.checkout-ref.outputs.checkout_ref }}
 
-      - name: Add eyes reaction to show codebot is working
-        if: |
-          (github.event_name == 'issue_comment' && contains(github.event.comment.body, 'codebot')) ||
-          (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, 'codebot'))
-        timeout-minutes: 1
-        run: |
-          set -euo pipefail
-
-          # Add eyes emoji reaction to indicate codebot is processing
-          if [ "${{ github.event_name }}" = "issue_comment" ]; then
-            COMMENT_ID="${{ github.event.comment.id }}"
-          elif [ "${{ github.event_name }}" = "pull_request_review_comment" ]; then
-            COMMENT_ID="${{ github.event.comment.id }}"
-          else
-            echo "No comment to react to for event type: ${{ github.event_name }}"
-            exit 0
-          fi
-
-          echo "Adding 👀 reaction to comment ID: $COMMENT_ID"
-          gh api repos/${{ github.repository }}/issues/comments/$COMMENT_ID/reactions \
-            --method POST \
-            --field content='eyes' || {
-            echo "Failed to add reaction - this might be expected for some comment types"
-            exit 0
-          }
-
-          echo "✅ Eyes reaction added successfully"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Refresh git state
         id: git-refresh
@@ -255,20 +341,27 @@ jobs:
           echo "Fetching all remote references..."
           git fetch --all --prune
 
-          # For issue_comment events, ensure we're on the latest commit of the PR branch
-          if [ "${{ github.event_name }}" = "issue_comment" ]; then
-            EXPECTED_SHA="${{ steps.pr-checkout-info.outputs.pr_head_sha }}"
-            echo "Expected SHA from PR: $EXPECTED_SHA"
+          # For repository dispatch or pull request events, ensure we have the latest changes
+          if [ "${{ github.event_name }}" = "repository_dispatch" ] || [ "${{ github.event_name }}" = "pull_request" ]; then
+            EXPECTED_SHA="${{ steps.checkout-ref.outputs.head_sha }}"
+            echo "Expected SHA: $EXPECTED_SHA"
 
-            # Fetch the specific PR branch to get latest changes
-            PR_HEAD_REF="${{ steps.pr-checkout-info.outputs.pr_head_ref }}"
-            if [ -n "$PR_HEAD_REF" ]; then
-              echo "Fetching latest changes for PR branch: $PR_HEAD_REF"
-              git fetch origin "$PR_HEAD_REF:$PR_HEAD_REF" 2>/dev/null || true
+            # Fetch the specific branch to get latest changes
+            CHECKOUT_REF="${{ steps.checkout-ref.outputs.checkout_ref }}"
+            if [ -n "$CHECKOUT_REF" ]; then
+              echo "Fetching latest changes for ref: $CHECKOUT_REF"
+              git fetch origin "$CHECKOUT_REF" 2>/dev/null || true
 
-              # Reset to the latest commit on the PR branch
-              echo "Resetting to latest commit on $PR_HEAD_REF"
-              git reset --hard "origin/$PR_HEAD_REF"
+              # For branch refs, reset to the latest commit
+              if [[ "$CHECKOUT_REF" =~ ^refs/heads/ ]]; then
+                BRANCH_NAME="${CHECKOUT_REF#refs/heads/}"
+                echo "Resetting to latest commit on branch $BRANCH_NAME"
+                git reset --hard "origin/$BRANCH_NAME" 2>/dev/null || git reset --hard HEAD
+              elif [[ ! "$CHECKOUT_REF" =~ ^[a-f0-9]{40}$ ]]; then
+                # Not a full SHA, treat as branch name
+                echo "Resetting to latest commit on $CHECKOUT_REF"
+                git reset --hard "origin/$CHECKOUT_REF" 2>/dev/null || git reset --hard HEAD
+              fi
 
               NEW_SHA=$(git rev-parse HEAD)
               echo "Updated to SHA: $NEW_SHA"
@@ -306,22 +399,11 @@ jobs:
           echo "current_branch=$FINAL_BRANCH" >> $GITHUB_OUTPUT
 
 
-      - name: Parse comment command
+      - name: Parse command configuration
         id: parse-command
         timeout-minutes: 2
-        env:
-          COMMENT_BODY: ${{ github.event.comment.body }}
         run: |
-          set -euo pipefail  # Enhanced error handling
-
-          # Input validation and sanitization
-          if [ ${#COMMENT_BODY} -gt 1000 ]; then
-            echo "Error: Comment body too long (max 1000 characters)"
-            exit 1
-          fi
-
-          # Sanitize comment body - remove potentially dangerous characters
-          SAFE_COMMENT=$(echo "$COMMENT_BODY" | tr -d '`$(){}[]|;&<>' | head -c 500)
+          set -euo pipefail
 
           # Default values
           echo "mode=review" >> $GITHUB_OUTPUT
@@ -330,113 +412,76 @@ jobs:
           echo "include_tests=true" >> $GITHUB_OUTPUT
           echo "full_analysis=false" >> $GITHUB_OUTPUT
 
-          # Parse comment content for commands (using safe variable)
-          if [ "${{ github.event_name }}" == "issue_comment" ] || [ "${{ github.event_name }}" == "pull_request_review_comment" ]; then
-            # Use grep with fixed strings where possible for security
-            if echo "$SAFE_COMMENT" | grep -qiF "codebot hunt"; then
-              echo "mode=hunt" >> $GITHUB_OUTPUT
-              echo "focus=bugs,security,performance" >> $GITHUB_OUTPUT
-              echo "verbose=false" >> $GITHUB_OUTPUT
-            elif echo "$SAFE_COMMENT" | grep -qiF "codebot analyze"; then
-              echo "mode=analyze" >> $GITHUB_OUTPUT
-              echo "focus=architecture,patterns,complexity" >> $GITHUB_OUTPUT
-              echo "verbose=true" >> $GITHUB_OUTPUT
-            elif echo "$SAFE_COMMENT" | grep -qiF "codebot security"; then
-              echo "mode=security" >> $GITHUB_OUTPUT
-              echo "focus=security,vulnerabilities,compliance" >> $GITHUB_OUTPUT
-              echo "verbose=true" >> $GITHUB_OUTPUT
-            elif echo "$SAFE_COMMENT" | grep -qiF "codebot performance"; then
-              echo "mode=performance" >> $GITHUB_OUTPUT
-              echo "focus=performance,optimization,bottlenecks" >> $GITHUB_OUTPUT
-              echo "verbose=true" >> $GITHUB_OUTPUT
-            elif echo "$SAFE_COMMENT" | grep -qiF "codebot review"; then
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            # For repository dispatch, use the parsed values from the payload
+            MODE="${{ github.event.client_payload.review_mode }}"
+            FULL_ANALYSIS="${{ github.event.client_payload.full_analysis }}"
+
+            echo "mode=${MODE:-review}" >> $GITHUB_OUTPUT
+            echo "full_analysis=${FULL_ANALYSIS:-false}" >> $GITHUB_OUTPUT
+
+            # Set focus and verbose based on mode
+            case "${MODE:-review}" in
+              hunt)
+                echo "focus=bugs,security,performance" >> $GITHUB_OUTPUT
+                echo "verbose=false" >> $GITHUB_OUTPUT
+                ;;
+              analyze)
+                echo "focus=architecture,patterns,complexity" >> $GITHUB_OUTPUT
+                echo "verbose=true" >> $GITHUB_OUTPUT
+                ;;
+              security)
+                echo "focus=security,vulnerabilities,compliance" >> $GITHUB_OUTPUT
+                echo "verbose=true" >> $GITHUB_OUTPUT
+                ;;
+              performance)
+                echo "focus=performance,optimization,bottlenecks" >> $GITHUB_OUTPUT
+                echo "verbose=true" >> $GITHUB_OUTPUT
+                ;;
+              review)
+                echo "focus=code-quality,security,performance" >> $GITHUB_OUTPUT
+                echo "verbose=true" >> $GITHUB_OUTPUT
+                ;;
+            esac
+
+            echo "Repository dispatch: mode=${MODE:-review}, full_analysis=${FULL_ANALYSIS:-false}"
+
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+            # For pull_request events, use defaults or infer from title
+            if echo "${{ github.event.pull_request.title }}" | grep -qiF "[auto-review]"; then
               echo "mode=review" >> $GITHUB_OUTPUT
               echo "focus=code-quality,security,performance" >> $GITHUB_OUTPUT
               echo "verbose=true" >> $GITHUB_OUTPUT
-            elif echo "$SAFE_COMMENT" | grep -qiF "codebot"; then
-              # Default to hunt mode for simple "codebot" command
-              echo "mode=hunt" >> $GITHUB_OUTPUT
-              echo "focus=bugs,security,performance" >> $GITHUB_OUTPUT
-              echo "verbose=false" >> $GITHUB_OUTPUT
-            fi
-
-            # Check for verbose flag (using fixed strings for security)
-            if echo "$SAFE_COMMENT" | grep -qiF "verbose" || echo "$SAFE_COMMENT" | grep -qiF "detailed"; then
-              echo "verbose=true" >> $GITHUB_OUTPUT
-            fi
-
-            # Check for specific focus areas
-            if echo "$SAFE_COMMENT" | grep -qiF "security"; then
-              echo "focus=security,vulnerabilities,compliance" >> $GITHUB_OUTPUT
-            elif echo "$SAFE_COMMENT" | grep -qiF "performance"; then
-              echo "focus=performance,optimization,bottlenecks" >> $GITHUB_OUTPUT
-            elif echo "$SAFE_COMMENT" | grep -qiF "tests"; then
-              echo "focus=test-coverage,test-quality" >> $GITHUB_OUTPUT
-            fi
-
-            # Check for --full flag (analyze entire codebase)
-            if echo "$SAFE_COMMENT" | grep -qiF -- "--full"; then
-              echo "full_analysis=true" >> $GITHUB_OUTPUT
-            else
               echo "full_analysis=false" >> $GITHUB_OUTPUT
             fi
-          fi
 
-          echo "Security: Input validation and sanitization completed"
+            echo "Pull request event: using defaults or title-based inference"
+          fi
 
       - name: Get PR information
         id: pr-info
         timeout-minutes: 3
         run: |
-          set -euo pipefail  # Enhanced error handling
+          set -euo pipefail
 
           # Initialize variables
           PR_NUMBER=""
           BASE_REF=""
 
           # Handle different trigger types with validation
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            # For repository dispatch, get PR info from payload
+            PR_NUMBER="${{ github.event.client_payload.pr_number }}"
+            BASE_REF="${{ github.event.client_payload.base_ref }}"
+
+            echo "Repository dispatch: PR #$PR_NUMBER, base: $BASE_REF"
+
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
             PR_NUMBER="${{ github.event.pull_request.number }}"
             BASE_REF="${{ github.event.pull_request.base.ref }}"
-          elif [ "${{ github.event_name }}" = "issue_comment" ]; then
-            PR_NUMBER="${{ github.event.issue.number }}"
 
-            # Validate PR number is numeric
-            if ! [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
-              echo "Error: Invalid PR number: $PR_NUMBER"
-              exit 1
-            fi
+            echo "Pull request event: PR #$PR_NUMBER, base: $BASE_REF"
 
-            # Fetch PR data with retry logic and timeout
-            for attempt in {1..3}; do
-              echo "Attempt $attempt: Fetching PR data for PR #$PR_NUMBER"
-              if PR_DATA=$(curl -sS --max-time 30 --retry 2 \
-                -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                -H "Accept: application/vnd.github.v3+json" \
-                "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER"); then
-
-                # Validate JSON response
-                if echo "$PR_DATA" | jq empty 2>/dev/null; then
-                  BASE_REF=$(echo "$PR_DATA" | jq -r '.base.ref // empty')
-                  if [ -n "$BASE_REF" ] && [ "$BASE_REF" != "null" ]; then
-                    echo "Successfully retrieved base ref: $BASE_REF"
-                    break
-                  fi
-                fi
-              fi
-
-              if [ $attempt -eq 3 ]; then
-                echo "Error: Failed to fetch PR data after 3 attempts"
-                exit 1
-              fi
-
-              echo "Retrying in $((2 ** attempt)) seconds..."
-              sleep $((2 ** attempt))
-            done
-
-          elif [ "${{ github.event_name }}" = "pull_request_review_comment" ]; then
-            PR_NUMBER="${{ github.event.pull_request.number }}"
-            BASE_REF="${{ github.event.pull_request.base.ref }}"
           else
             echo "Error: Unsupported event type: ${{ github.event_name }}"
             exit 1
@@ -449,6 +494,12 @@ jobs:
             exit 1
           fi
 
+          # Validate PR number is numeric
+          if ! [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
+            echo "Error: Invalid PR number: $PR_NUMBER"
+            exit 1
+          fi
+
           # Sanitize branch name for security (allow underscores, dots, and forward slashes)
           if ! [[ "$BASE_REF" =~ ^[a-zA-Z0-9/_.-]+$ ]]; then
             echo "Error: Invalid base ref format: $BASE_REF"
@@ -457,7 +508,7 @@ jobs:
 
           echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
           echo "base_ref=$BASE_REF" >> $GITHUB_OUTPUT
-          echo "Security: PR information validated and sanitized"
+          echo "✅ PR information validated: #$PR_NUMBER (base: $BASE_REF)"
 
       - name: Get changed files
         id: changes
