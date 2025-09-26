@@ -17,8 +17,8 @@ jobs:
     timeout-minutes: 2
     permissions:
       contents: read
-      pull-requests: read
-      issues: write  # needed for reactions
+      pull-requests: write  # needed for reactions on PR comments
+      issues: write  # needed for reactions on issue comments
     steps:
       - name: Add eyes reaction
         timeout-minutes: 1
@@ -73,6 +73,9 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
+          # Configure trigger phrase for codebot
+          trigger_phrase: "codebot"
+
           # This is an optional setting that allows Claude to read CI results on PRs
           additional_permissions: |
             actions: read
@@ -98,26 +101,3 @@ jobs:
                 }
               }
             }
-
-          # Allow Bash permissions for pre-commit hooks and documentation updates + MCP tools
-          allowed_tools: "Bash(pre-commit run --files),Bash(terraform fmt),Bash(terraform validate),Bash(terraform-docs),mcp__terraform-server__getProviderDocs,mcp__terraform-server__resolveProviderDocID,mcp__terraform-server__searchModules,mcp__terraform-server__moduleDetails,mcp__context7__resolve-library-id,mcp__context7__get-library-docs"
-
-          # Subagent routing for specialized expertise
-          custom_instructions: |
-            You have access to specialized subagents for this Terraform AWS Cognito User Pool module. Use them for relevant questions:
-
-            **Subagent Routing Rules:**
-            - For Cognito User Pool configurations, resource setup, MFA, security features, authentication flows, identity providers: use @terraform-cognito
-            - For testing questions, Terratest, test development, validation, CI/CD testing: use @terraform-testing
-            - For security analysis, compliance, vulnerability assessment, hardening recommendations: use @terraform-security
-            - For migrations, upgrades, version transitions, breaking changes: use @cognito-migration
-            - For documentation, examples, README updates, user guides: use @module-documentation
-
-            **Auto-routing Keywords:**
-            - MFA, authentication, password policy, advanced security → @terraform-security
-            - test, testing, terratest, validation, CI/CD → @terraform-testing
-            - migration, upgrade, version, breaking change → @cognito-migration
-            - user pool, client, domain, identity provider, schema → @terraform-cognito
-            - documentation, example, README, guide → @module-documentation
-
-            Always leverage the specialized knowledge in these subagents for better, more accurate responses.
