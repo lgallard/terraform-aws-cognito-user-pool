@@ -126,7 +126,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   claude:
-    # Only run on comment triggers or specific PR conditions
+    # Run on codebot comment triggers or specific PR conditions
     if: |
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, 'codebot')) ||
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, 'codebot')) ||
@@ -139,8 +139,8 @@ jobs:
     timeout-minutes: 15  # Prevent runaway executions
     permissions:
       contents: read
-      pull-requests: read
-      issues: read
+      pull-requests: write
+      issues: write
       id-token: write
 
     steps:
@@ -198,6 +198,36 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           # For issue_comment events, checkout the PR branch
           ref: ${{ github.event_name == 'issue_comment' && steps.pr-checkout-info.outputs.pr_head_ref || github.ref }}
+
+      - name: Add eyes reaction to show codebot is working
+        if: |
+          (github.event_name == 'issue_comment' && contains(github.event.comment.body, 'codebot')) ||
+          (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, 'codebot'))
+        timeout-minutes: 1
+        run: |
+          set -euo pipefail
+
+          # Add eyes emoji reaction to indicate codebot is processing
+          if [ "${{ github.event_name }}" = "issue_comment" ]; then
+            COMMENT_ID="${{ github.event.comment.id }}"
+          elif [ "${{ github.event_name }}" = "pull_request_review_comment" ]; then
+            COMMENT_ID="${{ github.event.comment.id }}"
+          else
+            echo "No comment to react to for event type: ${{ github.event_name }}"
+            exit 0
+          fi
+
+          echo "Adding 👀 reaction to comment ID: $COMMENT_ID"
+          gh api repos/${{ github.repository }}/issues/comments/$COMMENT_ID/reactions \
+            --method POST \
+            --field content='eyes' || {
+            echo "Failed to add reaction - this might be expected for some comment types"
+            exit 0
+          }
+
+          echo "✅ Eyes reaction added successfully"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Refresh git state
         id: git-refresh
@@ -591,6 +621,7 @@ jobs:
         uses: anthropics/claude-code-action@v1.0.0
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          trigger_phrase: "codebot"
 
           # Dynamic prompt based on review mode
           prompt: |
