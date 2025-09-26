@@ -625,6 +625,9 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           trigger_phrase: "codebot"
 
+          # Allow Claude to post comments and use MCP tools
+          allowed_tools: "mcp__github_comment__update_claude_comment,mcp__terraform-server__getProviderDocs,mcp__terraform-server__resolveProviderDocID,mcp__terraform-server__searchModules,mcp__terraform-server__moduleDetails,mcp__context7__resolve-library-id,mcp__context7__get-library-docs"
+
           # Dynamic prompt based on review mode
           prompt: |
             🔄 **COMMIT ANALYSIS CONTEXT**
