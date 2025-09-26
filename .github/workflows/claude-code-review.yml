@@ -142,6 +142,8 @@ jobs:
       pull-requests: write
       issues: write
       id-token: write
+      actions: read  # For Claude to read CI results
+      # Note: reactions permission is implicitly included in issues:write
 
     steps:
       - name: Get PR information for checkout
@@ -702,8 +704,8 @@ jobs:
             Use appropriate subagents: @terraform-cognito for Cognito configs, @terraform-security for security, @terraform-testing for tests
             ', steps.parse-command.outputs.focus, steps.parse-command.outputs.verbose) || '' }}
 
-          # Use sticky comments with commit-specific cache invalidation
-          use_sticky_comment: true
+          # Disable sticky comments to ensure analysis comments are visible
+          use_sticky_comment: false
 
       - name: Workflow Summary
         if: always()
