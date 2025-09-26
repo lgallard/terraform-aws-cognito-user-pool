@@ -704,8 +704,9 @@ jobs:
             Use appropriate subagents: @terraform-cognito for Cognito configs, @terraform-security for security, @terraform-testing for tests
             ', steps.parse-command.outputs.focus, steps.parse-command.outputs.verbose) || '' }}
 
-          # Disable sticky comments to ensure analysis comments are visible
-          use_sticky_comment: false
+          # Enable sticky comments and progress tracking for visible analysis
+          use_sticky_comment: true
+          track_progress: true
 
       - name: Workflow Summary
         if: always()
