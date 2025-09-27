@@ -11,8 +11,8 @@ jobs:
   # Add eyes reaction to show codebot is working
   eyes-reaction:
     if: |
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, 'codebot')) ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, 'codebot'))
+      (github.event_name == 'issue_comment' && (contains(github.event.comment.body, 'codebot') || contains(github.event.comment.body, '@codebot'))) ||
+      (github.event_name == 'pull_request_review_comment' && (contains(github.event.comment.body, 'codebot') || contains(github.event.comment.body, '@codebot')))
     runs-on: ubuntu-latest
     timeout-minutes: 2
     permissions:
@@ -50,8 +50,8 @@ jobs:
   # Claude Code Action (using proven claude.yml pattern)
   claude:
     if: |
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, 'codebot')) ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, 'codebot'))
+      (github.event_name == 'issue_comment' && (contains(github.event.comment.body, 'codebot') || contains(github.event.comment.body, '@codebot'))) ||
+      (github.event_name == 'pull_request_review_comment' && (contains(github.event.comment.body, 'codebot') || contains(github.event.comment.body, '@codebot')))
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -66,6 +66,62 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Parse codebot command
+        id: parse-command
+        run: |
+          set -euo pipefail
+
+          # Get comment body safely
+          COMMENT_BODY="${{ github.event.comment.body }}"
+          SAFE_COMMENT=$(echo "$COMMENT_BODY" | tr -d '`$(){}[]|;&<>' | head -c 500)
+
+          echo "Parsing comment: $SAFE_COMMENT"
+
+          # Default values
+          MODE="hunt"
+          FULL_ANALYSIS="false"
+          FOCUS="bugs,security,performance"
+          VERBOSE="false"
+
+          # Extract mode from comment (support both @codebot and codebot)
+          if echo "$SAFE_COMMENT" | grep -qiE "(^|\s)@?codebot\s+analyze"; then
+            MODE="analyze"
+            FOCUS="architecture,patterns,complexity"
+            VERBOSE="true"
+          elif echo "$SAFE_COMMENT" | grep -qiE "(^|\s)@?codebot\s+security"; then
+            MODE="security"
+            FOCUS="security,vulnerabilities,compliance"
+            VERBOSE="true"
+          elif echo "$SAFE_COMMENT" | grep -qiE "(^|\s)@?codebot\s+performance"; then
+            MODE="performance"
+            FOCUS="performance,optimization,bottlenecks"
+            VERBOSE="true"
+          elif echo "$SAFE_COMMENT" | grep -qiE "(^|\s)@?codebot\s+review"; then
+            MODE="review"
+            FOCUS="code-quality,security,performance"
+            VERBOSE="true"
+          elif echo "$SAFE_COMMENT" | grep -qiE "(^|\s)@?codebot\s+hunt"; then
+            MODE="hunt"
+            FOCUS="bugs,security,performance"
+            VERBOSE="false"
+          fi
+
+          # Check for --full flag
+          if echo "$SAFE_COMMENT" | grep -qiE -- "--full"; then
+            FULL_ANALYSIS="true"
+          fi
+
+          echo "Parsed mode: $MODE"
+          echo "Full analysis: $FULL_ANALYSIS"
+          echo "Focus areas: $FOCUS"
+          echo "Verbose: $VERBOSE"
+
+          # Set outputs
+          echo "mode=$MODE" >> $GITHUB_OUTPUT
+          echo "full_analysis=$FULL_ANALYSIS" >> $GITHUB_OUTPUT
+          echo "focus=$FOCUS" >> $GITHUB_OUTPUT
+          echo "verbose=$VERBOSE" >> $GITHUB_OUTPUT
+
       - name: Run Claude Code
         id: claude
         # Pin to specific version for supply chain security
@@ -73,7 +129,7 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
-          # Configure trigger phrase for codebot
+          # Configure trigger phrase for codebot (support both formats)
           trigger_phrase: "codebot"
 
           # This is an optional setting that allows Claude to read CI results on PRs
@@ -101,3 +157,106 @@ jobs:
                 }
               }
             }
+
+          # Dynamic prompt based on parsed mode
+          prompt: |
+            🤖 **CODEBOT ${{ steps.parse-command.outputs.mode || 'HUNT' }} MODE** - Terraform AWS Cognito User Pool Module
+
+            **Review Configuration:**
+            - **Mode**: ${{ steps.parse-command.outputs.mode || 'hunt' }}
+            - **Focus Areas**: ${{ steps.parse-command.outputs.focus || 'bugs,security,performance' }}
+            - **Full Analysis**: ${{ steps.parse-command.outputs.full_analysis || 'false' }}
+            - **Verbose Output**: ${{ steps.parse-command.outputs.verbose || 'false' }}
+
+            ---
+
+            ${{ steps.parse-command.outputs.mode == 'hunt' && '
+            🕵️ **BUG HUNT MODE** - Find potential issues quickly:
+            - Focus on critical bugs, security vulnerabilities, and performance issues
+            - Prioritize high-impact problems over style suggestions
+            - Be concise and actionable in your feedback
+            - Look for common Terraform and AWS Cognito pitfalls
+
+            **Subagent Routing:**
+            - Use @terraform-cognito for Cognito User Pool configuration issues
+            - Use @terraform-security for security vulnerabilities and hardening
+            - Use @terraform-testing for test-related improvements
+            ' || '' }}
+
+            ${{ steps.parse-command.outputs.mode == 'analyze' && '
+            📊 **ANALYSIS MODE** - Deep technical analysis:
+            - Analyze architecture, patterns, and design decisions
+            - Evaluate code complexity and maintainability
+            - Assess Terraform module structure and best practices
+            - Consider long-term implications and scalability
+            - Review variable validation and output design
+
+            **Subagent Routing:**
+            - Use @terraform-cognito for architecture and design decisions
+            - Use @terraform-testing for test coverage and quality analysis
+            - Use @module-documentation for documentation improvements
+            ' || '' }}
+
+            ${{ steps.parse-command.outputs.mode == 'security' && '
+            🔒 **SECURITY MODE** - Security-focused review:
+            - Identify security vulnerabilities and compliance issues
+            - Review AWS Cognito security configurations (MFA, password policies, etc.)
+            - Check for proper authentication and authorization patterns
+            - Validate input sanitization and validation logic
+            - Assess data protection and privacy concerns
+            - Review IAM permissions and principle of least privilege
+
+            **Subagent Routing:**
+            - Use @terraform-security for comprehensive security analysis and hardening recommendations
+            - Use @terraform-cognito for Cognito-specific security features
+            ' || '' }}
+
+            ${{ steps.parse-command.outputs.mode == 'performance' && '
+            ⚡ **PERFORMANCE MODE** - Performance optimization review:
+            - Identify performance bottlenecks and optimization opportunities
+            - Analyze Terraform resource efficiency and cost implications
+            - Review AWS Cognito configuration for optimal performance
+            - Check for unnecessary resource allocations
+            - Consider scaling patterns and load considerations
+            - Review caching strategies and connection pooling
+
+            **Subagent Routing:**
+            - Use @terraform-cognito for Cognito performance optimization
+            - Use @terraform-testing for performance testing recommendations
+            - Use @terraform-cost-optimizer for cost optimization suggestions
+            ' || '' }}
+
+            ${{ steps.parse-command.outputs.mode == 'review' && '
+            📝 **COMPREHENSIVE REVIEW MODE** - Full code review:
+            - Code quality and adherence to best practices
+            - Potential bugs and edge cases
+            - Performance considerations and optimizations
+            - Security concerns and vulnerability assessment
+            - Documentation quality and completeness
+            - Test coverage and validation
+
+            **Focus Areas**: ${{ steps.parse-command.outputs.focus }}
+
+            **Subagent Routing:**
+            - Use @terraform-cognito for Cognito User Pool configurations and features
+            - Use @terraform-security for security analysis and compliance
+            - Use @terraform-testing for test development and validation
+            - Use @module-documentation for documentation and examples
+            - Use @cognito-migration for upgrade and migration guidance
+            ' || '' }}
+
+            **Analysis Scope:**
+            ${{ steps.parse-command.outputs.full_analysis == 'true' && '
+            🔍 **FULL CODEBASE ANALYSIS** - Analyzing entire repository for comprehensive review.
+            ' || '
+            🎯 **PR CHANGES FOCUS** - Analyzing only the files changed in this pull request for targeted review.
+            ' }}
+
+            **Available Subagents:**
+            - **@terraform-cognito**: Cognito User Pool configurations, MFA, security features, authentication flows
+            - **@terraform-security**: Security analysis, compliance, vulnerability assessment, hardening
+            - **@terraform-testing**: Terratest, test development, validation, CI/CD testing
+            - **@cognito-migration**: Upgrades, version transitions, breaking changes, migration guidance
+            - **@module-documentation**: Documentation, examples, README updates, user guides
+
+            Always leverage the specialized knowledge in these subagents for better, more accurate responses.
