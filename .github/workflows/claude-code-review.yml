@@ -55,8 +55,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: read
-      issues: read
+      pull-requests: write  # Required for Claude to post analysis comments
+      issues: write         # Required for Claude to post analysis comments
       id-token: write
       actions: read # Required for Claude to read CI results on PRs
     steps:
