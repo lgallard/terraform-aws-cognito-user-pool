@@ -68,11 +68,12 @@ jobs:
 
       - name: Parse codebot command
         id: parse-command
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
         run: |
           set -euo pipefail
 
-          # Get comment body safely
-          COMMENT_BODY="${{ github.event.comment.body }}"
+          # Get comment body safely from environment variable
           SAFE_COMMENT=$(printf '%s' "$COMMENT_BODY" | tr -d '`$(){}[]|;&<>' | head -c 500)
 
           echo "Parsing comment: $SAFE_COMMENT"
