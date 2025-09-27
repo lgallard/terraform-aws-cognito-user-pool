@@ -156,7 +156,7 @@ jobs:
             }
 
           # Required tool permissions for GitHub commenting (v1.0 format)
-          allowed_tools: "Bash(gh pr comment:*),Bash(gh api:*),mcp__terraform-server__getProviderDocs,mcp__terraform-server__resolveProviderDocID,mcp__terraform-server__searchModules,mcp__terraform-server__moduleDetails,mcp__context7__resolve-library-id,mcp__context7__get-library-docs"
+          claude_args: "--allowedTools Bash(gh pr comment:*),Bash(gh api:*),mcp__terraform-server__getProviderDocs,mcp__terraform-server__resolveProviderDocID,mcp__terraform-server__searchModules,mcp__terraform-server__moduleDetails,mcp__context7__resolve-library-id,mcp__context7__get-library-docs"
 
           # Set trigger phrase for codebot mentions
           trigger_phrase: "codebot"
