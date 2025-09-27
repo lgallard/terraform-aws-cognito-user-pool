@@ -73,7 +73,7 @@ jobs:
 
           # Get comment body safely
           COMMENT_BODY="${{ github.event.comment.body }}"
-          SAFE_COMMENT=$(echo "$COMMENT_BODY" | tr -d '`$(){}[]|;&<>' | head -c 500)
+          SAFE_COMMENT=$(printf '%s' "$COMMENT_BODY" | tr -d '`$(){}[]|;&<>' | head -c 500)
 
           echo "Parsing comment: $SAFE_COMMENT"
 
