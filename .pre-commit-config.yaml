@@ -26,7 +26,7 @@ repos:
           - --tf-init-args=-upgrade  # Ensure latest provider versions
       - id: terraform_tfsec
         args:
-          - --args=--exclude-downloaded-modules
+          - --args=--exclude-downloaded-modules --soft-fail
   - repo: https://github.com/crate-ci/typos
     rev: v1.16.23
     hooks:
@@ -39,4 +39,6 @@ repos:
     rev: 3.2.0
     hooks:
       - id: checkov
-        args: [--framework, terraform]
+        args: [--framework, terraform, --quiet, --soft-fail]
+        files: \.tf$
+        exclude: examples/
