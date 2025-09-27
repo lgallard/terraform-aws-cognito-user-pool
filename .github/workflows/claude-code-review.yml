@@ -155,6 +155,9 @@ jobs:
               }
             }
 
+          # Allow MCP tools for documentation access - required for comment posting
+          allowed_tools: "mcp__terraform-server__getProviderDocs,mcp__terraform-server__resolveProviderDocID,mcp__terraform-server__searchModules,mcp__terraform-server__moduleDetails,mcp__context7__resolve-library-id,mcp__context7__get-library-docs"
+
           # Dynamic prompt based on parsed mode
           prompt: |
             🤖 **CODEBOT ${{ steps.parse-command.outputs.mode || 'HUNT' }} MODE** - Terraform AWS Cognito User Pool Module
