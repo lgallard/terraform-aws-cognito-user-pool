@@ -156,13 +156,15 @@ jobs:
             }
 
           # Required tool permissions for GitHub commenting (v1.0 format)
-          claude_args: |
-            --allowedTools "Bash(gh pr comment:*),Bash(gh api:*),mcp__terraform-server__getProviderDocs,mcp__terraform-server__resolveProviderDocID,mcp__terraform-server__searchModules,mcp__terraform-server__moduleDetails,mcp__context7__resolve-library-id,mcp__context7__get-library-docs"
+          allowed_tools: "Bash(gh pr comment:*),Bash(gh api:*),mcp__terraform-server__getProviderDocs,mcp__terraform-server__resolveProviderDocID,mcp__terraform-server__searchModules,mcp__terraform-server__moduleDetails,mcp__context7__resolve-library-id,mcp__context7__get-library-docs"
+
+          # Set trigger phrase for codebot mentions
+          trigger_phrase: "codebot"
 
           # Dynamic prompt based on parsed mode
           prompt: |
             REPO: ${{ github.repository }}
-            PR NUMBER: ${{ github.event.pull_request.number }}
+            PR NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
             COMMENT: ${{ github.event.comment.body }}
 
             🤖 **CODEBOT ${{ steps.parse-command.outputs.mode || 'HUNT' }} MODE** - Terraform AWS Cognito User Pool Module
@@ -265,3 +267,5 @@ jobs:
             - **@module-documentation**: Documentation, examples, README updates, user guides
 
             Always leverage the specialized knowledge in these subagents for better, more accurate responses.
+
+            **CRITICAL FINAL INSTRUCTION**: After completing your analysis, post your complete findings as a comment on this pull request using the GitHub commenting tools available to you.
