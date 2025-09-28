@@ -65,7 +65,7 @@ jobs:
             }
 
           # Allow Bash permissions for pre-commit hooks and documentation updates + MCP tools
-          allowed_tools: "Bash(pre-commit run --files),Bash(terraform fmt),Bash(terraform validate),Bash(terraform-docs),mcp__terraform-server__getProviderDocs,mcp__terraform-server__resolveProviderDocID,mcp__terraform-server__searchModules,mcp__terraform-server__moduleDetails,mcp__context7__resolve-library-id,mcp__context7__get-library-docs"
+          allowed_tools: "Bash(pre-commit run --files),Bash(terraform fmt),Bash(terraform validate),Bash(terraform-docs),mcp__terraform-server__get_provider_details,mcp__terraform-server__search_providers,mcp__terraform-server__search_modules,mcp__terraform-server__get_module_details,mcp__context7__resolve-library-id,mcp__context7__get-library-docs"
 
           # Optional: Specify model (defaults to Claude Sonnet 4, uncomment for Claude Opus 4)
           # model: "claude-opus-4-20250514"
