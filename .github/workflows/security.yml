@@ -1,0 +1,84 @@
+name: Security Scanning
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - '**.tf'
+      - '**.tfvars'
+  push:
+    branches: [master]
+    paths:
+      - '**.tf'
+      - '**.tfvars'
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      security-events: write
+      pull-requests: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          fetch-depth: 0
+
+      - name: Run tfsec
+        uses: aquasecurity/tfsec-action@b466648d6e39e7c75324f25d83891162a721f2d6 # v1.0.3
+        with:
+          soft_fail: true
+          format: sarif
+          out: tfsec.sarif
+
+      - name: Run Checkov
+        uses: bridgecrewio/checkov-action@6842c3f2fb48f2a03b33d3c708ab22530f00ab74 # v12.2867.0
+        with:
+          directory: .
+          framework: terraform
+          soft_fail: true
+          output_format: sarif
+          output_file_path: checkov.sarif
+          skip_path: examples/
+
+      - name: Upload tfsec SARIF to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@4f3212b61783c3c68e8309a0f18a699764811cda # v3.27.1
+        with:
+          sarif_file: tfsec.sarif
+          category: tfsec
+
+      - name: Upload Checkov SARIF to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@4f3212b61783c3c68e8309a0f18a699764811cda # v3.27.1
+        with:
+          sarif_file: checkov.sarif
+          category: checkov
+
+      - name: Security scan summary
+        if: always()
+        run: |
+          echo "## 🔒 Security Scan Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ Security scans completed successfully!" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Tools executed:**" >> $GITHUB_STEP_SUMMARY
+            echo "- 🔍 tfsec - Terraform security scanner" >> $GITHUB_STEP_SUMMARY
+            echo "- 🛡️  Checkov - Infrastructure security analysis" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Results uploaded to:**" >> $GITHUB_STEP_SUMMARY
+            echo "- GitHub Security tab (SARIF format)" >> $GITHUB_STEP_SUMMARY
+            echo "- Available for review in Security → Code scanning alerts" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️  Security scans completed with findings" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Please review the logs above and check the GitHub Security tab for details." >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Note:** This workflow runs with soft-fail enabled to prevent blocking development while security posture is being established." >> $GITHUB_STEP_SUMMARY

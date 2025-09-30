@@ -24,9 +24,6 @@ repos:
       - id: terraform_validate
         args:
           - --tf-init-args=-upgrade  # Ensure latest provider versions
-      - id: terraform_tfsec
-        args:
-          - --args=--exclude-downloaded-modules --soft-fail
   - repo: https://github.com/crate-ci/typos
     rev: v1.16.23
     hooks:
@@ -34,11 +31,3 @@ repos:
         types: [markdown]
         args: ['--format', 'brief']
         exclude: 'CHANGELOG.md'
-
-  - repo: https://github.com/bridgecrewio/checkov
-    rev: 3.2.0
-    hooks:
-      - id: checkov
-        args: [--framework, terraform, --quiet, --soft-fail]
-        files: \.tf$
-        exclude: examples/
