@@ -35,6 +35,15 @@ resource "aws_cognito_user_pool_client" "client" {
     }
   }
 
+  # refresh_token_rotation
+  dynamic "refresh_token_rotation" {
+    for_each = length(lookup(each.value, "refresh_token_rotation", {})) == 0 ? [] : [lookup(each.value, "refresh_token_rotation")]
+    content {
+      type                          = lookup(refresh_token_rotation.value, "type", null)
+      retry_grace_period_seconds    = lookup(refresh_token_rotation.value, "retry_grace_period_seconds", null)
+    }
+  }
+
   depends_on = [
     aws_cognito_resource_server.resource,
     aws_cognito_identity_provider.identity_provider
@@ -64,6 +73,7 @@ locals {
       prevent_user_existence_errors                 = var.client_prevent_user_existence_errors
       write_attributes                              = var.client_write_attributes
       enable_token_revocation                       = var.client_enable_token_revocation
+      refresh_token_rotation                        = var.client_refresh_token_rotation
     }
   ]
 
@@ -89,6 +99,7 @@ locals {
     prevent_user_existence_errors                 = lookup(e, "prevent_user_existence_errors", lookup(e, "client_prevent_user_existence_errors", null))
     write_attributes                              = lookup(e, "write_attributes", null)
     enable_token_revocation                       = lookup(e, "enable_token_revocation", null)
+    refresh_token_rotation                        = lookup(e, "refresh_token_rotation", {})
     }
   ]
 

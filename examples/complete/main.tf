@@ -199,6 +199,10 @@ module "aws_cognito_user_pool_complete_example" {
       supported_identity_providers         = []
       write_attributes                     = []
       refresh_token_validity               = 30
+      refresh_token_rotation = {
+        type                       = "rotate"
+        retry_grace_period_seconds = 300
+      }
     },
     {
       allowed_oauth_flows                  = ["code", "implicit"]

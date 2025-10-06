@@ -873,6 +873,25 @@ variable "client_token_validity_units" {
 
 }
 
+variable "client_refresh_token_rotation" {
+  description = "Configuration block for refresh token rotation. When enabled, refresh token rotation is a security feature that provides a new set of tokens (ID, access, and refresh tokens) each time a client exchanges a refresh token to get new tokens."
+  type = object({
+    type                        = optional(string)
+    retry_grace_period_seconds  = optional(number)
+  })
+  default = {}
+
+  validation {
+    condition = var.client_refresh_token_rotation.type == null || contains(["rotate", "disabled"], var.client_refresh_token_rotation.type)
+    error_message = "The refresh token rotation type must be either 'rotate' or 'disabled'."
+  }
+
+  validation {
+    condition = var.client_refresh_token_rotation.retry_grace_period_seconds == null || (var.client_refresh_token_rotation.retry_grace_period_seconds >= 0 && var.client_refresh_token_rotation.retry_grace_period_seconds <= 86400)
+    error_message = "The retry grace period must be between 0 and 86400 seconds (24 hours)."
+  }
+}
+
 #
 # aws_cognito_user_group
 #
