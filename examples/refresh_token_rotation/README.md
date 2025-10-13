@@ -24,20 +24,20 @@ Refresh token rotation is a security best practice that provides:
 
 ```hcl
 refresh_token_rotation = {
-  type                       = "rotate"        # Enable rotation
-  retry_grace_period_seconds = 300            # 5 minute grace period
+  feature                    = "ENABLED"      # Enable rotation
+  retry_grace_period_seconds = 60             # Maximum 60 seconds per AWS limits
 }
 ```
 
-- **type**: Set to "rotate" to enable refresh token rotation, or "disabled" to disable
-- **retry_grace_period_seconds**: Grace period (0-86400 seconds) for handling retry scenarios
+- **feature**: Set to "ENABLED" to enable refresh token rotation, or "DISABLED" to disable
+- **retry_grace_period_seconds**: Grace period (0-60 seconds) for handling retry scenarios
 
 ### Token Validity Settings
 
 The example demonstrates recommended token validity periods:
 
 - **Access tokens**: 60 minutes (short-lived for security)
-- **ID tokens**: 60 minutes (short-lived for security)  
+- **ID tokens**: 60 minutes (short-lived for security)
 - **Refresh tokens**: 30 days (longer-lived but with rotation)
 
 ## Usage
