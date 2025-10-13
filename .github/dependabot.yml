@@ -18,7 +18,7 @@ updates:
     schedule:
       interval: "monthly"
       day: "monday"
-      time: "09:00"
+      time: "10:00"
     open-pull-requests-limit: 2
     commit-message:
       prefix: "deps"
@@ -30,7 +30,7 @@ updates:
     schedule:
       interval: "monthly"
       day: "monday"
-      time: "09:00"
+      time: "11:00"
     open-pull-requests-limit: 2
     commit-message:
       prefix: "deps"
@@ -41,7 +41,7 @@ updates:
     schedule:
       interval: "monthly"
       day: "monday"
-      time: "09:00"
+      time: "12:00"
     open-pull-requests-limit: 2
     commit-message:
       prefix: "deps"
@@ -52,7 +52,7 @@ updates:
     schedule:
       interval: "monthly"
       day: "monday"
-      time: "09:00"
+      time: "13:00"
     open-pull-requests-limit: 2
     commit-message:
       prefix: "deps"
@@ -63,7 +63,7 @@ updates:
     schedule:
       interval: "monthly"
       day: "monday"
-      time: "09:00"
+      time: "14:00"
     open-pull-requests-limit: 2
     commit-message:
       prefix: "deps"
@@ -74,7 +74,18 @@ updates:
     schedule:
       interval: "monthly"
       day: "monday"
-      time: "09:00"
+      time: "15:00"
+    open-pull-requests-limit: 2
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+
+  - package-ecosystem: "terraform"
+    directory: "/examples/refresh_token_rotation"
+    schedule:
+      interval: "monthly"
+      day: "monday"
+      time: "16:00"
     open-pull-requests-limit: 2
     commit-message:
       prefix: "deps"
@@ -86,7 +97,7 @@ updates:
     schedule:
       interval: "monthly"
       day: "monday"
-      time: "09:00"
+      time: "17:00"
     open-pull-requests-limit: 2
     commit-message:
       prefix: "deps"

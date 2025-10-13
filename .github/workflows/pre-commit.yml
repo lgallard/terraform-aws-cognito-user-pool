@@ -44,8 +44,7 @@ jobs:
           terraform_version: '1.3.0'
 
       - name: Cache terraform tools
-        # Pin to specific SHA for supply chain security
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@v4
         with:
           path: |
             ~/.local/bin/terraform-docs
@@ -92,8 +91,7 @@ jobs:
           pip install pre-commit
 
       - name: Cache pre-commit hooks
-        # Pin to specific SHA for supply chain security
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pre-commit
           # Include run number to force periodic cache refresh and avoid stale tool databases
@@ -137,9 +135,8 @@ jobs:
             echo "**Tools verified:**" >> $GITHUB_STEP_SUMMARY
             echo "- 🔧 Terraform formatting" >> $GITHUB_STEP_SUMMARY
             echo "- ✅ Terraform validation" >> $GITHUB_STEP_SUMMARY
-            echo "- 📚 Documentation generation" >> $GITHUB_STEP_SUMMARY
-            echo "- 🔍 TFLint analysis" >> $GITHUB_STEP_SUMMARY
             echo "- 🧹 File formatting" >> $GITHUB_STEP_SUMMARY
+            echo "- ✍️  Typo checking" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ Pre-commit checks failed" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
@@ -154,5 +151,4 @@ jobs:
           echo "- check-yaml" >> $GITHUB_STEP_SUMMARY
           echo "- terraform_fmt" >> $GITHUB_STEP_SUMMARY
           echo "- terraform_validate" >> $GITHUB_STEP_SUMMARY
-          echo "- terraform_docs" >> $GITHUB_STEP_SUMMARY
-          echo "- terraform_tflint" >> $GITHUB_STEP_SUMMARY
+          echo "- typos" >> $GITHUB_STEP_SUMMARY

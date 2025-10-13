@@ -35,7 +35,7 @@ jobs:
           additional_args: --out=tfsec.sarif
 
       - name: Run Checkov
-        uses: bridgecrewio/checkov-action@master
+        uses: bridgecrewio/checkov-action@cba89e33f08479973cadc681333ffe84f7c8e824 # v3.2.477
         with:
           directory: .
           framework: terraform
