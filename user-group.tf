@@ -1,9 +1,9 @@
 resource "aws_cognito_user_group" "main" {
   for_each     = var.enabled ? { for group in local.groups : group.name => group } : {}
   name         = each.key
-  description  = lookup(each.value, "description", null)
-  precedence   = lookup(each.value, "precedence", null)
-  role_arn     = lookup(each.value, "role_arn", null)
+  description  = try(each.value.description, null)
+  precedence   = try(each.value.precedence, null)
+  role_arn     = try(each.value.role_arn, null)
   user_pool_id = local.user_pool_id
 }
 
@@ -23,10 +23,10 @@ locals {
 
   # This parses var.user_groups which is a list of objects (map), and transforms it to a tuple of elements to avoid conflict with  the ternary and local.groups_default
   groups_parsed = [for e in var.user_groups : {
-    name        = lookup(e, "name", null)
-    description = lookup(e, "description", null)
-    precedence  = lookup(e, "precedence", null)
-    role_arn    = lookup(e, "role_arn", null)
+    name        = try(e.name, null)
+    description = try(e.description, null)
+    precedence  = try(e.precedence, null)
+    role_arn    = try(e.role_arn, null)
     }
   ]
 
