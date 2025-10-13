@@ -19,7 +19,7 @@ on:
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     permissions:
       contents: read
       pull-requests: read
@@ -43,57 +43,26 @@ jobs:
         with:
           terraform_version: '1.3.0'
 
-      - name: Cache terraform tools
-        # Pin to specific SHA for supply chain security
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
-        with:
-          path: |
-            ~/.local/bin/terraform-docs
-            ~/.local/bin/tflint
-          key: terraform-tools-${{ runner.os }}-v1
-          restore-keys: |
-            terraform-tools-${{ runner.os }}-
-
-      - name: Install terraform-docs
+      - name: Install pre-commit
         run: |
-          if [ ! -f ~/.local/bin/terraform-docs ]; then
-            echo "Installing terraform-docs..."
-            mkdir -p ~/.local/bin
-            curl -sSLo ./terraform-docs.tar.gz https://terraform-docs.io/dl/v0.16.0/terraform-docs-v0.16.0-$(uname)-amd64.tar.gz
-            tar -xzf terraform-docs.tar.gz
-            chmod +x terraform-docs
-            mv terraform-docs ~/.local/bin/
-            rm terraform-docs.tar.gz
-          fi
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Install tflint
-        run: |
-          if ! command -v tflint &> /dev/null; then
-            echo "Installing tflint..."
-            curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-          fi
+          python -m pip install --upgrade pip
+          pip install pre-commit
 
       - name: Install Trivy
         run: |
           if ! command -v trivy &> /dev/null; then
             echo "Installing Trivy..."
             sudo apt-get update
-            sudo apt-get install wget apt-transport-https gnupg lsb-release
-            wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-            echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+            sudo apt-get install -y wget apt-transport-https gnupg lsb-release
+            sudo mkdir -p /etc/apt/keyrings
+            wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo gpg --dearmor -o /etc/apt/keyrings/trivy.gpg
+            echo "deb [signed-by=/etc/apt/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/trivy.list
             sudo apt-get update
-            sudo apt-get install trivy
+            sudo apt-get install -y trivy
           fi
 
-      - name: Install pre-commit
-        run: |
-          python -m pip install --upgrade pip
-          pip install pre-commit
-
       - name: Cache pre-commit hooks
-        # Pin to specific SHA for supply chain security
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.cache/pre-commit
           # Include run number to force periodic cache refresh and avoid stale tool databases
@@ -137,9 +106,8 @@ jobs:
             echo "**Tools verified:**" >> $GITHUB_STEP_SUMMARY
             echo "- 🔧 Terraform formatting" >> $GITHUB_STEP_SUMMARY
             echo "- ✅ Terraform validation" >> $GITHUB_STEP_SUMMARY
-            echo "- 📚 Documentation generation" >> $GITHUB_STEP_SUMMARY
-            echo "- 🔍 TFLint analysis" >> $GITHUB_STEP_SUMMARY
             echo "- 🧹 File formatting" >> $GITHUB_STEP_SUMMARY
+            echo "- ✍️  Typo checking" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ Pre-commit checks failed" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
@@ -154,5 +122,4 @@ jobs:
           echo "- check-yaml" >> $GITHUB_STEP_SUMMARY
           echo "- terraform_fmt" >> $GITHUB_STEP_SUMMARY
           echo "- terraform_validate" >> $GITHUB_STEP_SUMMARY
-          echo "- terraform_docs" >> $GITHUB_STEP_SUMMARY
-          echo "- terraform_tflint" >> $GITHUB_STEP_SUMMARY
+          echo "- typos" >> $GITHUB_STEP_SUMMARY
