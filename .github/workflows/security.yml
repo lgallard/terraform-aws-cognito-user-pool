@@ -32,7 +32,7 @@ jobs:
         with:
           soft_fail: true
           format: sarif
-          out: tfsec.sarif
+          additional_args: --out=tfsec.sarif
 
       - name: Run Checkov
         uses: bridgecrewio/checkov-action@master
