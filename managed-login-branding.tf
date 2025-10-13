@@ -8,19 +8,19 @@ resource "awscc_cognito_managed_login_branding" "branding" {
   # Support both client IDs and client names with proper resolution
   # Try to look up the value in the client name map first
   # If not found, treat it as a literal client ID
-  client_id = lookup(local.client_name_to_id_map, each.value.client_id, each.value.client_id)
+  client_id = try(local.client_name_to_id_map[each.value.client_id], each.value.client_id)
 
   # Assets configuration for branding images
-  assets = lookup(each.value, "assets", [])
+  assets = try(each.value.assets, [])
 
   # Settings as JSON for advanced branding configuration
-  settings = lookup(each.value, "settings", null)
+  settings = try(each.value.settings, null)
 
   # Whether to return merged resources (defaults + custom)
-  return_merged_resources = lookup(each.value, "return_merged_resources", false)
+  return_merged_resources = try(each.value.return_merged_resources, false)
 
   # Whether to use Cognito provided default values
-  use_cognito_provided_values = lookup(each.value, "use_cognito_provided_values", false)
+  use_cognito_provided_values = try(each.value.use_cognito_provided_values, false)
 
   depends_on = [
     aws_cognito_user_pool_client.client
