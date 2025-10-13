@@ -5,6 +5,23 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [3.0.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.4.0...3.0.0) (2025-10-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* Security scanning moved from pre-commit hooks to dedicated CI workflow
+
+### Features
+
+* enhance security infrastructure with updated hooks and dependency management ([#308](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/308)) ([6934a36](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/6934a367dc2836455c4f29ec541bba08f013ea5c))
+
+
+### Bug Fixes
+
+* correct Go version to 1.23 and use SHA pinning for setup-go v6 ([77bb372](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/77bb37253027b8fa977967935a0af771f3ab755b))
+* correct refresh_token_rotation schema and validation ([#353](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/353)) ([cc2125f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/cc2125fe9c6cc2d5c06320c226a98d44d470a3cc))
+
 ## [2.4.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.3.0...2.4.0) (2025-10-12)
 
 
