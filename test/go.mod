@@ -3,7 +3,7 @@ module github.com/lgallard/terraform-aws-cognito-user-pool/test
 go 1.23.0
 
 require (
-	github.com/aws/aws-sdk-go v1.45.25
+	github.com/aws/aws-sdk-go v1.55.8
 	github.com/gruntwork-io/terratest v0.46.8
 	github.com/stretchr/testify v1.8.4
 )
