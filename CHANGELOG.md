@@ -5,6 +5,13 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [2.4.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.3.0...2.4.0) (2025-10-12)
+
+
+### Features
+
+* Add refresh token rotation support ([#337](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/337)) ([cc9e4e1](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/cc9e4e1207843769675f0d3ea7eaf8293061b621))
+
 ## [2.3.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.2.0...2.3.0) (2025-09-28)
 
 
