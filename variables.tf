@@ -882,12 +882,12 @@ variable "client_refresh_token_rotation" {
   default = {}
 
   validation {
-    condition     = try(var.client_refresh_token_rotation.feature, null) == null || contains(["ENABLED", "DISABLED"], var.client_refresh_token_rotation.feature)
+    condition     = try(var.client_refresh_token_rotation.feature, null) == null || try(contains(["ENABLED", "DISABLED"], var.client_refresh_token_rotation.feature), false)
     error_message = "The refresh token rotation feature must be either 'ENABLED' or 'DISABLED'."
   }
 
   validation {
-    condition     = try(var.client_refresh_token_rotation.retry_grace_period_seconds, null) == null || (var.client_refresh_token_rotation.retry_grace_period_seconds >= 0 && var.client_refresh_token_rotation.retry_grace_period_seconds <= 60)
+    condition     = try(var.client_refresh_token_rotation.retry_grace_period_seconds, null) == null || try(var.client_refresh_token_rotation.retry_grace_period_seconds >= 0 && var.client_refresh_token_rotation.retry_grace_period_seconds <= 60, false)
     error_message = "The retry grace period must be between 0 and 60 seconds per AWS limits."
   }
 }
