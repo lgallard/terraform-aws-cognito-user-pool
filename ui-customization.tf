@@ -9,10 +9,10 @@ locals {
   # Create UI customizations map with robust key generation to handle null/duplicate names
   client_ui_customizations = {
     for idx, c in var.clients :
-    "${coalesce(lookup(c, "name", null), "client-${idx}")}" => {
-      css        = lookup(c, "ui_customization_css", null)
-      image_file = lookup(c, "ui_customization_image_file", null)
-    } if lookup(c, "ui_customization_css", null) != null || lookup(c, "ui_customization_image_file", null) != null
+    "${coalesce(try(c.name, null), "client-${idx}")}" => {
+      css        = try(c.ui_customization_css, null)
+      image_file = try(c.ui_customization_image_file, null)
+    } if try(c.ui_customization_css, null) != null || try(c.ui_customization_image_file, null) != null
   }
 }
 

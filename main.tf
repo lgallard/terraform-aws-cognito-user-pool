@@ -17,7 +17,7 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "username_configuration" {
     for_each = local.username_configuration
     content {
-      case_sensitive = lookup(username_configuration.value, "case_sensitive", true)
+      case_sensitive = try(username_configuration.value.case_sensitive, true)
     }
   }
 
@@ -25,14 +25,14 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "admin_create_user_config" {
     for_each = local.admin_create_user_config
     content {
-      allow_admin_create_user_only = lookup(admin_create_user_config.value, "allow_admin_create_user_only", true)
+      allow_admin_create_user_only = try(admin_create_user_config.value.allow_admin_create_user_only, true)
 
       dynamic "invite_message_template" {
-        for_each = lookup(admin_create_user_config.value, "email_message", null) == null && lookup(admin_create_user_config.value, "email_subject", null) == null && lookup(admin_create_user_config.value, "sms_message", null) == null ? [] : [1]
+        for_each = can(admin_create_user_config.value.email_message) || can(admin_create_user_config.value.email_subject) || can(admin_create_user_config.value.sms_message) ? [1] : []
         content {
-          email_message = lookup(admin_create_user_config.value, "email_message", null)
-          email_subject = lookup(admin_create_user_config.value, "email_subject", null)
-          sms_message   = lookup(admin_create_user_config.value, "sms_message", null)
+          email_message = try(admin_create_user_config.value.email_message, null)
+          email_subject = try(admin_create_user_config.value.email_subject, null)
+          sms_message   = try(admin_create_user_config.value.sms_message, null)
         }
       }
     }
@@ -42,8 +42,8 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "device_configuration" {
     for_each = local.device_configuration
     content {
-      challenge_required_on_new_device      = lookup(device_configuration.value, "challenge_required_on_new_device", false)
-      device_only_remembered_on_user_prompt = lookup(device_configuration.value, "device_only_remembered_on_user_prompt", false)
+      challenge_required_on_new_device      = try(device_configuration.value.challenge_required_on_new_device, false)
+      device_only_remembered_on_user_prompt = try(device_configuration.value.device_only_remembered_on_user_prompt, false)
     }
   }
 
@@ -51,11 +51,11 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "email_configuration" {
     for_each = local.email_configuration
     content {
-      configuration_set      = lookup(email_configuration.value, "configuration_set", null)
-      reply_to_email_address = lookup(email_configuration.value, "reply_to_email_address", null)
-      source_arn             = lookup(email_configuration.value, "source_arn", null)
-      email_sending_account  = lookup(email_configuration.value, "email_sending_account", "COGNITO_DEFAULT")
-      from_email_address     = lookup(email_configuration.value, "from_email_address", null)
+      configuration_set      = try(email_configuration.value.configuration_set, null)
+      reply_to_email_address = try(email_configuration.value.reply_to_email_address, null)
+      source_arn             = try(email_configuration.value.source_arn, null)
+      email_sending_account  = try(email_configuration.value.email_sending_account, "COGNITO_DEFAULT")
+      from_email_address     = try(email_configuration.value.from_email_address, null)
     }
   }
 
@@ -72,36 +72,36 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "lambda_config" {
     for_each = local.lambda_config
     content {
-      create_auth_challenge = lookup(lambda_config.value, "create_auth_challenge")
-      custom_message        = lookup(lambda_config.value, "custom_message")
-      define_auth_challenge = lookup(lambda_config.value, "define_auth_challenge")
-      post_authentication   = lookup(lambda_config.value, "post_authentication")
-      post_confirmation     = lookup(lambda_config.value, "post_confirmation")
-      pre_authentication    = lookup(lambda_config.value, "pre_authentication")
-      pre_sign_up           = lookup(lambda_config.value, "pre_sign_up")
-      pre_token_generation  = lookup(lambda_config.value, "pre_token_generation")
+      create_auth_challenge = try(lambda_config.value.create_auth_challenge, null)
+      custom_message        = try(lambda_config.value.custom_message, null)
+      define_auth_challenge = try(lambda_config.value.define_auth_challenge, null)
+      post_authentication   = try(lambda_config.value.post_authentication, null)
+      post_confirmation     = try(lambda_config.value.post_confirmation, null)
+      pre_authentication    = try(lambda_config.value.pre_authentication, null)
+      pre_sign_up           = try(lambda_config.value.pre_sign_up, null)
+      pre_token_generation  = try(lambda_config.value.pre_token_generation, null)
       dynamic "pre_token_generation_config" {
-        for_each = lookup(lambda_config.value, "pre_token_generation_config")
+        for_each = try(lambda_config.value.pre_token_generation_config, {})
         content {
-          lambda_arn     = lookup(pre_token_generation_config.value, "lambda_arn")
-          lambda_version = lookup(pre_token_generation_config.value, "lambda_version")
+          lambda_arn     = try(pre_token_generation_config.value.lambda_arn, null)
+          lambda_version = try(pre_token_generation_config.value.lambda_version, null)
         }
       }
-      user_migration                 = lookup(lambda_config.value, "user_migration")
-      verify_auth_challenge_response = lookup(lambda_config.value, "verify_auth_challenge_response")
-      kms_key_id                     = lookup(lambda_config.value, "kms_key_id")
+      user_migration                 = try(lambda_config.value.user_migration, null)
+      verify_auth_challenge_response = try(lambda_config.value.verify_auth_challenge_response, null)
+      kms_key_id                     = try(lambda_config.value.kms_key_id, null)
       dynamic "custom_email_sender" {
-        for_each = lookup(lambda_config.value, "custom_email_sender")
+        for_each = try(lambda_config.value.custom_email_sender, {})
         content {
-          lambda_arn     = lookup(custom_email_sender.value, "lambda_arn")
-          lambda_version = lookup(custom_email_sender.value, "lambda_version")
+          lambda_arn     = try(custom_email_sender.value.lambda_arn, null)
+          lambda_version = try(custom_email_sender.value.lambda_version, null)
         }
       }
       dynamic "custom_sms_sender" {
-        for_each = lookup(lambda_config.value, "custom_sms_sender")
+        for_each = try(lambda_config.value.custom_sms_sender, {})
         content {
-          lambda_arn     = lookup(custom_sms_sender.value, "lambda_arn")
-          lambda_version = lookup(custom_sms_sender.value, "lambda_version")
+          lambda_arn     = try(custom_sms_sender.value.lambda_arn, null)
+          lambda_version = try(custom_sms_sender.value.lambda_version, null)
         }
       }
     }
@@ -111,8 +111,8 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "sms_configuration" {
     for_each = local.sms_configuration
     content {
-      external_id    = lookup(sms_configuration.value, "external_id")
-      sns_caller_arn = lookup(sms_configuration.value, "sns_caller_arn")
+      external_id    = try(sms_configuration.value.external_id, null)
+      sns_caller_arn = try(sms_configuration.value.sns_caller_arn, null)
     }
   }
 
@@ -120,7 +120,7 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "software_token_mfa_configuration" {
     for_each = local.software_token_mfa_configuration
     content {
-      enabled = lookup(software_token_mfa_configuration.value, "enabled")
+      enabled = try(software_token_mfa_configuration.value.enabled, false)
     }
   }
 
@@ -128,13 +128,13 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "password_policy" {
     for_each = local.password_policy
     content {
-      minimum_length                   = lookup(password_policy.value, "minimum_length")
-      require_lowercase                = lookup(password_policy.value, "require_lowercase")
-      require_numbers                  = lookup(password_policy.value, "require_numbers")
-      require_symbols                  = lookup(password_policy.value, "require_symbols")
-      require_uppercase                = lookup(password_policy.value, "require_uppercase")
-      temporary_password_validity_days = lookup(password_policy.value, "temporary_password_validity_days")
-      password_history_size            = lookup(password_policy.value, "password_history_size")
+      minimum_length                   = try(password_policy.value.minimum_length, null)
+      require_lowercase                = try(password_policy.value.require_lowercase, null)
+      require_numbers                  = try(password_policy.value.require_numbers, null)
+      require_symbols                  = try(password_policy.value.require_symbols, null)
+      require_uppercase                = try(password_policy.value.require_uppercase, null)
+      temporary_password_validity_days = try(password_policy.value.temporary_password_validity_days, null)
+      password_history_size            = try(password_policy.value.password_history_size, null)
     }
   }
 
@@ -142,11 +142,11 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "schema" {
     for_each = var.schemas == null ? [] : var.schemas
     content {
-      attribute_data_type      = lookup(schema.value, "attribute_data_type")
-      developer_only_attribute = lookup(schema.value, "developer_only_attribute")
-      mutable                  = lookup(schema.value, "mutable")
-      name                     = lookup(schema.value, "name")
-      required                 = lookup(schema.value, "required")
+      attribute_data_type      = try(schema.value.attribute_data_type, null)
+      developer_only_attribute = try(schema.value.developer_only_attribute, null)
+      mutable                  = try(schema.value.mutable, null)
+      name                     = try(schema.value.name, null)
+      required                 = try(schema.value.required, null)
     }
   }
 
@@ -154,18 +154,18 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "schema" {
     for_each = var.string_schemas == null ? [] : var.string_schemas
     content {
-      attribute_data_type      = lookup(schema.value, "attribute_data_type")
-      developer_only_attribute = lookup(schema.value, "developer_only_attribute")
-      mutable                  = lookup(schema.value, "mutable")
-      name                     = lookup(schema.value, "name")
-      required                 = lookup(schema.value, "required")
+      attribute_data_type      = try(schema.value.attribute_data_type, null)
+      developer_only_attribute = try(schema.value.developer_only_attribute, null)
+      mutable                  = try(schema.value.mutable, null)
+      name                     = try(schema.value.name, null)
+      required                 = try(schema.value.required, null)
 
       # string_attribute_constraints
       dynamic "string_attribute_constraints" {
-        for_each = length(keys(lookup(schema.value, "string_attribute_constraints", {}))) == 0 ? [{}] : [lookup(schema.value, "string_attribute_constraints", {})]
+        for_each = try(schema.value.string_attribute_constraints, {}) != {} ? [schema.value.string_attribute_constraints] : [{}]
         content {
-          min_length = lookup(string_attribute_constraints.value, "min_length", null)
-          max_length = lookup(string_attribute_constraints.value, "max_length", null)
+          min_length = try(string_attribute_constraints.value.min_length, null)
+          max_length = try(string_attribute_constraints.value.max_length, null)
         }
       }
     }
@@ -175,18 +175,18 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "schema" {
     for_each = var.number_schemas == null ? [] : var.number_schemas
     content {
-      attribute_data_type      = lookup(schema.value, "attribute_data_type")
-      developer_only_attribute = lookup(schema.value, "developer_only_attribute")
-      mutable                  = lookup(schema.value, "mutable")
-      name                     = lookup(schema.value, "name")
-      required                 = lookup(schema.value, "required")
+      attribute_data_type      = try(schema.value.attribute_data_type, null)
+      developer_only_attribute = try(schema.value.developer_only_attribute, null)
+      mutable                  = try(schema.value.mutable, null)
+      name                     = try(schema.value.name, null)
+      required                 = try(schema.value.required, null)
 
       # number_attribute_constraints
       dynamic "number_attribute_constraints" {
-        for_each = length(keys(lookup(schema.value, "number_attribute_constraints", {}))) == 0 ? [{}] : [lookup(schema.value, "number_attribute_constraints", {})]
+        for_each = try(schema.value.number_attribute_constraints, {}) != {} ? [schema.value.number_attribute_constraints] : [{}]
         content {
-          min_value = lookup(number_attribute_constraints.value, "min_value", null)
-          max_value = lookup(number_attribute_constraints.value, "max_value", null)
+          min_value = try(number_attribute_constraints.value.min_value, null)
+          max_value = try(number_attribute_constraints.value.max_value, null)
         }
       }
     }
@@ -196,12 +196,12 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "user_pool_add_ons" {
     for_each = local.user_pool_add_ons
     content {
-      advanced_security_mode = lookup(user_pool_add_ons.value, "advanced_security_mode")
+      advanced_security_mode = try(user_pool_add_ons.value.advanced_security_mode, null)
 
       dynamic "advanced_security_additional_flows" {
-        for_each = lookup(user_pool_add_ons.value, "advanced_security_additional_flows") != null ? [1] : []
+        for_each = can(user_pool_add_ons.value.advanced_security_additional_flows) ? [1] : []
         content {
-          custom_auth_mode = lookup(user_pool_add_ons.value, "advanced_security_additional_flows")
+          custom_auth_mode = try(user_pool_add_ons.value.advanced_security_additional_flows, null)
         }
       }
     }
@@ -211,12 +211,12 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "verification_message_template" {
     for_each = local.verification_message_template
     content {
-      default_email_option  = lookup(verification_message_template.value, "default_email_option", "CONFIRM_WITH_CODE")
-      email_message         = lookup(verification_message_template.value, "email_message", null)
-      email_message_by_link = lookup(verification_message_template.value, "email_message_by_link", null)
-      email_subject         = lookup(verification_message_template.value, "email_subject", null)
-      email_subject_by_link = lookup(verification_message_template.value, "email_subject_by_link", null)
-      sms_message           = lookup(verification_message_template.value, "sms_message", null)
+      default_email_option  = try(verification_message_template.value.default_email_option, "CONFIRM_WITH_CODE")
+      email_message         = try(verification_message_template.value.email_message, null)
+      email_message_by_link = try(verification_message_template.value.email_message_by_link, null)
+      email_subject         = try(verification_message_template.value.email_subject, null)
+      email_subject_by_link = try(verification_message_template.value.email_subject_by_link, null)
+      sms_message           = try(verification_message_template.value.sms_message, null)
     }
   }
 
@@ -224,7 +224,7 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "user_attribute_update_settings" {
     for_each = local.user_attribute_update_settings
     content {
-      attributes_require_verification_before_update = lookup(user_attribute_update_settings.value, "attributes_require_verification_before_update")
+      attributes_require_verification_before_update = try(user_attribute_update_settings.value.attributes_require_verification_before_update, null)
     }
   }
 
@@ -236,8 +236,8 @@ resource "aws_cognito_user_pool" "pool" {
       dynamic "recovery_mechanism" {
         for_each = var.recovery_mechanisms
         content {
-          name     = lookup(recovery_mechanism.value, "name")
-          priority = lookup(recovery_mechanism.value, "priority")
+          name     = try(recovery_mechanism.value.name, null)
+          priority = try(recovery_mechanism.value.priority, null)
         }
       }
     }
@@ -247,7 +247,7 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "sign_in_policy" {
     for_each = local.sign_in_policy
     content {
-      allowed_first_auth_factors = lookup(sign_in_policy.value, "allowed_first_auth_factors")
+      allowed_first_auth_factors = try(sign_in_policy.value.allowed_first_auth_factors, null)
     }
   }
 
@@ -275,7 +275,7 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "username_configuration" {
     for_each = local.username_configuration
     content {
-      case_sensitive = lookup(username_configuration.value, "case_sensitive", true)
+      case_sensitive = try(username_configuration.value.case_sensitive, true)
     }
   }
 
@@ -283,14 +283,14 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "admin_create_user_config" {
     for_each = local.admin_create_user_config
     content {
-      allow_admin_create_user_only = lookup(admin_create_user_config.value, "allow_admin_create_user_only", true)
+      allow_admin_create_user_only = try(admin_create_user_config.value.allow_admin_create_user_only, true)
 
       dynamic "invite_message_template" {
-        for_each = lookup(admin_create_user_config.value, "email_message", null) == null && lookup(admin_create_user_config.value, "email_subject", null) == null && lookup(admin_create_user_config.value, "sms_message", null) == null ? [] : [1]
+        for_each = can(admin_create_user_config.value.email_message) || can(admin_create_user_config.value.email_subject) || can(admin_create_user_config.value.sms_message) ? [1] : []
         content {
-          email_message = lookup(admin_create_user_config.value, "email_message", null)
-          email_subject = lookup(admin_create_user_config.value, "email_subject", null)
-          sms_message   = lookup(admin_create_user_config.value, "sms_message", null)
+          email_message = try(admin_create_user_config.value.email_message, null)
+          email_subject = try(admin_create_user_config.value.email_subject, null)
+          sms_message   = try(admin_create_user_config.value.sms_message, null)
         }
       }
     }
@@ -300,8 +300,8 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "device_configuration" {
     for_each = local.device_configuration
     content {
-      challenge_required_on_new_device      = lookup(device_configuration.value, "challenge_required_on_new_device", false)
-      device_only_remembered_on_user_prompt = lookup(device_configuration.value, "device_only_remembered_on_user_prompt", false)
+      challenge_required_on_new_device      = try(device_configuration.value.challenge_required_on_new_device, false)
+      device_only_remembered_on_user_prompt = try(device_configuration.value.device_only_remembered_on_user_prompt, false)
     }
   }
 
@@ -309,11 +309,11 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "email_configuration" {
     for_each = local.email_configuration
     content {
-      configuration_set      = lookup(email_configuration.value, "configuration_set", null)
-      reply_to_email_address = lookup(email_configuration.value, "reply_to_email_address", null)
-      source_arn             = lookup(email_configuration.value, "source_arn", null)
-      email_sending_account  = lookup(email_configuration.value, "email_sending_account", "COGNITO_DEFAULT")
-      from_email_address     = lookup(email_configuration.value, "from_email_address", null)
+      configuration_set      = try(email_configuration.value.configuration_set, null)
+      reply_to_email_address = try(email_configuration.value.reply_to_email_address, null)
+      source_arn             = try(email_configuration.value.source_arn, null)
+      email_sending_account  = try(email_configuration.value.email_sending_account, "COGNITO_DEFAULT")
+      from_email_address     = try(email_configuration.value.from_email_address, null)
     }
   }
 
@@ -330,36 +330,36 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "lambda_config" {
     for_each = local.lambda_config
     content {
-      create_auth_challenge = lookup(lambda_config.value, "create_auth_challenge")
-      custom_message        = lookup(lambda_config.value, "custom_message")
-      define_auth_challenge = lookup(lambda_config.value, "define_auth_challenge")
-      post_authentication   = lookup(lambda_config.value, "post_authentication")
-      post_confirmation     = lookup(lambda_config.value, "post_confirmation")
-      pre_authentication    = lookup(lambda_config.value, "pre_authentication")
-      pre_sign_up           = lookup(lambda_config.value, "pre_sign_up")
-      pre_token_generation  = lookup(lambda_config.value, "pre_token_generation")
+      create_auth_challenge = try(lambda_config.value.create_auth_challenge, null)
+      custom_message        = try(lambda_config.value.custom_message, null)
+      define_auth_challenge = try(lambda_config.value.define_auth_challenge, null)
+      post_authentication   = try(lambda_config.value.post_authentication, null)
+      post_confirmation     = try(lambda_config.value.post_confirmation, null)
+      pre_authentication    = try(lambda_config.value.pre_authentication, null)
+      pre_sign_up           = try(lambda_config.value.pre_sign_up, null)
+      pre_token_generation  = try(lambda_config.value.pre_token_generation, null)
       dynamic "pre_token_generation_config" {
-        for_each = lookup(lambda_config.value, "pre_token_generation_config")
+        for_each = try(lambda_config.value.pre_token_generation_config, {})
         content {
-          lambda_arn     = lookup(pre_token_generation_config.value, "lambda_arn")
-          lambda_version = lookup(pre_token_generation_config.value, "lambda_version")
+          lambda_arn     = try(pre_token_generation_config.value.lambda_arn, null)
+          lambda_version = try(pre_token_generation_config.value.lambda_version, null)
         }
       }
-      user_migration                 = lookup(lambda_config.value, "user_migration")
-      verify_auth_challenge_response = lookup(lambda_config.value, "verify_auth_challenge_response")
-      kms_key_id                     = lookup(lambda_config.value, "kms_key_id")
+      user_migration                 = try(lambda_config.value.user_migration, null)
+      verify_auth_challenge_response = try(lambda_config.value.verify_auth_challenge_response, null)
+      kms_key_id                     = try(lambda_config.value.kms_key_id, null)
       dynamic "custom_email_sender" {
-        for_each = lookup(lambda_config.value, "custom_email_sender")
+        for_each = try(lambda_config.value.custom_email_sender, {})
         content {
-          lambda_arn     = lookup(custom_email_sender.value, "lambda_arn")
-          lambda_version = lookup(custom_email_sender.value, "lambda_version")
+          lambda_arn     = try(custom_email_sender.value.lambda_arn, null)
+          lambda_version = try(custom_email_sender.value.lambda_version, null)
         }
       }
       dynamic "custom_sms_sender" {
-        for_each = lookup(lambda_config.value, "custom_sms_sender")
+        for_each = try(lambda_config.value.custom_sms_sender, {})
         content {
-          lambda_arn     = lookup(custom_sms_sender.value, "lambda_arn")
-          lambda_version = lookup(custom_sms_sender.value, "lambda_version")
+          lambda_arn     = try(custom_sms_sender.value.lambda_arn, null)
+          lambda_version = try(custom_sms_sender.value.lambda_version, null)
         }
       }
     }
@@ -369,8 +369,8 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "sms_configuration" {
     for_each = local.sms_configuration
     content {
-      external_id    = lookup(sms_configuration.value, "external_id")
-      sns_caller_arn = lookup(sms_configuration.value, "sns_caller_arn")
+      external_id    = try(sms_configuration.value.external_id, null)
+      sns_caller_arn = try(sms_configuration.value.sns_caller_arn, null)
     }
   }
 
@@ -378,7 +378,7 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "software_token_mfa_configuration" {
     for_each = local.software_token_mfa_configuration
     content {
-      enabled = lookup(software_token_mfa_configuration.value, "enabled")
+      enabled = try(software_token_mfa_configuration.value.enabled, false)
     }
   }
 
@@ -386,13 +386,13 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "password_policy" {
     for_each = local.password_policy
     content {
-      minimum_length                   = lookup(password_policy.value, "minimum_length")
-      require_lowercase                = lookup(password_policy.value, "require_lowercase")
-      require_numbers                  = lookup(password_policy.value, "require_numbers")
-      require_symbols                  = lookup(password_policy.value, "require_symbols")
-      require_uppercase                = lookup(password_policy.value, "require_uppercase")
-      temporary_password_validity_days = lookup(password_policy.value, "temporary_password_validity_days")
-      password_history_size            = lookup(password_policy.value, "password_history_size")
+      minimum_length                   = try(password_policy.value.minimum_length, null)
+      require_lowercase                = try(password_policy.value.require_lowercase, null)
+      require_numbers                  = try(password_policy.value.require_numbers, null)
+      require_symbols                  = try(password_policy.value.require_symbols, null)
+      require_uppercase                = try(password_policy.value.require_uppercase, null)
+      temporary_password_validity_days = try(password_policy.value.temporary_password_validity_days, null)
+      password_history_size            = try(password_policy.value.password_history_size, null)
     }
   }
 
@@ -400,11 +400,11 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "schema" {
     for_each = var.schemas == null ? [] : var.schemas
     content {
-      attribute_data_type      = lookup(schema.value, "attribute_data_type")
-      developer_only_attribute = lookup(schema.value, "developer_only_attribute")
-      mutable                  = lookup(schema.value, "mutable")
-      name                     = lookup(schema.value, "name")
-      required                 = lookup(schema.value, "required")
+      attribute_data_type      = try(schema.value.attribute_data_type, null)
+      developer_only_attribute = try(schema.value.developer_only_attribute, null)
+      mutable                  = try(schema.value.mutable, null)
+      name                     = try(schema.value.name, null)
+      required                 = try(schema.value.required, null)
     }
   }
 
@@ -412,18 +412,18 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "schema" {
     for_each = var.string_schemas == null ? [] : var.string_schemas
     content {
-      attribute_data_type      = lookup(schema.value, "attribute_data_type")
-      developer_only_attribute = lookup(schema.value, "developer_only_attribute")
-      mutable                  = lookup(schema.value, "mutable")
-      name                     = lookup(schema.value, "name")
-      required                 = lookup(schema.value, "required")
+      attribute_data_type      = try(schema.value.attribute_data_type, null)
+      developer_only_attribute = try(schema.value.developer_only_attribute, null)
+      mutable                  = try(schema.value.mutable, null)
+      name                     = try(schema.value.name, null)
+      required                 = try(schema.value.required, null)
 
       # string_attribute_constraints
       dynamic "string_attribute_constraints" {
-        for_each = length(keys(lookup(schema.value, "string_attribute_constraints", {}))) == 0 ? [{}] : [lookup(schema.value, "string_attribute_constraints", {})]
+        for_each = try(schema.value.string_attribute_constraints, {}) != {} ? [schema.value.string_attribute_constraints] : [{}]
         content {
-          min_length = lookup(string_attribute_constraints.value, "min_length", null)
-          max_length = lookup(string_attribute_constraints.value, "max_length", null)
+          min_length = try(string_attribute_constraints.value.min_length, null)
+          max_length = try(string_attribute_constraints.value.max_length, null)
         }
       }
     }
@@ -433,18 +433,18 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "schema" {
     for_each = var.number_schemas == null ? [] : var.number_schemas
     content {
-      attribute_data_type      = lookup(schema.value, "attribute_data_type")
-      developer_only_attribute = lookup(schema.value, "developer_only_attribute")
-      mutable                  = lookup(schema.value, "mutable")
-      name                     = lookup(schema.value, "name")
-      required                 = lookup(schema.value, "required")
+      attribute_data_type      = try(schema.value.attribute_data_type, null)
+      developer_only_attribute = try(schema.value.developer_only_attribute, null)
+      mutable                  = try(schema.value.mutable, null)
+      name                     = try(schema.value.name, null)
+      required                 = try(schema.value.required, null)
 
       # number_attribute_constraints
       dynamic "number_attribute_constraints" {
-        for_each = length(keys(lookup(schema.value, "number_attribute_constraints", {}))) == 0 ? [{}] : [lookup(schema.value, "number_attribute_constraints", {})]
+        for_each = try(schema.value.number_attribute_constraints, {}) != {} ? [schema.value.number_attribute_constraints] : [{}]
         content {
-          min_value = lookup(number_attribute_constraints.value, "min_value", null)
-          max_value = lookup(number_attribute_constraints.value, "max_value", null)
+          min_value = try(number_attribute_constraints.value.min_value, null)
+          max_value = try(number_attribute_constraints.value.max_value, null)
         }
       }
     }
@@ -454,12 +454,12 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "user_pool_add_ons" {
     for_each = local.user_pool_add_ons
     content {
-      advanced_security_mode = lookup(user_pool_add_ons.value, "advanced_security_mode")
+      advanced_security_mode = try(user_pool_add_ons.value.advanced_security_mode, null)
 
       dynamic "advanced_security_additional_flows" {
-        for_each = lookup(user_pool_add_ons.value, "advanced_security_additional_flows") != null ? [1] : []
+        for_each = can(user_pool_add_ons.value.advanced_security_additional_flows) ? [1] : []
         content {
-          custom_auth_mode = lookup(user_pool_add_ons.value, "advanced_security_additional_flows")
+          custom_auth_mode = try(user_pool_add_ons.value.advanced_security_additional_flows, null)
         }
       }
     }
@@ -469,19 +469,19 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "verification_message_template" {
     for_each = local.verification_message_template
     content {
-      default_email_option  = lookup(verification_message_template.value, "default_email_option", "CONFIRM_WITH_CODE")
-      email_message         = lookup(verification_message_template.value, "email_message", null)
-      email_message_by_link = lookup(verification_message_template.value, "email_message_by_link", null)
-      email_subject         = lookup(verification_message_template.value, "email_subject", null)
-      email_subject_by_link = lookup(verification_message_template.value, "email_subject_by_link", null)
-      sms_message           = lookup(verification_message_template.value, "sms_message", null)
+      default_email_option  = try(verification_message_template.value.default_email_option, "CONFIRM_WITH_CODE")
+      email_message         = try(verification_message_template.value.email_message, null)
+      email_message_by_link = try(verification_message_template.value.email_message_by_link, null)
+      email_subject         = try(verification_message_template.value.email_subject, null)
+      email_subject_by_link = try(verification_message_template.value.email_subject_by_link, null)
+      sms_message           = try(verification_message_template.value.sms_message, null)
     }
   }
 
   dynamic "user_attribute_update_settings" {
     for_each = local.user_attribute_update_settings
     content {
-      attributes_require_verification_before_update = lookup(user_attribute_update_settings.value, "attributes_require_verification_before_update")
+      attributes_require_verification_before_update = try(user_attribute_update_settings.value.attributes_require_verification_before_update, null)
     }
   }
 
@@ -493,8 +493,8 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
       dynamic "recovery_mechanism" {
         for_each = var.recovery_mechanisms
         content {
-          name     = lookup(recovery_mechanism.value, "name")
-          priority = lookup(recovery_mechanism.value, "priority")
+          name     = try(recovery_mechanism.value.name, null)
+          priority = try(recovery_mechanism.value.priority, null)
         }
       }
     }
@@ -504,7 +504,7 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "sign_in_policy" {
     for_each = local.sign_in_policy
     content {
-      allowed_first_auth_factors = lookup(sign_in_policy.value, "allowed_first_auth_factors")
+      allowed_first_auth_factors = try(sign_in_policy.value.allowed_first_auth_factors, null)
     }
   }
 
