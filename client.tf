@@ -39,8 +39,8 @@ resource "aws_cognito_user_pool_client" "client" {
   dynamic "refresh_token_rotation" {
     for_each = length(lookup(each.value, "refresh_token_rotation", {})) == 0 ? [] : [lookup(each.value, "refresh_token_rotation")]
     content {
-      type                          = lookup(refresh_token_rotation.value, "type", null)
-      retry_grace_period_seconds    = lookup(refresh_token_rotation.value, "retry_grace_period_seconds", null)
+      feature                    = lookup(refresh_token_rotation.value, "feature", null)
+      retry_grace_period_seconds = lookup(refresh_token_rotation.value, "retry_grace_period_seconds", null)
     }
   }
 
