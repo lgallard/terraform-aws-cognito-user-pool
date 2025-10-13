@@ -1,14 +1,14 @@
 resource "aws_cognito_resource_server" "resource" {
   count      = var.enabled ? length(local.resource_servers) : 0
-  name       = element(local.resource_servers, count.index).name
-  identifier = element(local.resource_servers, count.index).identifier
+  name       = try(element(local.resource_servers, count.index).name, null)
+  identifier = try(element(local.resource_servers, count.index).identifier, null)
 
   #scope
   dynamic "scope" {
     for_each = element(local.resource_servers, count.index).scope
     content {
-      scope_name        = scope.value.scope_name
-      scope_description = scope.value.scope_description
+      scope_name        = try(scope.value.scope_name, null)
+      scope_description = try(scope.value.scope_description, null)
     }
   }
 
