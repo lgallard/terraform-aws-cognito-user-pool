@@ -325,3 +325,100 @@ func TestEnabledFlagValidation(t *testing.T) {
 		})
 	}
 }
+
+func TestRefreshTokenRotationValidation(t *testing.T) {
+	t.Parallel()
+
+	testCases := []struct {
+		name               string
+		refreshTokenRotation map[string]interface{}
+		shouldFail         bool
+		description        string
+	}{
+		{
+			name: "ValidRotateType",
+			refreshTokenRotation: map[string]interface{}{
+				"type":                       "rotate",
+				"retry_grace_period_seconds": 300,
+			},
+			shouldFail:  false,
+			description: "Valid rotate type with grace period",
+		},
+		{
+			name: "ValidDisabledType",
+			refreshTokenRotation: map[string]interface{}{
+				"type": "disabled",
+			},
+			shouldFail:  false,
+			description: "Valid disabled type",
+		},
+		{
+			name: "InvalidType",
+			refreshTokenRotation: map[string]interface{}{
+				"type": "invalid",
+			},
+			shouldFail:  true,
+			description: "Invalid rotation type",
+		},
+		{
+			name: "InvalidGracePeriodTooLow",
+			refreshTokenRotation: map[string]interface{}{
+				"type":                       "rotate",
+				"retry_grace_period_seconds": -1,
+			},
+			shouldFail:  true,
+			description: "Grace period below minimum",
+		},
+		{
+			name: "InvalidGracePeriodTooHigh",
+			refreshTokenRotation: map[string]interface{}{
+				"type":                       "rotate",
+				"retry_grace_period_seconds": 86401,
+			},
+			shouldFail:  true,
+			description: "Grace period above maximum",
+		},
+		{
+			name: "ValidMaxGracePeriod",
+			refreshTokenRotation: map[string]interface{}{
+				"type":                       "rotate",
+				"retry_grace_period_seconds": 86400,
+			},
+			shouldFail:  false,
+			description: "Valid maximum grace period",
+		},
+		{
+			name: "ValidMinGracePeriod",
+			refreshTokenRotation: map[string]interface{}{
+				"type":                       "rotate",
+				"retry_grace_period_seconds": 0,
+			},
+			shouldFail:  false,
+			description: "Valid minimum grace period",
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			terraformOptions := &terraform.Options{
+				TerraformDir: helpers.GetFixturePath("validation-test"),
+				Vars: map[string]interface{}{
+					"user_pool_name":               helpers.GenerateUniqueUserPoolName(t, tc.name),
+					"client_refresh_token_rotation": tc.refreshTokenRotation,
+				},
+				NoColor: true,
+			}
+
+			_, err := terraform.InitAndPlanE(t, terraformOptions)
+
+			if tc.shouldFail {
+				assert.Error(t, err, "Expected validation error for: %s", tc.description)
+			} else {
+				assert.NoError(t, err, "Unexpected validation error for: %s", tc.description)
+			}
+		})
+	}
+}

@@ -6,771 +6,266 @@ on:
     types: [created]
   pull_request_review_comment:
     types: [created]
-  pull_request:
-    types: [opened, synchronize]
-
-  # Manual triggers via GitHub CLI
-  workflow_dispatch:
-    inputs:
-      review_mode:
-        description: 'Review mode to use'
-        required: false
-        default: 'hunt'
-        type: choice
-        options:
-          - hunt
-          - analyze
-          - security
-          - performance
-          - review
-      focus:
-        description: 'Focus areas (comma-separated)'
-        required: false
-        default: 'bugs,security,performance'
-        type: string
-      verbose:
-        description: 'Enable verbose output'
-        required: false
-        default: false
-        type: boolean
 
 jobs:
-  # Handle workflow_dispatch by creating a comment to trigger Claude
-  dispatch-trigger:
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      pull-requests: write
-      issues: write
-    steps:
-      - name: Find open PR
-        id: find-pr
-        timeout-minutes: 3
-        run: |
-          set -euo pipefail  # Enhanced error handling
-
-          BRANCH_NAME="${{ github.ref_name }}"
-
-          # Validate branch name for security (allow underscores, dots, and forward slashes)
-          if ! [[ "$BRANCH_NAME" =~ ^[a-zA-Z0-9/_.-]+$ ]]; then
-            echo "Error: Invalid branch name format: $BRANCH_NAME"
-            exit 1
-          fi
-
-          echo "Searching for open PR for branch: $BRANCH_NAME"
-
-          # Find PR with error handling and validation
-          if ! PR_DATA=$(gh pr list --repo "${{ github.repository }}" --state open --head "$BRANCH_NAME" --json number --jq '.[0].number // empty' 2>/dev/null); then
-            echo "Error: Failed to query GitHub API for PRs"
-            exit 1
-          fi
-
-          if [ -z "$PR_DATA" ] || [ "$PR_DATA" = "null" ]; then
-            echo "No open PR found for branch $BRANCH_NAME"
-            exit 1
-          fi
-
-          # Validate PR number is numeric
-          if ! [[ "$PR_DATA" =~ ^[0-9]+$ ]]; then
-            echo "Error: Invalid PR number returned: $PR_DATA"
-            exit 1
-          fi
-
-          echo "Found PR #$PR_DATA"
-          echo "pr_number=$PR_DATA" >> $GITHUB_OUTPUT
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create trigger comment
-        timeout-minutes: 2
-        run: |
-          set -euo pipefail  # Enhanced error handling
-
-          PR_NUMBER="${{ steps.find-pr.outputs.pr_number }}"
-          REVIEW_MODE="${{ github.event.inputs.review_mode || 'hunt' }}"
-
-          # Validate inputs
-          if ! [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
-            echo "Error: Invalid PR number: $PR_NUMBER"
-            exit 1
-          fi
-
-          # Validate review mode against allowed values
-          case "$REVIEW_MODE" in
-            hunt|analyze|security|performance|review)
-              echo "Using review mode: $REVIEW_MODE"
-              ;;
-            *)
-              echo "Error: Invalid review mode: $REVIEW_MODE"
-              exit 1
-              ;;
-          esac
-
-          # Build comment body safely
-          COMMENT_BODY="codebot $REVIEW_MODE"
-          if [ "${{ github.event.inputs.verbose }}" = "true" ]; then
-            COMMENT_BODY="$COMMENT_BODY verbose"
-          fi
-
-          echo "Creating comment: $COMMENT_BODY"
-
-          # Create comment with error handling
-          if ! gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" --body "$COMMENT_BODY"; then
-            echo "Error: Failed to create PR comment"
-            exit 1
-          fi
-
-          echo "Successfully created trigger comment on PR #$PR_NUMBER"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  claude:
-    # Only run on comment triggers or specific PR conditions
+  # Add eyes reaction to show codebot is working
+  eyes-reaction:
     if: |
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, 'codebot')) ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, 'codebot')) ||
-      (github.event_name == 'pull_request' && (
-        github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' ||
-        contains(github.event.pull_request.title, '[auto-review]')
-      ))
-
+      (github.event_name == 'issue_comment' && (contains(github.event.comment.body, 'codebot') || contains(github.event.comment.body, '@codebot'))) ||
+      (github.event_name == 'pull_request_review_comment' && (contains(github.event.comment.body, 'codebot') || contains(github.event.comment.body, '@codebot')))
     runs-on: ubuntu-latest
-    timeout-minutes: 15  # Prevent runaway executions
+    timeout-minutes: 2
     permissions:
       contents: read
-      pull-requests: read
-      issues: read
-      id-token: write
-
+      pull-requests: write  # needed for reactions on PR comments
+      issues: write  # needed for reactions on issue comments
     steps:
-      - name: Get PR information for checkout
-        id: pr-checkout-info
-        if: github.event_name == 'issue_comment'
-        timeout-minutes: 2
+      - name: Add eyes reaction
+        timeout-minutes: 1
         run: |
           set -euo pipefail
 
-          PR_NUMBER="${{ github.event.issue.number }}"
-
-          # Validate PR number
-          if ! [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
-            echo "Error: Invalid PR number: $PR_NUMBER"
-            exit 1
-          fi
-
-          echo "Fetching PR #$PR_NUMBER details for checkout"
-
-          # Get PR head ref with retry logic
-          for attempt in {1..3}; do
-            if PR_DATA=$(curl -sS --max-time 30 --retry 2 \
-              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              -H "Accept: application/vnd.github.v3+json" \
-              "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER"); then
-
-              if echo "$PR_DATA" | jq empty 2>/dev/null; then
-                HEAD_REF=$(echo "$PR_DATA" | jq -r '.head.ref // empty')
-                HEAD_SHA=$(echo "$PR_DATA" | jq -r '.head.sha // empty')
-
-                if [ -n "$HEAD_REF" ] && [ "$HEAD_REF" != "null" ] && [ -n "$HEAD_SHA" ] && [ "$HEAD_SHA" != "null" ]; then
-                  echo "pr_head_ref=$HEAD_REF" >> $GITHUB_OUTPUT
-                  echo "pr_head_sha=$HEAD_SHA" >> $GITHUB_OUTPUT
-                  echo "Found PR branch: $HEAD_REF ($HEAD_SHA)"
-                  break
-                fi
-              fi
-            fi
-
-            if [ $attempt -eq 3 ]; then
-              echo "Error: Failed to fetch PR data for checkout"
-              exit 1
-            fi
-
-            echo "Retrying in $((2 ** attempt)) seconds..."
-            sleep $((2 ** attempt))
-          done
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Full history for reliable diff comparisons
-          token: ${{ secrets.GITHUB_TOKEN }}
-          # For issue_comment events, checkout the PR branch
-          ref: ${{ github.event_name == 'issue_comment' && steps.pr-checkout-info.outputs.pr_head_ref || github.ref }}
-
-      - name: Refresh git state
-        id: git-refresh
-        timeout-minutes: 3
-        run: |
-          set -euo pipefail
-
-          echo "🔄 Refreshing git state to ensure latest changes are analyzed"
-
-          # Get current branch name
-          CURRENT_BRANCH=$(git branch --show-current || echo "")
-          CURRENT_SHA=$(git rev-parse HEAD)
-
-          echo "Current branch: $CURRENT_BRANCH"
-          echo "Current SHA: $CURRENT_SHA"
-
-          # Fetch all remote references to ensure we have the latest state
-          echo "Fetching all remote references..."
-          git fetch --all --prune
-
-          # For issue_comment events, ensure we're on the latest commit of the PR branch
+          # Add eyes emoji reaction to indicate codebot is processing
           if [ "${{ github.event_name }}" = "issue_comment" ]; then
-            EXPECTED_SHA="${{ steps.pr-checkout-info.outputs.pr_head_sha }}"
-            echo "Expected SHA from PR: $EXPECTED_SHA"
-
-            # Fetch the specific PR branch to get latest changes
-            PR_HEAD_REF="${{ steps.pr-checkout-info.outputs.pr_head_ref }}"
-            if [ -n "$PR_HEAD_REF" ]; then
-              echo "Fetching latest changes for PR branch: $PR_HEAD_REF"
-              git fetch origin "$PR_HEAD_REF:$PR_HEAD_REF" 2>/dev/null || true
-
-              # Reset to the latest commit on the PR branch
-              echo "Resetting to latest commit on $PR_HEAD_REF"
-              git reset --hard "origin/$PR_HEAD_REF"
-
-              NEW_SHA=$(git rev-parse HEAD)
-              echo "Updated to SHA: $NEW_SHA"
-
-              if [ "$NEW_SHA" != "$CURRENT_SHA" ]; then
-                echo "⚠️  SHA changed from $CURRENT_SHA to $NEW_SHA - analyzing latest changes"
-              else
-                echo "✅ SHA unchanged - no new commits since checkout"
-              fi
-            fi
-          else
-            # For PR events, ensure we have the latest changes
-            if [ -n "$CURRENT_BRANCH" ] && [ "$CURRENT_BRANCH" != "HEAD" ]; then
-              echo "Ensuring latest changes for branch: $CURRENT_BRANCH"
-              git fetch origin "$CURRENT_BRANCH" 2>/dev/null || true
-              git reset --hard "origin/$CURRENT_BRANCH" 2>/dev/null || git reset --hard HEAD
-
-              NEW_SHA=$(git rev-parse HEAD)
-              if [ "$NEW_SHA" != "$CURRENT_SHA" ]; then
-                echo "⚠️  SHA updated from $CURRENT_SHA to $NEW_SHA"
-              fi
-            fi
-          fi
-
-          # Final verification
-          FINAL_SHA=$(git rev-parse HEAD)
-          FINAL_BRANCH=$(git branch --show-current || echo "detached")
-
-          echo "✅ Git state refreshed successfully"
-          echo "Final branch: $FINAL_BRANCH"
-          echo "Final SHA: $FINAL_SHA"
-
-          # Output for use in subsequent steps
-          echo "current_sha=$FINAL_SHA" >> $GITHUB_OUTPUT
-          echo "current_branch=$FINAL_BRANCH" >> $GITHUB_OUTPUT
-
-
-      - name: Parse comment command
-        id: parse-command
-        timeout-minutes: 2
-        env:
-          COMMENT_BODY: ${{ github.event.comment.body }}
-        run: |
-          set -euo pipefail  # Enhanced error handling
-
-          # Input validation and sanitization
-          if [ ${#COMMENT_BODY} -gt 1000 ]; then
-            echo "Error: Comment body too long (max 1000 characters)"
-            exit 1
-          fi
-
-          # Sanitize comment body - remove potentially dangerous characters
-          SAFE_COMMENT=$(echo "$COMMENT_BODY" | tr -d '`$(){}[]|;&<>' | head -c 500)
-
-          # Default values
-          echo "mode=review" >> $GITHUB_OUTPUT
-          echo "focus=code-quality,security,performance" >> $GITHUB_OUTPUT
-          echo "verbose=false" >> $GITHUB_OUTPUT
-          echo "include_tests=true" >> $GITHUB_OUTPUT
-          echo "full_analysis=false" >> $GITHUB_OUTPUT
-
-          # Parse comment content for commands (using safe variable)
-          if [ "${{ github.event_name }}" == "issue_comment" ] || [ "${{ github.event_name }}" == "pull_request_review_comment" ]; then
-            # Use grep with fixed strings where possible for security
-            if echo "$SAFE_COMMENT" | grep -qiF "codebot hunt"; then
-              echo "mode=hunt" >> $GITHUB_OUTPUT
-              echo "focus=bugs,security,performance" >> $GITHUB_OUTPUT
-              echo "verbose=false" >> $GITHUB_OUTPUT
-            elif echo "$SAFE_COMMENT" | grep -qiF "codebot analyze"; then
-              echo "mode=analyze" >> $GITHUB_OUTPUT
-              echo "focus=architecture,patterns,complexity" >> $GITHUB_OUTPUT
-              echo "verbose=true" >> $GITHUB_OUTPUT
-            elif echo "$SAFE_COMMENT" | grep -qiF "codebot security"; then
-              echo "mode=security" >> $GITHUB_OUTPUT
-              echo "focus=security,vulnerabilities,compliance" >> $GITHUB_OUTPUT
-              echo "verbose=true" >> $GITHUB_OUTPUT
-            elif echo "$SAFE_COMMENT" | grep -qiF "codebot performance"; then
-              echo "mode=performance" >> $GITHUB_OUTPUT
-              echo "focus=performance,optimization,bottlenecks" >> $GITHUB_OUTPUT
-              echo "verbose=true" >> $GITHUB_OUTPUT
-            elif echo "$SAFE_COMMENT" | grep -qiF "codebot review"; then
-              echo "mode=review" >> $GITHUB_OUTPUT
-              echo "focus=code-quality,security,performance" >> $GITHUB_OUTPUT
-              echo "verbose=true" >> $GITHUB_OUTPUT
-            elif echo "$SAFE_COMMENT" | grep -qiF "codebot"; then
-              # Default to hunt mode for simple "codebot" command
-              echo "mode=hunt" >> $GITHUB_OUTPUT
-              echo "focus=bugs,security,performance" >> $GITHUB_OUTPUT
-              echo "verbose=false" >> $GITHUB_OUTPUT
-            fi
-
-            # Check for verbose flag (using fixed strings for security)
-            if echo "$SAFE_COMMENT" | grep -qiF "verbose" || echo "$SAFE_COMMENT" | grep -qiF "detailed"; then
-              echo "verbose=true" >> $GITHUB_OUTPUT
-            fi
-
-            # Check for specific focus areas
-            if echo "$SAFE_COMMENT" | grep -qiF "security"; then
-              echo "focus=security,vulnerabilities,compliance" >> $GITHUB_OUTPUT
-            elif echo "$SAFE_COMMENT" | grep -qiF "performance"; then
-              echo "focus=performance,optimization,bottlenecks" >> $GITHUB_OUTPUT
-            elif echo "$SAFE_COMMENT" | grep -qiF "tests"; then
-              echo "focus=test-coverage,test-quality" >> $GITHUB_OUTPUT
-            fi
-
-            # Check for --full flag (analyze entire codebase)
-            if echo "$SAFE_COMMENT" | grep -qiF -- "--full"; then
-              echo "full_analysis=true" >> $GITHUB_OUTPUT
-            else
-              echo "full_analysis=false" >> $GITHUB_OUTPUT
-            fi
-          fi
-
-          echo "Security: Input validation and sanitization completed"
-
-      - name: Get PR information
-        id: pr-info
-        timeout-minutes: 3
-        run: |
-          set -euo pipefail  # Enhanced error handling
-
-          # Initialize variables
-          PR_NUMBER=""
-          BASE_REF=""
-
-          # Handle different trigger types with validation
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            PR_NUMBER="${{ github.event.pull_request.number }}"
-            BASE_REF="${{ github.event.pull_request.base.ref }}"
-          elif [ "${{ github.event_name }}" = "issue_comment" ]; then
-            PR_NUMBER="${{ github.event.issue.number }}"
-
-            # Validate PR number is numeric
-            if ! [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
-              echo "Error: Invalid PR number: $PR_NUMBER"
-              exit 1
-            fi
-
-            # Fetch PR data with retry logic and timeout
-            for attempt in {1..3}; do
-              echo "Attempt $attempt: Fetching PR data for PR #$PR_NUMBER"
-              if PR_DATA=$(curl -sS --max-time 30 --retry 2 \
-                -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                -H "Accept: application/vnd.github.v3+json" \
-                "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER"); then
-
-                # Validate JSON response
-                if echo "$PR_DATA" | jq empty 2>/dev/null; then
-                  BASE_REF=$(echo "$PR_DATA" | jq -r '.base.ref // empty')
-                  if [ -n "$BASE_REF" ] && [ "$BASE_REF" != "null" ]; then
-                    echo "Successfully retrieved base ref: $BASE_REF"
-                    break
-                  fi
-                fi
-              fi
-
-              if [ $attempt -eq 3 ]; then
-                echo "Error: Failed to fetch PR data after 3 attempts"
-                exit 1
-              fi
-
-              echo "Retrying in $((2 ** attempt)) seconds..."
-              sleep $((2 ** attempt))
-            done
-
+            COMMENT_ID="${{ github.event.comment.id }}"
           elif [ "${{ github.event_name }}" = "pull_request_review_comment" ]; then
-            PR_NUMBER="${{ github.event.pull_request.number }}"
-            BASE_REF="${{ github.event.pull_request.base.ref }}"
+            COMMENT_ID="${{ github.event.comment.id }}"
           else
-            echo "Error: Unsupported event type: ${{ github.event_name }}"
-            exit 1
+            echo "No comment to react to for event type: ${{ github.event_name }}"
+            exit 0
           fi
 
-          # Validate required variables
-          if [ -z "$PR_NUMBER" ] || [ -z "$BASE_REF" ]; then
-            echo "Error: Missing required PR information"
-            echo "PR_NUMBER: $PR_NUMBER, BASE_REF: $BASE_REF"
-            exit 1
-          fi
-
-          # Sanitize branch name for security (allow underscores, dots, and forward slashes)
-          if ! [[ "$BASE_REF" =~ ^[a-zA-Z0-9/_.-]+$ ]]; then
-            echo "Error: Invalid base ref format: $BASE_REF"
-            exit 1
-          fi
-
-          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
-          echo "base_ref=$BASE_REF" >> $GITHUB_OUTPUT
-          echo "Security: PR information validated and sanitized"
-
-      - name: Get changed files
-        id: changes
-        if: steps.parse-command.outputs.full_analysis == 'false'
-        run: |
-
-          set -euo pipefail
-
-          BASE_REF="${{ steps.pr-info.outputs.base_ref }}"
-          CURRENT_SHA="${{ steps.git-refresh.outputs.current_sha }}"
-          CURRENT_BRANCH="${{ steps.git-refresh.outputs.current_branch }}"
-
-          echo "🔍 Detecting changed files for analysis"
-          echo "Base branch: $BASE_REF"
-          echo "Current SHA: $CURRENT_SHA"
-          echo "Current branch: $CURRENT_BRANCH"
-
-          # Ensure we have the base branch reference
-          echo "Fetching base branch: $BASE_REF"
-          git fetch origin "$BASE_REF" 2>/dev/null || {
-            echo "⚠️  Failed to fetch $BASE_REF, trying fallback methods"
-            git fetch origin 2>/dev/null || true
+          echo "Adding 👀 reaction to comment ID: $COMMENT_ID"
+          gh api repos/${{ github.repository }}/issues/comments/$COMMENT_ID/reactions \
+            --method POST \
+            --field content='eyes' || {
+            echo "Failed to add reaction - this might be expected for some comment types"
+            exit 0
           }
 
-          # Multiple fallback strategies for getting changed files
-          CHANGED_FILES=""
-          DIFF_SUCCESS=false
+          echo "✅ Eyes reaction added successfully"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-          # Strategy 1: Standard three-dot diff (preferred)
-          if [ "$DIFF_SUCCESS" = false ]; then
-            echo "Trying three-dot diff: origin/$BASE_REF...HEAD"
-            if CHANGED_FILES=$(git diff --name-only "origin/$BASE_REF...HEAD" 2>/dev/null); then
-              echo "✅ Three-dot diff successful"
-              DIFF_SUCCESS=true
-            else
-              echo "❌ Three-dot diff failed"
-            fi
-          fi
+  # Claude Code Action (using proven claude.yml pattern)
+  claude:
+    if: |
+      (github.event_name == 'issue_comment' && (contains(github.event.comment.body, 'codebot') || contains(github.event.comment.body, '@codebot'))) ||
+      (github.event_name == 'pull_request_review_comment' && (contains(github.event.comment.body, 'codebot') || contains(github.event.comment.body, '@codebot')))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write  # Required for Claude to post analysis comments
+      issues: write         # Required for Claude to post analysis comments
+      id-token: write
+      actions: read # Required for Claude to read CI results on PRs
+    steps:
+      - name: Checkout repository
+        # Pin to specific SHA for supply chain security
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          fetch-depth: 1
 
-          # Strategy 2: Two-dot diff fallback
-          if [ "$DIFF_SUCCESS" = false ]; then
-            echo "Trying two-dot diff: origin/$BASE_REF..HEAD"
-            if CHANGED_FILES=$(git diff --name-only "origin/$BASE_REF..HEAD" 2>/dev/null); then
-              echo "✅ Two-dot diff successful"
-              DIFF_SUCCESS=true
-            else
-              echo "❌ Two-dot diff failed"
-            fi
-          fi
-
-          # Strategy 3: Direct branch comparison
-          if [ "$DIFF_SUCCESS" = false ]; then
-            echo "Trying direct comparison: origin/$BASE_REF HEAD"
-            if CHANGED_FILES=$(git diff --name-only "origin/$BASE_REF" HEAD 2>/dev/null); then
-              echo "✅ Direct comparison successful"
-              DIFF_SUCCESS=true
-            else
-              echo "❌ Direct comparison failed"
-            fi
-          fi
-
-          # Strategy 4: Last resort - use merge-base
-          if [ "$DIFF_SUCCESS" = false ]; then
-            echo "Trying merge-base approach"
-            if MERGE_BASE=$(git merge-base "origin/$BASE_REF" HEAD 2>/dev/null); then
-              if CHANGED_FILES=$(git diff --name-only "$MERGE_BASE" HEAD 2>/dev/null); then
-                echo "✅ Merge-base diff successful"
-                DIFF_SUCCESS=true
-              fi
-            fi
-          fi
-
-          # Validate and process results
-          if [ "$DIFF_SUCCESS" = false ]; then
-            echo "❌ All diff strategies failed - will analyze full codebase"
-            CHANGED_FILES=""
-            CHANGED_COUNT=0
-            CHANGED_FILES_STR="Unable to determine changed files - will analyze full codebase"
-          else
-            # Filter out empty lines and count
-            CHANGED_FILES=$(echo "$CHANGED_FILES" | grep -v '^$' || echo "")
-            CHANGED_COUNT=$(echo "$CHANGED_FILES" | grep -c . 2>/dev/null || echo "0")
-
-            if [ "$CHANGED_COUNT" -eq 0 ]; then
-              CHANGED_FILES_STR="No files changed"
-              echo "⚠️  No changed files detected - this might indicate an issue"
-            else
-              CHANGED_FILES_STR=$(echo "$CHANGED_FILES" | tr '\n' ' ' | sed 's/[[:space:]]*$//')
-              echo "✅ Found $CHANGED_COUNT changed files"
-            fi
-          fi
-
-          # Debug output
-          echo "📋 Changed files summary:"
-          echo "  Count: $CHANGED_COUNT"
-          echo "  Files: $CHANGED_FILES_STR"
-
-
-          if [ "$CHANGED_COUNT" -gt 0 ]; then
-            echo "📄 Individual files:"
-            echo "$CHANGED_FILES" | while IFS= read -r file; do
-              [ -n "$file" ] && echo "  - $file"
-            done
-          fi
-
-          # Output for next steps
-          echo "changed_files=$CHANGED_FILES_STR" >> $GITHUB_OUTPUT
-          echo "changed_count=$CHANGED_COUNT" >> $GITHUB_OUTPUT
-          echo "diff_successful=$DIFF_SUCCESS" >> $GITHUB_OUTPUT
-
-      - name: Verify commit SHA and git state
-        id: verify-state
-        timeout-minutes: 2
+      - name: Parse codebot command
+        id: parse-command
         run: |
           set -euo pipefail
 
-          echo "🔍 Verifying git state before analysis"
+          # Get comment body safely
+          COMMENT_BODY="${{ github.event.comment.body }}"
+          SAFE_COMMENT=$(echo "$COMMENT_BODY" | tr -d '`$(){}[]|;&<>' | head -c 500)
 
-          CURRENT_SHA="${{ steps.git-refresh.outputs.current_sha }}"
-          ACTUAL_SHA=$(git rev-parse HEAD)
-          CURRENT_BRANCH="${{ steps.git-refresh.outputs.current_branch }}"
+          echo "Parsing comment: $SAFE_COMMENT"
 
-          # Verify SHA consistency
-          if [ "$CURRENT_SHA" != "$ACTUAL_SHA" ]; then
-            echo "⚠️  SHA mismatch detected!"
-            echo "  Expected: $CURRENT_SHA"
-            echo "  Actual: $ACTUAL_SHA"
-            echo "  This indicates a git state issue - attempting to resolve..."
+          # Default values
+          MODE="hunt"
+          FULL_ANALYSIS="false"
+          FOCUS="bugs,security,performance"
+          VERBOSE="false"
 
-            # Update the SHA for consistency
-            CURRENT_SHA="$ACTUAL_SHA"
-            echo "current_sha=$ACTUAL_SHA" >> $GITHUB_OUTPUT
-          else
-            echo "✅ SHA verification passed: $CURRENT_SHA"
-            echo "current_sha=$CURRENT_SHA" >> $GITHUB_OUTPUT
+          # Extract mode from comment (support both @codebot and codebot)
+          if echo "$SAFE_COMMENT" | grep -qiE "(^|\s)@?codebot\s+analyze"; then
+            MODE="analyze"
+            FOCUS="architecture,patterns,complexity"
+            VERBOSE="true"
+          elif echo "$SAFE_COMMENT" | grep -qiE "(^|\s)@?codebot\s+security"; then
+            MODE="security"
+            FOCUS="security,vulnerabilities,compliance"
+            VERBOSE="true"
+          elif echo "$SAFE_COMMENT" | grep -qiE "(^|\s)@?codebot\s+performance"; then
+            MODE="performance"
+            FOCUS="performance,optimization,bottlenecks"
+            VERBOSE="true"
+          elif echo "$SAFE_COMMENT" | grep -qiE "(^|\s)@?codebot\s+review"; then
+            MODE="review"
+            FOCUS="code-quality,security,performance"
+            VERBOSE="true"
+          elif echo "$SAFE_COMMENT" | grep -qiE "(^|\s)@?codebot\s+hunt"; then
+            MODE="hunt"
+            FOCUS="bugs,security,performance"
+            VERBOSE="false"
           fi
 
-          # Get additional context for debugging
-          echo "📊 Git state summary:"
-          echo "  Commit SHA: $CURRENT_SHA"
-          echo "  Branch: $CURRENT_BRANCH"
-          echo "  Repository: ${{ github.repository }}"
-          echo "  Event: ${{ github.event_name }}"
+          # Check for --full flag
+          if echo "$SAFE_COMMENT" | grep -qiE -- "--full"; then
+            FULL_ANALYSIS="true"
+          fi
 
-          # Get commit info for better context
-          COMMIT_MSG=$(git log -1 --pretty=format:"%s" 2>/dev/null || echo "Unable to get commit message")
-          COMMIT_AUTHOR=$(git log -1 --pretty=format:"%an" 2>/dev/null || echo "Unknown")
-          COMMIT_DATE=$(git log -1 --pretty=format:"%ci" 2>/dev/null || echo "Unknown")
+          echo "Parsed mode: $MODE"
+          echo "Full analysis: $FULL_ANALYSIS"
+          echo "Focus areas: $FOCUS"
+          echo "Verbose: $VERBOSE"
 
-          echo "  Commit message: $COMMIT_MSG"
-          echo "  Author: $COMMIT_AUTHOR"
-          echo "  Date: $COMMIT_DATE"
+          # Set outputs
+          echo "mode=$MODE" >> $GITHUB_OUTPUT
+          echo "full_analysis=$FULL_ANALYSIS" >> $GITHUB_OUTPUT
+          echo "focus=$FOCUS" >> $GITHUB_OUTPUT
+          echo "verbose=$VERBOSE" >> $GITHUB_OUTPUT
 
-          # Create unique identifier for cache invalidation
-          REVIEW_ID="${CURRENT_SHA:0:8}-${{ github.event_name }}-$(date +%s)"
-          echo "  Review ID: $REVIEW_ID"
-
-          # Output additional context
-          echo "commit_message=$COMMIT_MSG" >> $GITHUB_OUTPUT
-          echo "commit_author=$COMMIT_AUTHOR" >> $GITHUB_OUTPUT
-          echo "commit_date=$COMMIT_DATE" >> $GITHUB_OUTPUT
-          echo "review_id=$REVIEW_ID" >> $GITHUB_OUTPUT
-
-      - name: Run Claude Code Review
+      - name: Run Claude Code
         id: claude
-        timeout-minutes: 10
-        uses: anthropics/claude-code-action@beta
+        # Pin to specific version for supply chain security
+        uses: anthropics/claude-code-action@v1.0.0
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
-          # Allow Bash permissions for pre-commit hooks and documentation updates
-          allowed_tools: "Bash(pre-commit run --files),Bash(terraform fmt),Bash(terraform validate),Bash(terraform-docs)"
+          # This is an optional setting that allows Claude to read CI results on PRs
+          additional_permissions: |
+            actions: read
 
-          # Dynamic prompt based on review mode
-          direct_prompt: |
-            🔄 **COMMIT ANALYSIS CONTEXT**
-            - **Commit SHA**: `${{ steps.verify-state.outputs.current_sha }}`
-            - **Review ID**: `${{ steps.verify-state.outputs.review_id }}`
-            - **Branch**: `${{ steps.git-refresh.outputs.current_branch }}`
-            - **Last Commit**: "${{ steps.verify-state.outputs.commit_message }}" by ${{ steps.verify-state.outputs.commit_author }}
-            - **Date**: ${{ steps.verify-state.outputs.commit_date }}
+          # MCP Configuration for Terraform and Context7 documentation access
+          # Dependencies pinned to specific versions for supply chain security
+          mcp_config: |
+            {
+              "mcpServers": {
+                "terraform": {
+                  "command": "npx",
+                  "args": [
+                    "-y",
+                    "@modelcontextprotocol/server-terraform@0.6.0"
+                  ]
+                },
+                "context7": {
+                  "command": "npx",
+                  "args": [
+                    "-y",
+                    "@upstash/context7-mcp@1.0.0"
+                  ]
+                }
+              }
+            }
+
+          # Required tool permissions for GitHub commenting (v1.0 format)
+          claude_args: "--allowedTools Bash(gh pr comment:*),Bash(gh api:*),mcp__terraform-server__get_provider_details,mcp__terraform-server__search_providers,mcp__terraform-server__search_modules,mcp__terraform-server__get_module_details,mcp__context7__resolve-library-id,mcp__context7__get-library-docs"
+
+          # Set trigger phrase for codebot mentions
+          trigger_phrase: "codebot"
+
+          # Dynamic prompt based on parsed mode
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
+            COMMENT: ${{ github.event.comment.body }}
+
+            🤖 **CODEBOT ${{ steps.parse-command.outputs.mode || 'HUNT' }} MODE** - Terraform AWS Cognito User Pool Module
+
+            **Review Configuration:**
+            - **Mode**: ${{ steps.parse-command.outputs.mode || 'hunt' }}
+            - **Focus Areas**: ${{ steps.parse-command.outputs.focus || 'bugs,security,performance' }}
+            - **Full Analysis**: ${{ steps.parse-command.outputs.full_analysis || 'false' }}
+            - **Verbose Output**: ${{ steps.parse-command.outputs.verbose || 'false' }}
 
             ---
 
-            ${{ steps.parse-command.outputs.full_analysis == 'false' && format('
-            **IMPORTANT: Focus ONLY on the following changed files in this pull request:**
-            Files changed: {0}
-            Total files changed: {1}
-            Diff detection: {2}
-
-            DO NOT review or comment on files outside this list unless they are directly impacted by changes in these files.
-            ', steps.changes.outputs.changed_files || 'Unable to determine changed files', steps.changes.outputs.changed_count || '0', steps.changes.outputs.diff_successful == 'true' && 'Successful' || 'Failed - analyzing full codebase') || '' }}
-
-            ${{ steps.parse-command.outputs.mode == 'hunt' && format('
-            🕵️ BUG HUNT MODE - Find potential issues quickly:
+            ${{ steps.parse-command.outputs.mode == 'hunt' && '
+            🕵️ **BUG HUNT MODE** - Find potential issues quickly:
             - Focus on critical bugs, security vulnerabilities, and performance issues
             - Prioritize high-impact problems over style suggestions
-            - Be concise and actionable
-            - Provide clear, actionable feedback
+            - Be concise and actionable in your feedback
+            - Look for common Terraform and AWS Cognito pitfalls
 
-            Use @terraform-cognito subagent for Cognito-specific issues, @terraform-security for security vulnerabilities
-            ') || '' }}
+            **Subagent Routing:**
+            - Use @terraform-cognito for Cognito User Pool configuration issues
+            - Use @terraform-security for security vulnerabilities and hardening
+            - Use @terraform-testing for test-related improvements
+            ' || '' }}
 
-            ${{ steps.parse-command.outputs.mode == 'analyze' && format('
-            📊 ANALYSIS MODE - Deep technical analysis:
+            ${{ steps.parse-command.outputs.mode == 'analyze' && '
+            📊 **ANALYSIS MODE** - Deep technical analysis:
             - Analyze architecture, patterns, and design decisions
             - Evaluate code complexity and maintainability
-            - Assess test coverage and quality
-            - Provide strategic recommendations
+            - Assess Terraform module structure and best practices
             - Consider long-term implications and scalability
+            - Review variable validation and output design
 
-            Use @terraform-testing subagent for test analysis, @terraform-cognito for architecture decisions
-            ') || '' }}
+            **Subagent Routing:**
+            - Use @terraform-cognito for architecture and design decisions
+            - Use @terraform-testing for test coverage and quality analysis
+            - Use @module-documentation for documentation improvements
+            ' || '' }}
 
-            ${{ steps.parse-command.outputs.mode == 'security' && format('
-            🔒 SECURITY MODE - Security-focused review:
+            ${{ steps.parse-command.outputs.mode == 'security' && '
+            🔒 **SECURITY MODE** - Security-focused review:
             - Identify security vulnerabilities and compliance issues
-            - Check for proper authentication and authorization
-            - Validate input sanitization and output encoding
-            - Review encryption and key management
+            - Review AWS Cognito security configurations (MFA, password policies, etc.)
+            - Check for proper authentication and authorization patterns
+            - Validate input sanitization and validation logic
             - Assess data protection and privacy concerns
+            - Review IAM permissions and principle of least privilege
 
-            Use @terraform-security subagent for comprehensive security analysis and hardening recommendations
-            ') || '' }}
+            **Subagent Routing:**
+            - Use @terraform-security for comprehensive security analysis and hardening recommendations
+            - Use @terraform-cognito for Cognito-specific security features
+            ' || '' }}
 
-            ${{ steps.parse-command.outputs.mode == 'performance' && format('
-            ⚡ PERFORMANCE MODE - Performance optimization review:
+            ${{ steps.parse-command.outputs.mode == 'performance' && '
+            ⚡ **PERFORMANCE MODE** - Performance optimization review:
             - Identify performance bottlenecks and optimization opportunities
-            - Analyze resource usage and efficiency
-            - Check for memory leaks and scalability issues
-            - Review caching strategies and database queries
-            - Consider load testing and monitoring needs
+            - Analyze Terraform resource efficiency and cost implications
+            - Review AWS Cognito configuration for optimal performance
+            - Check for unnecessary resource allocations
+            - Consider scaling patterns and load considerations
+            - Review caching strategies and connection pooling
 
-            Use @terraform-testing subagent for test performance and @terraform-cognito for Cognito performance optimization
-            ') || '' }}
+            **Subagent Routing:**
+            - Use @terraform-cognito for Cognito performance optimization
+            - Use @terraform-testing for performance testing recommendations
+            - Use @terraform-cost-optimizer for cost optimization suggestions
+            ' || '' }}
 
-            ${{ steps.parse-command.outputs.mode == 'review' && format('
-            📝 STANDARD REVIEW MODE - Comprehensive code review:
-            - Code quality and best practices
-            - Potential bugs or issues
-            - Performance considerations
-            - Security concerns
-            - Test coverage and quality
+            ${{ steps.parse-command.outputs.mode == 'review' && '
+            📝 **COMPREHENSIVE REVIEW MODE** - Full code review:
+            - Code quality and adherence to best practices
+            - Potential bugs and edge cases
+            - Performance considerations and optimizations
+            - Security concerns and vulnerability assessment
+            - Documentation quality and completeness
+            - Test coverage and validation
 
-            Focus areas: {0}
-            Verbose output: {1}
+            **Focus Areas**: ${{ steps.parse-command.outputs.focus }}
 
-            Be constructive and helpful.
+            **Subagent Routing:**
+            - Use @terraform-cognito for Cognito User Pool configurations and features
+            - Use @terraform-security for security analysis and compliance
+            - Use @terraform-testing for test development and validation
+            - Use @module-documentation for documentation and examples
+            - Use @cognito-migration for upgrade and migration guidance
+            ' || '' }}
 
-            Use appropriate subagents: @terraform-cognito for Cognito configs, @terraform-security for security, @terraform-testing for tests
-            ', steps.parse-command.outputs.focus, steps.parse-command.outputs.verbose) || '' }}
+            **Analysis Scope:**
+            ${{ steps.parse-command.outputs.full_analysis == 'true' && '
+            🔍 **FULL CODEBASE ANALYSIS** - Analyzing entire repository for comprehensive review.
+            ' || '
+            🎯 **PR CHANGES FOCUS** - Analyzing only the files changed in this pull request for targeted review.
+            ' }}
 
-          # Use sticky comments with commit-specific cache invalidation
-          use_sticky_comment: true
-          # Note: The commit SHA and review ID in the prompt help ensure fresh analysis
+            **Available Subagents:**
+            - **@terraform-cognito**: Cognito User Pool configurations, MFA, security features, authentication flows
+            - **@terraform-security**: Security analysis, compliance, vulnerability assessment, hardening
+            - **@terraform-testing**: Terratest, test development, validation, CI/CD testing
+            - **@cognito-migration**: Upgrades, version transitions, breaking changes, migration guidance
+            - **@module-documentation**: Documentation, examples, README updates, user guides
 
-      - name: Workflow Summary
-        if: always()
-        timeout-minutes: 2
-        run: |
-          set -euo pipefail  # Enhanced error handling
+            Always leverage the specialized knowledge in these subagents for better, more accurate responses.
 
-          echo "## 🤖 Claude Code Review Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          # Security Status
-          echo "### 🔐 Security Status" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Input validation and sanitization enabled" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Command injection protection active" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Error handling and retry logic implemented" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Timeout protection for all operations" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          # Review Configuration
-          echo "### ⚙️ Review Configuration" >> $GITHUB_STEP_SUMMARY
-          echo "**Review Mode:** \`${{ steps.parse-command.outputs.mode }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Focus Areas:** \`${{ steps.parse-command.outputs.focus }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Verbose Output:** \`${{ steps.parse-command.outputs.verbose }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Full Analysis:** \`${{ steps.parse-command.outputs.full_analysis || 'false' }}\`" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.parse-command.outputs.full_analysis }}" != "true" ]; then
-            echo "**Changed Files:** \`${{ steps.changes.outputs.changed_count || '0' }}\` files" >> $GITHUB_STEP_SUMMARY
-            echo "**Diff Detection:** \`${{ steps.changes.outputs.diff_successful == 'true' && 'Successful' || 'Failed' }}\`" >> $GITHUB_STEP_SUMMARY
-          fi
-          echo "**PR Number:** \`${{ steps.pr-info.outputs.pr_number || 'N/A' }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Base Branch:** \`${{ steps.pr-info.outputs.base_ref || 'N/A' }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          # Git State Information
-          echo "### 📊 Git State Analysis" >> $GITHUB_STEP_SUMMARY
-          echo "**Commit SHA:** \`${{ steps.verify-state.outputs.current_sha || steps.git-refresh.outputs.current_sha || 'Unknown' }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Review ID:** \`${{ steps.verify-state.outputs.review_id || 'N/A' }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Current Branch:** \`${{ steps.git-refresh.outputs.current_branch || 'Unknown' }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Last Commit:** \"${{ steps.verify-state.outputs.commit_message || 'Unknown' }}\"" >> $GITHUB_STEP_SUMMARY
-          echo "**Author:** \`${{ steps.verify-state.outputs.commit_author || 'Unknown' }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Date:** \`${{ steps.verify-state.outputs.commit_date || 'Unknown' }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          # Analysis Scope Details
-          if [ "${{ steps.parse-command.outputs.full_analysis }}" != "true" ] && [ "${{ steps.changes.outputs.changed_count || '0' }}" -gt "0" ]; then
-            echo "### 📄 Files Being Analyzed" >> $GITHUB_STEP_SUMMARY
-            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-            echo "${{ steps.changes.outputs.changed_files }}" | tr ' ' '\n' | grep -v '^$' | head -20 >> $GITHUB_STEP_SUMMARY
-            if [ "${{ steps.changes.outputs.changed_count }}" -gt "20" ]; then
-              echo "... and $((${{ steps.changes.outputs.changed_count }} - 20)) more files" >> $GITHUB_STEP_SUMMARY
-            fi
-            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-          fi
-
-          # Available Commands
-          echo "### 📝 Available Commands" >> $GITHUB_STEP_SUMMARY
-          echo "Comment any of these in PRs to trigger specific review types:" >> $GITHUB_STEP_SUMMARY
-          echo "- \`codebot hunt\` - Quick bug detection (like Bugbot) on PR changes" >> $GITHUB_STEP_SUMMARY
-          echo "- \`codebot analyze\` - Deep technical analysis on PR changes" >> $GITHUB_STEP_SUMMARY
-          echo "- \`codebot security\` - Security-focused review on PR changes" >> $GITHUB_STEP_SUMMARY
-          echo "- \`codebot performance\` - Performance optimization review on PR changes" >> $GITHUB_STEP_SUMMARY
-          echo "- \`codebot review\` - Comprehensive review on PR changes" >> $GITHUB_STEP_SUMMARY
-          echo "- \`codebot\` - Defaults to hunt mode on PR changes" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          # Scope Options
-          echo "### 🔍 Scope Options" >> $GITHUB_STEP_SUMMARY
-          echo "- Add \`--full\` to any command to analyze the entire codebase" >> $GITHUB_STEP_SUMMARY
-          echo "- Example: \`codebot hunt --full\` - Hunt for bugs in the entire codebase" >> $GITHUB_STEP_SUMMARY
-          echo "- Default behavior (without --full) focuses only on changed files in the PR" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          # Manual Triggers
-          echo "### 🚀 Manual Triggers" >> $GITHUB_STEP_SUMMARY
-          echo "Run via GitHub CLI:" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
-          echo "gh workflow run claude-code-review.yml -f review_mode=hunt" >> $GITHUB_STEP_SUMMARY
-          echo "gh workflow run claude-code-review.yml -f review_mode=security -f verbose=true" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-
-          # Performance & Reliability Info
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### ⚡ Performance & Reliability" >> $GITHUB_STEP_SUMMARY
-          echo "- 🚀 Full git history fetch for reliable diff comparisons" >> $GITHUB_STEP_SUMMARY
-          echo "- 🔄 Automatic git state refresh and commit SHA verification" >> $GITHUB_STEP_SUMMARY
-          echo "- 🎯 Multiple fallback strategies for change detection" >> $GITHUB_STEP_SUMMARY
-          echo "- ⏱️ Timeout protection prevents runaway executions" >> $GITHUB_STEP_SUMMARY
-          echo "- 🛡️ Comprehensive error handling and validation" >> $GITHUB_STEP_SUMMARY
-          echo "- 📊 Enhanced logging and debug information" >> $GITHUB_STEP_SUMMARY
-          echo "- 🔐 Cache invalidation via commit-specific review IDs" >> $GITHUB_STEP_SUMMARY
-
-          # Troubleshooting section
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 🔧 Troubleshooting" >> $GITHUB_STEP_SUMMARY
-          echo "If the review doesn't detect recent changes:" >> $GITHUB_STEP_SUMMARY
-          echo "1. Check the commit SHA matches your latest changes" >> $GITHUB_STEP_SUMMARY
-          echo "2. Verify the diff detection was successful" >> $GITHUB_STEP_SUMMARY
-          echo "3. Review the git state analysis above" >> $GITHUB_STEP_SUMMARY
-          echo "4. Try \`codebot hunt --full\` to analyze the entire codebase" >> $GITHUB_STEP_SUMMARY
+            **CRITICAL FINAL INSTRUCTION**: After completing your analysis, post your complete findings as a comment on this pull request using the GitHub commenting tools available to you.

@@ -319,3 +319,67 @@ func TestAdvancedSecurityFeatures(t *testing.T) {
 		}
 	})
 }
+
+func TestTerraformCognitoRefreshTokenRotation(t *testing.T) {
+	t.Parallel()
+
+	terraformOptions := &terraform.Options{
+		TerraformDir: "../fixtures/validation-test",
+		Vars: map[string]interface{}{
+			"user_pool_name": fmt.Sprintf("test-refresh-rotation-%s", random.UniqueId()),
+			"clients": []interface{}{
+				map[string]interface{}{
+					"name": "rotation-client",
+					"explicit_auth_flows": []string{
+						"ALLOW_USER_PASSWORD_AUTH",
+						"ALLOW_REFRESH_TOKEN_AUTH",
+					},
+					"generate_secret":        true,
+					"enable_token_revocation": true,
+					"refresh_token_rotation": map[string]interface{}{
+						"type":                       "rotate",
+						"retry_grace_period_seconds": 300,
+					},
+					"access_token_validity":  60,
+					"refresh_token_validity": 30,
+					"id_token_validity":      60,
+					"token_validity_units": map[string]interface{}{
+						"access_token":  "minutes",
+						"id_token":      "minutes",
+						"refresh_token": "days",
+					},
+				},
+			},
+		},
+		NoColor: true,
+	}
+
+	helpers.ApplyAndValidate(t, terraformOptions, func(t *testing.T, opts *terraform.Options) {
+		userPoolID := helpers.GetOutputAsString(t, opts, "id")
+		clientIDs := helpers.GetOutputAsStringSlice(t, opts, "client_ids")
+
+		assert.Greater(t, len(clientIDs), 0, "Should have at least one client")
+
+		client := helpers.GetCognitoClient(t, "us-east-1")
+		userPool := helpers.ValidateUserPoolExists(t, client, userPoolID)
+
+		// Validate that the user pool exists
+		assert.NotNil(t, userPool)
+
+		// Validate client configuration by describing the client
+		for _, clientID := range clientIDs {
+			userPoolClient := helpers.ValidateUserPoolClientExists(t, client, userPoolID, clientID)
+			
+			// Validate that token revocation is enabled (related to refresh token rotation)
+			assert.NotNil(t, userPoolClient.EnableTokenRevocation)
+			assert.True(t, *userPoolClient.EnableTokenRevocation, "Token revocation should be enabled for refresh token rotation")
+			
+			// Validate token validity settings
+			assert.NotNil(t, userPoolClient.AccessTokenValidity)
+			assert.Equal(t, int32(60), *userPoolClient.AccessTokenValidity)
+			
+			assert.NotNil(t, userPoolClient.RefreshTokenValidity)
+			assert.Equal(t, int32(30), *userPoolClient.RefreshTokenValidity)
+		}
+	})
+}

@@ -765,16 +765,16 @@ variable "client_enable_token_revocation" {
 }
 
 variable "client_explicit_auth_flows" {
-  description = "List of authentication flows (ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_PASSWORD_AUTH)"
+  description = "List of authentication flows (ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, ALLOW_USER_PASSWORD_AUTH, ALLOW_ADMIN_USER_PASSWORD_AUTH)"
   type        = list(string)
   default     = []
 
   validation {
     condition = alltrue([
       for flow in var.client_explicit_auth_flows :
-      contains(["ADMIN_NO_SRP_AUTH", "CUSTOM_AUTH_FLOW_ONLY", "USER_SRP_AUTH", "ALLOW_CUSTOM_AUTH", "ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"], flow)
+      contains(["ADMIN_NO_SRP_AUTH", "CUSTOM_AUTH_FLOW_ONLY", "USER_SRP_AUTH", "ALLOW_CUSTOM_AUTH", "ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_ADMIN_USER_PASSWORD_AUTH", "ALLOW_USER_PASSWORD_AUTH"], flow)
     ])
-    error_message = "Authentication flows must be valid values: ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_SRP_AUTH, ALLOW_CUSTOM_AUTH, ALLOW_USER_SRP_AUTH, ALLOW_REFRESH_TOKEN_AUTH. Avoid USER_PASSWORD_AUTH for security."
+    error_message = "Authentication flows must be valid values: ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_SRP_AUTH, ALLOW_CUSTOM_AUTH, ALLOW_USER_SRP_AUTH, ALLOW_REFRESH_TOKEN_AUTH, ALLOW_ADMIN_USER_PASSWORD_AUTH, ALLOW_USER_PASSWORD_AUTH. Avoid password-based flows for security."
   }
 }
 
@@ -871,6 +871,25 @@ variable "client_token_validity_units" {
     refresh_token = "days"
   }
 
+}
+
+variable "client_refresh_token_rotation" {
+  description = "Configuration block for refresh token rotation. When enabled, refresh token rotation is a security feature that provides a new set of tokens (ID, access, and refresh tokens) each time a client exchanges a refresh token to get new tokens."
+  type = object({
+    type                        = optional(string)
+    retry_grace_period_seconds  = optional(number)
+  })
+  default = {}
+
+  validation {
+    condition = var.client_refresh_token_rotation.type == null || contains(["rotate", "disabled"], var.client_refresh_token_rotation.type)
+    error_message = "The refresh token rotation type must be either 'rotate' or 'disabled'."
+  }
+
+  validation {
+    condition = var.client_refresh_token_rotation.retry_grace_period_seconds == null || (var.client_refresh_token_rotation.retry_grace_period_seconds >= 0 && var.client_refresh_token_rotation.retry_grace_period_seconds <= 86400)
+    error_message = "The retry grace period must be between 0 and 86400 seconds (24 hours)."
+  }
 }
 
 #
@@ -1038,7 +1057,6 @@ variable "managed_login_branding" {
       ])
     ])
     error_message = "Invalid color_mode. Must be one of: LIGHT, DARK, DYNAMIC"
-
   }
 
   validation {
@@ -1059,6 +1077,5 @@ variable "managed_login_branding" {
       ])
     ])
     error_message = "Asset file size must not exceed 2MB when base64 encoded"
-
   }
 }

@@ -5,6 +5,73 @@
 
 * support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
+## [2.4.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.3.0...2.4.0) (2025-10-12)
+
+
+### Features
+
+* Add refresh token rotation support ([#337](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/337)) ([cc9e4e1](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/cc9e4e1207843769675f0d3ea7eaf8293061b621))
+
+## [2.3.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.2.0...2.3.0) (2025-09-28)
+
+
+### Features
+
+* add support for ALLOW_ADMIN_USER_PASSWORD_AUTH explicit auth flow ([#310](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/310)) ([0b73c64](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/0b73c643d72d600cd6cbccf2a3f7e3e61bd1ebcf))
+* implement repository dispatch for branch-context codebot analysis ([41cc328](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/41cc328051c42df473c47758afd0b281ecf41a5a))
+* replace complex debug workflow with clean codebot pattern ([#319](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/319)) ([c75246e](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/c75246e93bfecba3ad73c1a22c03e8982e4ce1cd))
+* restore codebot modes with flexible [@codebot](https://github.com/codebot) and codebot triggers ([#321](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/321)) ([f5bc08f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/f5bc08fcac771bfdcef1bcc056102f6791e7e32e))
+* simplify codebot workflow with direct approach ([1230048](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/123004895ee0107942a10d18c2c819d2d0921125))
+
+
+### Bug Fixes
+
+* Add allowed_tools parameter required for Claude comment posting ([#326](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/326)) ([afa9839](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/afa9839bdcd59a7e27a2eb8fc4f5dd8260e30d7f))
+* Add back allowed_tools parameter - confirmed it works in claude.yml ([#328](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/328)) ([343856c](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/343856c80053bae837812a80db17831c02435b76))
+* add required GitHub commenting tools to codebot workflow ([#331](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/331)) ([ae772ef](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/ae772ef5c0010be2ade7fa368f549974e3a6ad68))
+* Add write permissions for Claude Code Action to post comments ([#323](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/323)) ([1b743fb](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/1b743fb35d356d1078eb3a5a2d73da0defee90d5))
+* correct Claude Code Action parameters for codebot commenting ([#333](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/333)) ([e2d7980](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/e2d798015334e9da8ed4ff6f7dd615b6f4164b7a))
+* correct MCP server tool names in GitHub Actions workflows ([#335](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/335)) ([f204d78](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/f204d78a12738eaac5497924032eb97db04c4f3d))
+* critical codebot trigger and permissions fixes ([#320](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/320)) ([dac5127](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/dac51272a1ad70d7d9b539563a25f82e4a6e6ac5))
+* Remove trigger_phrase that prevents Claude comment posting ([#325](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/325)) ([5a31b97](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/5a31b977a7fa05831465695867b9bba42e93e155))
+* Remove unsupported allowed_tools parameter from Claude Code Action v1.0.0 ([#327](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/327)) ([1af03bf](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/1af03bfa4b365890952a7b4b278b1c4c4d86279d))
+* resolve codebot workflow trigger and eyes emoji issues ([#313](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/313)) ([bd9101b](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/bd9101bfdb8659b815bf529161b45990949500fc))
+* separate token usage for PR info and repository dispatch ([#317](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/317)) ([5d340be](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/5d340be8237f879b4b2fc1a23dcac93e81624aae))
+* update Claude Code Action parameters to correct format ([#311](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/311)) ([67d4fba](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/67d4fbaed040a9edfa0f1a955f747f51fec25b1d))
+* Update codebot trigger phrase to support mode commands ([#322](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/322)) ([fac74e5](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/fac74e5a40698fe35e6afb95da0b392ba10fe42c))
+* use claude_args instead of unrecognized allowed_tools parameter ([#334](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/334)) ([eaeea0e](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/eaeea0e569240d74673a28777720da27a8bbd06c))
+* use CLAUDE_CODE_OAUTH_TOKEN for repository dispatch authentication ([#316](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/316)) ([0b0f1f5](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/0b0f1f56ea6c41c49b18a4ba1f13b33056dfac73))
+* Use environment variable for comment body to prevent command injection ([#330](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/330)) ([613a3ac](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/613a3ac76792fb2c095e84ea552016459c7bd995))
+* Use printf instead of echo for comment body parsing to prevent command execution ([#329](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/329)) ([55ae5a5](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/55ae5a545ae97e0ef64e3c651240973078d63951))
+
+## [2.2.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.1.4...2.2.0) (2025-08-24)
+
+
+### Features
+
+* Add automated Cognito User Pool feature discovery system ([#303](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/303)) ([e400e56](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/e400e56140c56fcc45e838e54a22f35e792f00a3))
+
+## [2.1.4](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.1.3...2.1.4) (2025-08-18)
+
+
+### Bug Fixes
+
+* correct typo and test fixture validation errors ([#301](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/301)) ([1ca8dbb](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/1ca8dbb22324ad676bb9cfdcd84c99952ef7382d))
+
+## [2.1.3](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.1.2...2.1.3) (2025-08-18)
+
+
+### Bug Fixes
+
+* remove incorrect aws_cognito_user_pool_schema resource reference ([#298](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/298)) ([bb18757](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/bb1875702e9dec3b21d438d5af44ed837b6ba6bc))
+
+## [2.1.2](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.1.1...2.1.2) (2025-08-17)
+
+
+### Bug Fixes
+
+* configure Renovate to prevent pre-release Go versions ([#294](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/294)) ([510ca9a](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/510ca9a84ddf0908b5adea9e41512703f6d4db04))
+
 ## [2.1.1](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.1.0...2.1.1) (2025-08-12)
 
 
