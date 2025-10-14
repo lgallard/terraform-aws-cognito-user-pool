@@ -7,9 +7,9 @@ Terraform module to create [Amazon Cognito User Pools](https://aws.amazon.com/co
 
 ## Usage
 
-You can use this module to create a Cognito User Pool using the default values or use the detailed definition to set every aspect of the Cognito User Pool
+You can use this module to create a Cognito User Pool using the default values or use the detailed definition to set every aspect of the Cognito User Pool.
 
-Check the [examples](examples/) where you can see the **simple** example using the default values, the **simple_extended** version which adds  **app clients**, **domain**, **resource servers** resources, the **complete** version with a detailed example, or the **with_branding** example that demonstrates managed login branding capabilities.
+Check the [examples](examples/) where you can see the **simple** example using the default values, the **simple_extended** version which adds **app clients**, **domain**, **resource servers** resources, the **complete** version with a detailed example, or the **with_branding** example that demonstrates managed login branding capabilities.
 
 ### Example (simple)
 
