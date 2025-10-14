@@ -111,8 +111,8 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "sms_configuration" {
     for_each = local.sms_configuration
     content {
-      external_id    = lookup(sms_configuration.value, "external_id")
-      sns_caller_arn = lookup(sms_configuration.value, "sns_caller_arn")
+      external_id    = try(sms_configuration.value.external_id, null)
+      sns_caller_arn = try(sms_configuration.value.sns_caller_arn, null)
     }
   }
 
@@ -120,7 +120,7 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "software_token_mfa_configuration" {
     for_each = local.software_token_mfa_configuration
     content {
-      enabled = lookup(software_token_mfa_configuration.value, "enabled")
+      enabled = try(software_token_mfa_configuration.value.enabled, false)
     }
   }
 
@@ -128,13 +128,13 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "password_policy" {
     for_each = local.password_policy
     content {
-      minimum_length                   = lookup(password_policy.value, "minimum_length")
-      require_lowercase                = lookup(password_policy.value, "require_lowercase")
-      require_numbers                  = lookup(password_policy.value, "require_numbers")
-      require_symbols                  = lookup(password_policy.value, "require_symbols")
-      require_uppercase                = lookup(password_policy.value, "require_uppercase")
-      temporary_password_validity_days = lookup(password_policy.value, "temporary_password_validity_days")
-      password_history_size            = lookup(password_policy.value, "password_history_size")
+      minimum_length                   = try(password_policy.value.minimum_length, null)
+      require_lowercase                = try(password_policy.value.require_lowercase, null)
+      require_numbers                  = try(password_policy.value.require_numbers, null)
+      require_symbols                  = try(password_policy.value.require_symbols, null)
+      require_uppercase                = try(password_policy.value.require_uppercase, null)
+      temporary_password_validity_days = try(password_policy.value.temporary_password_validity_days, null)
+      password_history_size            = try(password_policy.value.password_history_size, null)
     }
   }
 
@@ -196,12 +196,12 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "user_pool_add_ons" {
     for_each = local.user_pool_add_ons
     content {
-      advanced_security_mode = lookup(user_pool_add_ons.value, "advanced_security_mode")
+      advanced_security_mode = try(user_pool_add_ons.value.advanced_security_mode, null)
 
       dynamic "advanced_security_additional_flows" {
-        for_each = lookup(user_pool_add_ons.value, "advanced_security_additional_flows") != null ? [1] : []
+        for_each = can(user_pool_add_ons.value.advanced_security_additional_flows) ? [1] : []
         content {
-          custom_auth_mode = lookup(user_pool_add_ons.value, "advanced_security_additional_flows")
+          custom_auth_mode = try(user_pool_add_ons.value.advanced_security_additional_flows, null)
         }
       }
     }
@@ -369,8 +369,8 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "sms_configuration" {
     for_each = local.sms_configuration
     content {
-      external_id    = lookup(sms_configuration.value, "external_id")
-      sns_caller_arn = lookup(sms_configuration.value, "sns_caller_arn")
+      external_id    = try(sms_configuration.value.external_id, null)
+      sns_caller_arn = try(sms_configuration.value.sns_caller_arn, null)
     }
   }
 
@@ -378,7 +378,7 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "software_token_mfa_configuration" {
     for_each = local.software_token_mfa_configuration
     content {
-      enabled = lookup(software_token_mfa_configuration.value, "enabled")
+      enabled = try(software_token_mfa_configuration.value.enabled, false)
     }
   }
 
@@ -386,13 +386,13 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "password_policy" {
     for_each = local.password_policy
     content {
-      minimum_length                   = lookup(password_policy.value, "minimum_length")
-      require_lowercase                = lookup(password_policy.value, "require_lowercase")
-      require_numbers                  = lookup(password_policy.value, "require_numbers")
-      require_symbols                  = lookup(password_policy.value, "require_symbols")
-      require_uppercase                = lookup(password_policy.value, "require_uppercase")
-      temporary_password_validity_days = lookup(password_policy.value, "temporary_password_validity_days")
-      password_history_size            = lookup(password_policy.value, "password_history_size")
+      minimum_length                   = try(password_policy.value.minimum_length, null)
+      require_lowercase                = try(password_policy.value.require_lowercase, null)
+      require_numbers                  = try(password_policy.value.require_numbers, null)
+      require_symbols                  = try(password_policy.value.require_symbols, null)
+      require_uppercase                = try(password_policy.value.require_uppercase, null)
+      temporary_password_validity_days = try(password_policy.value.temporary_password_validity_days, null)
+      password_history_size            = try(password_policy.value.password_history_size, null)
     }
   }
 
@@ -454,12 +454,12 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   dynamic "user_pool_add_ons" {
     for_each = local.user_pool_add_ons
     content {
-      advanced_security_mode = lookup(user_pool_add_ons.value, "advanced_security_mode")
+      advanced_security_mode = try(user_pool_add_ons.value.advanced_security_mode, null)
 
       dynamic "advanced_security_additional_flows" {
-        for_each = lookup(user_pool_add_ons.value, "advanced_security_additional_flows") != null ? [1] : []
+        for_each = can(user_pool_add_ons.value.advanced_security_additional_flows) ? [1] : []
         content {
-          custom_auth_mode = lookup(user_pool_add_ons.value, "advanced_security_additional_flows")
+          custom_auth_mode = try(user_pool_add_ons.value.advanced_security_additional_flows, null)
         }
       }
     }
