@@ -979,10 +979,24 @@ variable "recovery_mechanisms" {
 # aws_cognito_identity_provider
 #
 variable "identity_providers" {
-  description = "Cognito Pool Identity Providers"
-  type        = list(any)
-  default     = []
-  sensitive   = true
+  description = "List of identity provider configurations"
+  type = list(object({
+    provider_name     = string
+    provider_type     = string
+    attribute_mapping = optional(map(string), {})
+    idp_identifiers   = optional(list(string), [])
+    provider_details  = optional(map(string), {})
+  }))
+  default   = []
+  sensitive = true
+
+  validation {
+    condition = alltrue([
+      for provider in var.identity_providers :
+      can(provider.provider_name) && can(provider.provider_type)
+    ])
+    error_message = "Each identity provider must have provider_name and provider_type defined."
+  }
 }
 
 variable "enable_propagate_additional_user_context_data" {
