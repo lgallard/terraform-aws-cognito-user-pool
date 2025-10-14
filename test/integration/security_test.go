@@ -369,15 +369,15 @@ func TestTerraformCognitoRefreshTokenRotation(t *testing.T) {
 		// Validate client configuration by describing the client
 		for _, clientID := range clientIDs {
 			userPoolClient := helpers.ValidateUserPoolClientExists(t, client, userPoolID, clientID)
-			
+
 			// Validate that token revocation is enabled (related to refresh token rotation)
 			assert.NotNil(t, userPoolClient.EnableTokenRevocation)
 			assert.True(t, *userPoolClient.EnableTokenRevocation, "Token revocation should be enabled for refresh token rotation")
-			
+
 			// Validate token validity settings
 			assert.NotNil(t, userPoolClient.AccessTokenValidity)
 			assert.Equal(t, int32(60), *userPoolClient.AccessTokenValidity)
-			
+
 			assert.NotNil(t, userPoolClient.RefreshTokenValidity)
 			assert.Equal(t, int32(30), *userPoolClient.RefreshTokenValidity)
 		}
