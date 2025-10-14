@@ -46,7 +46,7 @@ resource "aws_cognito_user_pool_client" "client" {
                length(keys(try(each.value.refresh_token_rotation, {}))) > 0 ? 
                [each.value.refresh_token_rotation] : []
     content {
-      type                       = try(refresh_token_rotation.value.type, null)
+      feature                    = try(refresh_token_rotation.value.feature, null)
       retry_grace_period_seconds = try(refresh_token_rotation.value.retry_grace_period_seconds, null)
     }
   }

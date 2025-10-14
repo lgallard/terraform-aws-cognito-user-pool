@@ -1,9 +1,27 @@
-## [0.40.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/0.39.3...0.40.0) (2025-07-05)
+## [3.0.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.4.0...3.0.0) (2025-10-13)
 
+
+### ⚠ BREAKING CHANGES
+
+* Security scanning moved from pre-commit hooks to dedicated CI workflow
 
 ### Features
 
-* support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
+* enhance security infrastructure with updated hooks and dependency management ([#308](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/308)) ([6934a36](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/6934a367dc2836455c4f29ec541bba08f013ea5c))
+
+
+### Bug Fixes
+
+* correct Go version to 1.23 and use SHA pinning for setup-go v6 ([77bb372](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/77bb37253027b8fa977967935a0af771f3ab755b))
+* correct refresh_token_rotation schema and validation ([#353](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/353)) ([cc2125f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/cc2125fe9c6cc2d5c06320c226a98d44d470a3cc))
+
+## [3.0.1](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/3.0.0...3.0.1) (2025-10-14)
+
+
+### Bug Fixes
+
+* improve README documentation formatting ([#356](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/356)) ([79917be](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/79917beabf8af0b6583f09ed575a673a110c5ad9))
+* improve README formatting and correct CHANGELOG ordering ([#358](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/358)) ([91df6db](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/91df6dbe81198f6bbabefa861c87fab36f9de305))
 
 ## [2.4.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.3.0...2.4.0) (2025-10-12)
 
@@ -249,6 +267,13 @@
 ### Bug Fixes
 
 * switch user groups from count to for_each to prevent unintended deletion ([#202](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/202)) ([1bc67f6](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/1bc67f63c42b95b595f51fab5e473e74e89f3f4b))
+
+## [0.40.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/0.39.3...0.40.0) (2025-07-05)
+
+
+### Features
+
+* support user pool tier option ([#199](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/199)) ([82fa069](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/82fa0695bcafe584e1cc317dd6cf9529e9872677))
 
 ## [0.39.3](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/0.39.2...0.39.3) (2025-06-29)
 

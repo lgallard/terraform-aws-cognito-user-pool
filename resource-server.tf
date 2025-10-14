@@ -1,14 +1,14 @@
 resource "aws_cognito_resource_server" "resource" {
   count      = var.enabled ? length(local.resource_servers) : 0
-  name       = lookup(element(local.resource_servers, count.index), "name")
-  identifier = lookup(element(local.resource_servers, count.index), "identifier")
+  name       = element(local.resource_servers, count.index).name
+  identifier = element(local.resource_servers, count.index).identifier
 
   #scope
   dynamic "scope" {
-    for_each = lookup(element(local.resource_servers, count.index), "scope")
+    for_each = element(local.resource_servers, count.index).scope
     content {
-      scope_name        = lookup(scope.value, "scope_name")
-      scope_description = lookup(scope.value, "scope_description")
+      scope_name        = scope.value.scope_name
+      scope_description = scope.value.scope_description
     }
   }
 
@@ -30,9 +30,9 @@ locals {
 
   # This parses var.user_groups which is a list of objects (map), and transforms it to a tuple of elements to avoid conflict with  the ternary and local.groups_default
   resource_servers_parsed = [for e in var.resource_servers : {
-    name       = lookup(e, "name", null)
-    identifier = lookup(e, "identifier", null)
-    scope      = lookup(e, "scope", [])
+    name       = try(e.name, null)
+    identifier = try(e.identifier, null)
+    scope      = try(e.scope, [])
     }
   ]
 
