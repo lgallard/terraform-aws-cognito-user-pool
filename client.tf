@@ -20,19 +20,19 @@ resource "aws_cognito_user_pool_client" "client" {
   refresh_token_validity                        = try(each.value.refresh_token_validity, null)
   supported_identity_providers                  = try(each.value.supported_identity_providers, null)
   enable_propagate_additional_user_context_data = try(each.value.enable_propagate_additional_user_context_data, null)
-  prevent_user_existence_errors                 = coalesce(
-    try(each.value.prevent_user_existence_errors, null), 
+  prevent_user_existence_errors = coalesce(
+    try(each.value.prevent_user_existence_errors, null),
     try(each.value.client_prevent_user_existence_errors, null)
   )
-  write_attributes                              = try(each.value.write_attributes, null)
-  enable_token_revocation                       = try(each.value.enable_token_revocation, null)
-  user_pool_id                                  = local.user_pool_id
+  write_attributes        = try(each.value.write_attributes, null)
+  enable_token_revocation = try(each.value.enable_token_revocation, null)
+  user_pool_id            = local.user_pool_id
 
   # token_validity_units
   dynamic "token_validity_units" {
-    for_each = try(each.value.token_validity_units, null) != null && 
-               length(keys(try(each.value.token_validity_units, {}))) > 0 ? 
-               [each.value.token_validity_units] : []
+    for_each = (try(each.value.token_validity_units, null) != null &&
+      length(keys(try(each.value.token_validity_units, {}))) > 0 ?
+    [each.value.token_validity_units] : [])
     content {
       access_token  = try(token_validity_units.value.access_token, null)
       id_token      = try(token_validity_units.value.id_token, null)
@@ -42,9 +42,9 @@ resource "aws_cognito_user_pool_client" "client" {
 
   # refresh_token_rotation
   dynamic "refresh_token_rotation" {
-    for_each = try(each.value.refresh_token_rotation, null) != null && 
-               length(keys(try(each.value.refresh_token_rotation, {}))) > 0 ? 
-               [each.value.refresh_token_rotation] : []
+    for_each = (try(each.value.refresh_token_rotation, null) != null &&
+      length(keys(try(each.value.refresh_token_rotation, {}))) > 0 ?
+    [each.value.refresh_token_rotation] : [])
     content {
       feature                    = try(refresh_token_rotation.value.feature, null)
       retry_grace_period_seconds = try(refresh_token_rotation.value.retry_grace_period_seconds, null)
@@ -103,13 +103,13 @@ locals {
     enable_propagate_additional_user_context_data = try(e.enable_propagate_additional_user_context_data, null)
     token_validity_units                          = try(e.token_validity_units, {})
     supported_identity_providers                  = try(e.supported_identity_providers, null)
-    prevent_user_existence_errors                 = coalesce(
-      try(e.prevent_user_existence_errors, null), 
+    prevent_user_existence_errors = coalesce(
+      try(e.prevent_user_existence_errors, null),
       try(e.client_prevent_user_existence_errors, null)
     )
-    write_attributes                              = try(e.write_attributes, null)
-    enable_token_revocation                       = try(e.enable_token_revocation, null)
-    refresh_token_rotation                        = try(e.refresh_token_rotation, {})
+    write_attributes        = try(e.write_attributes, null)
+    enable_token_revocation = try(e.enable_token_revocation, null)
+    refresh_token_rotation  = try(e.refresh_token_rotation, {})
     }
   ]
 
