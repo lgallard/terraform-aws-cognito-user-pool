@@ -995,7 +995,7 @@ variable "identity_providers" {
       for provider in var.identity_providers :
       can(provider.provider_name) && can(provider.provider_type)
     ])
-    error_message = "Each identity provider must have provider_name and provider_type defined."
+    error_message = "Each identity provider must have provider_name and provider_type defined. These are required fields for AWS Cognito identity provider configuration."
   }
 }
 
