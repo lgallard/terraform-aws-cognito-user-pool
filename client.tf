@@ -32,7 +32,7 @@ resource "aws_cognito_user_pool_client" "client" {
   dynamic "token_validity_units" {
     for_each = (try(each.value.token_validity_units, null) != null &&
       length(keys(try(each.value.token_validity_units, {}))) > 0 ?
-    [each.value.token_validity_units] : [])
+    [try(each.value.token_validity_units, {})] : [])
     content {
       access_token  = try(token_validity_units.value.access_token, null)
       id_token      = try(token_validity_units.value.id_token, null)
@@ -44,7 +44,7 @@ resource "aws_cognito_user_pool_client" "client" {
   dynamic "refresh_token_rotation" {
     for_each = (try(each.value.refresh_token_rotation, null) != null &&
       length(keys(try(each.value.refresh_token_rotation, {}))) > 0 ?
-    [each.value.refresh_token_rotation] : [])
+    [try(each.value.refresh_token_rotation, {})] : [])
     content {
       feature                    = try(refresh_token_rotation.value.feature, null)
       retry_grace_period_seconds = try(refresh_token_rotation.value.retry_grace_period_seconds, null)
