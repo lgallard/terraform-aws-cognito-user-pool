@@ -5,6 +5,13 @@
 
 * Phase 3 - Modernize client configs with dynamic block bug fixes ([#359](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/359)) ([3c42a1f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/3c42a1fa862ab7d666bd0a5f5ac322dc8993ec26))
 
+## [3.1.1](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/3.1.0...3.1.1) (2025-10-14)
+
+
+### Bug Fixes
+
+* correct spacing in README module description ([#363](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/363)) ([684596c](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/684596cbb60e6c380d6205418d240791c293f364))
+
 ## [3.0.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/2.4.0...3.0.0) (2025-10-13)
 
 
