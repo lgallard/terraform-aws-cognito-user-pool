@@ -4,43 +4,46 @@ resource "aws_cognito_user_pool_client" "client" {
     "${lookup(client, "name", "client")}_${idx}" => client
   } : {}
 
-  allowed_oauth_flows                           = lookup(each.value, "allowed_oauth_flows", null)
-  allowed_oauth_flows_user_pool_client          = lookup(each.value, "allowed_oauth_flows_user_pool_client", null)
-  allowed_oauth_scopes                          = lookup(each.value, "allowed_oauth_scopes", null)
-  auth_session_validity                         = lookup(each.value, "auth_session_validity", null)
-  callback_urls                                 = lookup(each.value, "callback_urls", null)
-  default_redirect_uri                          = lookup(each.value, "default_redirect_uri", null)
-  explicit_auth_flows                           = lookup(each.value, "explicit_auth_flows", null)
-  generate_secret                               = lookup(each.value, "generate_secret", null)
-  logout_urls                                   = lookup(each.value, "logout_urls", null)
-  name                                          = lookup(each.value, "name", null)
-  read_attributes                               = lookup(each.value, "read_attributes", null)
-  access_token_validity                         = lookup(each.value, "access_token_validity", null)
-  id_token_validity                             = lookup(each.value, "id_token_validity", null)
-  refresh_token_validity                        = lookup(each.value, "refresh_token_validity", null)
-  supported_identity_providers                  = lookup(each.value, "supported_identity_providers", null)
-  enable_propagate_additional_user_context_data = lookup(each.value, "enable_propagate_additional_user_context_data", null)
-  prevent_user_existence_errors                 = lookup(each.value, "prevent_user_existence_errors", null)
-  write_attributes                              = lookup(each.value, "write_attributes", null)
-  enable_token_revocation                       = lookup(each.value, "enable_token_revocation", null)
-  user_pool_id                                  = local.user_pool_id
+  allowed_oauth_flows                           = try(each.value.allowed_oauth_flows, null)
+  allowed_oauth_flows_user_pool_client          = try(each.value.allowed_oauth_flows_user_pool_client, null)
+  allowed_oauth_scopes                          = try(each.value.allowed_oauth_scopes, null)
+  auth_session_validity                         = try(each.value.auth_session_validity, null)
+  callback_urls                                 = try(each.value.callback_urls, null)
+  default_redirect_uri                          = try(each.value.default_redirect_uri, null)
+  explicit_auth_flows                           = try(each.value.explicit_auth_flows, null)
+  generate_secret                               = try(each.value.generate_secret, null)
+  logout_urls                                   = try(each.value.logout_urls, null)
+  name                                          = try(each.value.name, null)
+  read_attributes                               = try(each.value.read_attributes, null)
+  access_token_validity                         = try(each.value.access_token_validity, null)
+  id_token_validity                             = try(each.value.id_token_validity, null)
+  refresh_token_validity                        = try(each.value.refresh_token_validity, null)
+  supported_identity_providers                  = try(each.value.supported_identity_providers, null)
+  enable_propagate_additional_user_context_data = try(each.value.enable_propagate_additional_user_context_data, null)
+  prevent_user_existence_errors = try(
+    each.value.prevent_user_existence_errors,
+    try(each.value.client_prevent_user_existence_errors, null)
+  )
+  write_attributes        = try(each.value.write_attributes, null)
+  enable_token_revocation = try(each.value.enable_token_revocation, null)
+  user_pool_id            = local.user_pool_id
 
   # token_validity_units
   dynamic "token_validity_units" {
-    for_each = length(lookup(each.value, "token_validity_units", {})) == 0 ? [] : [lookup(each.value, "token_validity_units")]
+    for_each = can(each.value.token_validity_units) && length(keys(each.value.token_validity_units)) > 0 ? [each.value.token_validity_units] : []
     content {
-      access_token  = lookup(token_validity_units.value, "access_token", null)
-      id_token      = lookup(token_validity_units.value, "id_token", null)
-      refresh_token = lookup(token_validity_units.value, "refresh_token", null)
+      access_token  = try(token_validity_units.value.access_token, null)
+      id_token      = try(token_validity_units.value.id_token, null)
+      refresh_token = try(token_validity_units.value.refresh_token, null)
     }
   }
 
   # refresh_token_rotation
   dynamic "refresh_token_rotation" {
-    for_each = length(lookup(each.value, "refresh_token_rotation", {})) == 0 ? [] : [lookup(each.value, "refresh_token_rotation")]
+    for_each = can(each.value.refresh_token_rotation) && length(keys(each.value.refresh_token_rotation)) > 0 ? [each.value.refresh_token_rotation] : []
     content {
-      feature                    = lookup(refresh_token_rotation.value, "feature", null)
-      retry_grace_period_seconds = lookup(refresh_token_rotation.value, "retry_grace_period_seconds", null)
+      feature                    = try(refresh_token_rotation.value.feature, null)
+      retry_grace_period_seconds = try(refresh_token_rotation.value.retry_grace_period_seconds, null)
     }
   }
 
@@ -79,27 +82,30 @@ locals {
 
   # This parses vars.clients which is a list of objects (map), and transforms it to a tuple of elements to avoid conflict with  the ternary and local.clients_default
   clients_parsed = [for e in var.clients : {
-    allowed_oauth_flows                           = lookup(e, "allowed_oauth_flows", null)
-    allowed_oauth_flows_user_pool_client          = lookup(e, "allowed_oauth_flows_user_pool_client", null)
-    allowed_oauth_scopes                          = lookup(e, "allowed_oauth_scopes", null)
-    auth_session_validity                         = lookup(e, "auth_session_validity", null)
-    callback_urls                                 = lookup(e, "callback_urls", null)
-    default_redirect_uri                          = lookup(e, "default_redirect_uri", null)
-    explicit_auth_flows                           = lookup(e, "explicit_auth_flows", null)
-    generate_secret                               = lookup(e, "generate_secret", null)
-    logout_urls                                   = lookup(e, "logout_urls", null)
-    name                                          = lookup(e, "name", null)
-    read_attributes                               = lookup(e, "read_attributes", null)
-    access_token_validity                         = lookup(e, "access_token_validity", null)
-    id_token_validity                             = lookup(e, "id_token_validity", null)
-    refresh_token_validity                        = lookup(e, "refresh_token_validity", null)
-    enable_propagate_additional_user_context_data = lookup(e, "enable_propagate_additional_user_context_data", null)
-    token_validity_units                          = lookup(e, "token_validity_units", {})
-    supported_identity_providers                  = lookup(e, "supported_identity_providers", null)
-    prevent_user_existence_errors                 = lookup(e, "prevent_user_existence_errors", lookup(e, "client_prevent_user_existence_errors", null))
-    write_attributes                              = lookup(e, "write_attributes", null)
-    enable_token_revocation                       = lookup(e, "enable_token_revocation", null)
-    refresh_token_rotation                        = lookup(e, "refresh_token_rotation", {})
+    allowed_oauth_flows                           = try(e.allowed_oauth_flows, null)
+    allowed_oauth_flows_user_pool_client          = try(e.allowed_oauth_flows_user_pool_client, null)
+    allowed_oauth_scopes                          = try(e.allowed_oauth_scopes, null)
+    auth_session_validity                         = try(e.auth_session_validity, null)
+    callback_urls                                 = try(e.callback_urls, null)
+    default_redirect_uri                          = try(e.default_redirect_uri, null)
+    explicit_auth_flows                           = try(e.explicit_auth_flows, null)
+    generate_secret                               = try(e.generate_secret, null)
+    logout_urls                                   = try(e.logout_urls, null)
+    name                                          = try(e.name, null)
+    read_attributes                               = try(e.read_attributes, null)
+    access_token_validity                         = try(e.access_token_validity, null)
+    id_token_validity                             = try(e.id_token_validity, null)
+    refresh_token_validity                        = try(e.refresh_token_validity, null)
+    enable_propagate_additional_user_context_data = try(e.enable_propagate_additional_user_context_data, null)
+    token_validity_units                          = try(e.token_validity_units, {})
+    supported_identity_providers                  = try(e.supported_identity_providers, null)
+    prevent_user_existence_errors = try(
+      e.prevent_user_existence_errors,
+      try(e.client_prevent_user_existence_errors, null)
+    )
+    write_attributes        = try(e.write_attributes, null)
+    enable_token_revocation = try(e.enable_token_revocation, null)
+    refresh_token_rotation  = try(e.refresh_token_rotation, {})
     }
   ]
 
