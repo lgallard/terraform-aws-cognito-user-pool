@@ -262,7 +262,8 @@ module "aws_cognito_user_pool_complete_example" {
 
   # identity_providers
   # Note: For SAML providers, AWS automatically manages signing and encryption certificates
-  # The module includes lifecycle ignore_changes for ActiveEncryptionCertificate to prevent drift
+  # For OAuth providers, AWS may auto-manage OIDC discovery fields and handle sensitive values differently
+  # The module includes lifecycle ignore_changes to prevent drift for both SAML and OAuth providers
   identity_providers = [
     {
       provider_name = "Google"
