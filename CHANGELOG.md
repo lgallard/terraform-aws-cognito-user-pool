@@ -5,6 +5,13 @@
 
 * Phase 3 - Modernize client configs with dynamic block bug fixes ([#359](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/359)) ([3c42a1f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/3c42a1fa862ab7d666bd0a5f5ac322dc8993ec26))
 
+## [3.1.3](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/3.1.2...3.1.3) (2025-10-27)
+
+
+### Bug Fixes
+
+* expand identity provider drift prevention for OAuth providers ([#371](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/371)) ([b2a9dfb](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/b2a9dfb927137e530ae21a82f995b1975b7efc28))
+
 ## [3.1.2](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/3.1.1...3.1.2) (2025-10-14)
 
 
