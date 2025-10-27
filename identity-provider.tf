@@ -18,16 +18,16 @@ resource "aws_cognito_identity_provider" "identity_provider" {
     ignore_changes = [
       # SAML provider auto-managed fields
       provider_details["ActiveEncryptionCertificate"],
-      
+
       # OAuth provider auto-managed fields that may cause drift
-      provider_details["authorize_url"],    # May be updated via OIDC discovery
-      provider_details["token_url"],        # May be updated via OIDC discovery
-      provider_details["oidc_issuer"],      # May be updated via OIDC discovery
-      provider_details["jwks_uri"],         # Auto-populated from OIDC discovery
-      provider_details["issuer"],           # May be auto-populated
-      
+      provider_details["authorize_url"], # May be updated via OIDC discovery
+      provider_details["token_url"],     # May be updated via OIDC discovery
+      provider_details["oidc_issuer"],   # May be updated via OIDC discovery
+      provider_details["jwks_uri"],      # Auto-populated from OIDC discovery
+      provider_details["issuer"],        # May be auto-populated
+
       # Sensitive fields that cause drift due to Terraform's sensitive value handling
-      provider_details["client_secret"],    # Sensitive field causing plan drift
+      provider_details["client_secret"], # Sensitive field causing plan drift
     ]
   }
 }
