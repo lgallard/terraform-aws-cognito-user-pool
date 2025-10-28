@@ -157,7 +157,8 @@ jobs:
 
           # Required tool permissions for GitHub commenting (v1.0 format)
           # Task: enables subagent invocation | Read/Grep/Glob: enables code examination
-          claude_args: "--allowedTools Task,Read,Grep,Glob,Bash(gh pr comment:*),Bash(gh api:*),mcp__terraform-server__get_provider_details,mcp__terraform-server__search_providers,mcp__terraform-server__search_modules,mcp__terraform-server__get_module_details,mcp__context7__resolve-library-id,mcp__context7__get-library-docs"
+          # mcp__github__*: enables GitHub comment posting via MCP tools
+          claude_args: "--allowedTools Task,Read,Grep,Glob,Bash(gh pr comment:*),Bash(gh api:*),mcp__github__*,mcp__terraform-server__get_provider_details,mcp__terraform-server__search_providers,mcp__terraform-server__search_modules,mcp__terraform-server__get_module_details,mcp__context7__resolve-library-id,mcp__context7__get-library-docs"
 
           # Set trigger phrase for codebot mentions
           trigger_phrase: "codebot"
