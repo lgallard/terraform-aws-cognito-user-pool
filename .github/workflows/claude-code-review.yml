@@ -156,7 +156,8 @@ jobs:
             }
 
           # Required tool permissions for GitHub commenting (v1.0 format)
-          claude_args: "--allowedTools Bash(gh pr comment:*),Bash(gh api:*),mcp__terraform-server__get_provider_details,mcp__terraform-server__search_providers,mcp__terraform-server__search_modules,mcp__terraform-server__get_module_details,mcp__context7__resolve-library-id,mcp__context7__get-library-docs"
+          # Task: enables subagent invocation | Read/Grep/Glob: enables code examination
+          claude_args: "--allowedTools Task,Read,Grep,Glob,Bash(gh pr comment:*),Bash(gh api:*),mcp__terraform-server__get_provider_details,mcp__terraform-server__search_providers,mcp__terraform-server__search_modules,mcp__terraform-server__get_module_details,mcp__context7__resolve-library-id,mcp__context7__get-library-docs"
 
           # Set trigger phrase for codebot mentions
           trigger_phrase: "codebot"
@@ -180,9 +181,13 @@ jobs:
             ${{ steps.parse-command.outputs.mode == 'hunt' && '
             🕵️ **BUG HUNT MODE** - Find potential issues quickly:
             - Focus on critical bugs, security vulnerabilities, and performance issues
+            - **IMPORTANT: Use Read tool to examine full file context before making claims**
+            - **VERIFY findings using MCP documentation tools before marking as CRITICAL**
+            - **Delegate to appropriate subagents using @mentions for specialized analysis**
             - Prioritize high-impact problems over style suggestions
             - Be concise and actionable in your feedback
             - Look for common Terraform and AWS Cognito pitfalls
+            - **Include confidence level (High/Medium/Low) for each finding**
 
             **Subagent Routing:**
             - Use @terraform-cognito for Cognito User Pool configuration issues
@@ -267,5 +272,18 @@ jobs:
             - **@module-documentation**: Documentation, examples, README updates, user guides
 
             Always leverage the specialized knowledge in these subagents for better, more accurate responses.
+
+            ---
+
+            **Analysis Guidelines - MUST FOLLOW:**
+            1. **Read Before Analyzing**: Always use Read tool to examine full file context, not just diffs
+            2. **Verify Claims**: Check AWS/Terraform documentation via MCP tools before declaring issues as CRITICAL
+            3. **Use Subagents**: Delegate specialized work to appropriate @subagent (e.g., @terraform-security for security analysis)
+            4. **Confidence Levels**: Label each finding as High/Medium/Low confidence based on verification depth
+            5. **Distinguish Severity**: Separate definite bugs from potential concerns or style suggestions
+            6. **Context Matters**: Understand AWS auto-managed fields vs user-configured values before flagging drift
+            7. **Established Patterns**: Check git history for similar accepted patterns before flagging as issues
+
+            ---
 
             **CRITICAL FINAL INSTRUCTION**: After completing your analysis, post your complete findings as a comment on this pull request using the GitHub commenting tools available to you.
