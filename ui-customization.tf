@@ -18,7 +18,12 @@ locals {
 
 # UI customizations for specific clients
 resource "aws_cognito_user_pool_ui_customization" "ui_customization" {
-  for_each = local.client_ui_customizations
+  # Only create resources for clients that still exist in client_ids_map
+  for_each = {
+    for k, v in local.client_ui_customizations :
+    k => v
+    if contains(keys(local.client_ids_map), k)
+  }
 
   client_id = local.client_ids_map[each.key]
 
