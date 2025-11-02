@@ -6,11 +6,11 @@ locals {
     coalesce(c.name, k) => c.id
   }
 
-  # Create UI customizations map with key generation matching client.tf naming convention
-  # CRITICAL: Must match client.tf:4 key format to prevent UI customization misassignment
+  # Create UI customizations map using local.clients for consistency
+  # Preserves backward-compatible key format to avoid resource recreation
   client_ui_customizations = {
     for idx, c in local.clients :
-    "${lookup(c, "name", "client")}_${idx}" => {
+    coalesce(lookup(c, "name", null), "client-${idx}") => {
       css        = try(c.ui_customization_css, null)
       image_file = try(c.ui_customization_image_file, null)
     } if try(c.ui_customization_css, null) != null || try(c.ui_customization_image_file, null) != null
