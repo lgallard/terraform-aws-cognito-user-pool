@@ -5,6 +5,16 @@
 
 * Phase 3 - Modernize client configs with dynamic block bug fixes ([#359](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/359)) ([3c42a1f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/3c42a1fa862ab7d666bd0a5f5ac322dc8993ec26))
 
+## [3.1.4](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/3.1.3...3.1.4) (2025-11-02)
+
+
+### Bug Fixes
+
+* correct GitHub MCP server tool names for comment posting ([#376](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/376)) ([6494e76](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/6494e7613af289df2272c4860e0ad27e02975f9c))
+* enable GitHub MCP tools for codebot comment posting ([#375](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/375)) ([10299e8](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/10299e8d6d264ab07705f64855d08e5d008d5188))
+* enable subagent tools and verification to reduce false positives ([#373](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/373)) ([d73603a](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/d73603aa5b167fcc950f3f06923f6e6fc0b24f97))
+* prevent Invalid index error in UI customization during destroy ([#378](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/378)) ([adbf3d1](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/adbf3d190751228924dc1942a276ae7b25a4386e))
+
 ## [3.1.3](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/3.1.2...3.1.3) (2025-10-27)
 
 
