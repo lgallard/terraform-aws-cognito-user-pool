@@ -5,6 +5,13 @@
 
 * Phase 3 - Modernize client configs with dynamic block bug fixes ([#359](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/359)) ([3c42a1f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/3c42a1fa862ab7d666bd0a5f5ac322dc8993ec26))
 
+## [3.1.5](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/3.1.4...3.1.5) (2025-11-14)
+
+
+### Bug Fixes
+
+* prevent lambda_config drift when no triggers are defined ([#383](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/383)) ([6103618](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/6103618644d5f7883f5772a2f80958786dbdee86)), closes [#382](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/382)
+
 ## [3.1.4](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/3.1.3...3.1.4) (2025-11-02)
 
 
