@@ -25,5 +25,7 @@ locals {
     custom_sms_sender              = length(try(var.lambda_config.custom_sms_sender, var.lambda_config_custom_sms_sender, {})) == 0 ? [] : [try(var.lambda_config.custom_sms_sender, var.lambda_config_custom_sms_sender)]
   }
 
-  lambda_config = var.lambda_config == null || length(var.lambda_config) == 0 ? [] : [local.lambda_config_default]
+  lambda_config = (
+    var.lambda_config == null || length(var.lambda_config) == 0
+  ) ? null : [local.lambda_config_default]
 }
