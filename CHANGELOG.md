@@ -5,6 +5,13 @@
 
 * Phase 3 - Modernize client configs with dynamic block bug fixes ([#359](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/359)) ([3c42a1f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/3c42a1fa862ab7d666bd0a5f5ac322dc8993ec26))
 
+## [3.1.6](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/3.1.5...3.1.6) (2025-11-19)
+
+
+### Bug Fixes
+
+* use empty list instead of null for lambda_config when not configured ([#386](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/386)) ([34bfe85](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/34bfe85453fb51497b8e57ee3c4bed2b50810420)), closes [#385](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/385)
+
 ## [3.1.5](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/3.1.4...3.1.5) (2025-11-14)
 
 
