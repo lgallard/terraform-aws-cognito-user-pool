@@ -27,5 +27,5 @@ locals {
 
   lambda_config = (
     var.lambda_config == null || length(var.lambda_config) == 0
-  ) ? null : [local.lambda_config_default]
+  ) ? [] : [local.lambda_config_default]
 }
