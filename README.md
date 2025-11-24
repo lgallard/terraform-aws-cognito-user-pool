@@ -277,7 +277,7 @@ If you need to add new schema attributes after enabling `ignore_schema_changes =
 - **🎯 NEW DEPLOYMENTS**: **Always use `ignore_schema_changes = true`** to prevent schema perpetual diffs from the start
 - **Plan your schema carefully**: Schema attributes are immutable after creation
 - **Design for the future**: Consider using custom attributes with generic names for flexibility
-- **Test thoroughly**: Always run `terraform plan` to verify expected behavior
+- **Validate thoroughly**: Always run `terraform plan` and request AI validation for significant changes
 
 ## Managed Login Branding
 
@@ -695,11 +695,112 @@ Following the [CLAUDE.md](CLAUDE.md) guidelines:
 
 This ensures consistent code quality and catches common issues before they reach the repository.
 
+### AI-Powered Validation
+
+This module uses **AI-powered validation** through specialized Claude Code subagents instead of traditional automated tests. This approach provides comprehensive analysis of code quality, security, Terraform best practices, and module functionality.
+
+#### Why AI Validation?
+
+Traditional testing has limitations for infrastructure-as-code:
+- **Static test cases** can't predict all real-world scenarios
+- **High maintenance overhead** for test infrastructure
+- **Cost** of running infrastructure tests against AWS
+- **Limited coverage** of edge cases and security configurations
+
+AI validation provides:
+- **Comprehensive analysis** covering functionality, security, and best practices
+- **Adaptive validation** that understands context and intent
+- **Security-first approach** with specialized security agents
+- **Real-time AWS provider knowledge** through MCP servers
+
+#### Specialized Validation Agents
+
+The module includes four specialized AI agents (configured in `.claude/subagents.yaml`):
+
+1. **terraform-cognito** - AWS Cognito User Pool specialist
+   - Validates Cognito resource configurations
+   - Ensures AWS best practices for identity management
+   - Reviews authentication and authorization patterns
+
+2. **terraform-security** - Security analysis and hardening specialist
+   - Performs security analysis of configurations
+   - Reviews password policies, MFA settings, encryption
+   - Validates access controls and compliance
+
+3. **cognito-migration** - AWS Cognito upgrade and migration specialist
+   - Validates backward compatibility
+   - Reviews migration paths for breaking changes
+   - Ensures smooth version upgrades
+
+4. **module-documentation** - Documentation and example specialist
+   - Validates example configurations
+   - Reviews documentation completeness
+   - Ensures examples follow best practices
+
+#### When to Request AI Validation
+
+**Required for:**
+- New features or significant modifications
+- Security-related changes (MFA, password policies, access controls)
+- Breaking changes or deprecations
+- Example updates
+
+**Recommended for:**
+- Complex configuration changes
+- Before creating pull requests
+- After addressing review feedback
+
+**Example validation request:**
+```
+@claude Please use the terraform-cognito and terraform-security agents to validate
+this implementation. Check for AWS best practices, security concerns, and proper
+integration with existing module patterns.
+```
+
+#### Automated Validation Triggers
+
+While validation is requested on-demand, several automated systems support code quality:
+
+1. **Pre-commit Hooks** (runs locally on every commit):
+   - Terraform syntax validation (`terraform validate`)
+   - Security scanning (`tfsec`)
+   - Linting (`tflint`)
+   - Format checking (`terraform fmt`)
+
+2. **Feature Discovery Workflow** (runs weekly):
+   - Scans AWS provider for new features, deprecations, and bug fixes
+   - Creates GitHub issues with validation checklists
+   - See "Automation & Feature Discovery" section below
+
+3. **Security Scanning** (runs on every push):
+   - Trivy for vulnerability scanning
+   - TFSec for Terraform-specific security issues
+
+#### Validation Coverage
+
+AI validation covers:
+- **Configuration**: Terraform syntax, resource relationships, variable validation
+- **Security**: Misconfigurations, access controls, encryption, authentication patterns
+- **Functionality**: Logic correctness, edge cases, error handling, lifecycle management
+- **Documentation**: Example accuracy, variable documentation, usage instructions
+- **Backward Compatibility**: Interface consistency, state migration, upgrade paths
+
+For detailed guidance on using AI validation, see [CLAUDE.md](CLAUDE.md).
+
 ## Automation & Feature Discovery
 
 ### Automated Feature Discovery System
 
-This module includes an automated feature discovery system that runs weekly to identify new AWS Cognito User Pool features, deprecations, and bug fixes from the AWS provider. The system uses Claude Code with MCP (Model Context Protocol) servers to analyze provider documentation and automatically create GitHub issues for new functionality.
+This module includes an **automated feature discovery system** that runs weekly to identify new AWS Cognito User Pool features, deprecations, and bug fixes from the AWS provider. This system addresses the continuous validation concern by **proactively monitoring AWS provider changes** and creating structured validation checklists for each change.
+
+**How it addresses provider update concerns:**
+- **Continuous monitoring** of AWS provider updates (weekly scans)
+- **Automated issue creation** with validation checklists for each discovery
+- **Structured templates** that include AI validation requirements
+- **Feature tracking** to prevent missed updates
+- **Deprecation warnings** before features are removed
+
+The system uses Claude Code with MCP (Model Context Protocol) servers to analyze provider documentation and automatically create GitHub issues for new functionality, ensuring no provider changes go unnoticed.
 
 #### How It Works
 
@@ -774,13 +875,15 @@ The system identifies and categorizes findings as:
 - Authentication and security patches
 - Performance improvements
 
-#### Issue Templates
+#### Issue Templates with AI Validation
 
-Each discovery type uses a structured template:
+Each discovery type uses a structured template that **includes AI validation checklists**:
 
-- **New Features**: Implementation checklist, examples, validation requirements
-- **Deprecations**: Migration guidance, timeline, impact assessment
-- **Bug Fixes**: Impact analysis, validation strategy, version requirements
+- **New Features**: Implementation checklist, examples, **AI validation requirements** (terraform-cognito, terraform-security, module-documentation agents)
+- **Deprecations**: Migration guidance, timeline, impact assessment, **AI validation with cognito-migration agent**
+- **Bug Fixes**: Impact analysis, **validation strategy with specialized agents**, version requirements
+
+These templates ensure that **every provider change triggers a structured validation process** using the appropriate AI agents, addressing the concern about continuous validation coverage.
 
 #### Feature Tracking
 
@@ -825,11 +928,14 @@ The system leverages Model Context Protocol servers for real-time documentation 
 
 #### Benefits
 
-- **Stay Current**: Never miss new AWS Cognito features
+- **Continuous Validation Coverage**: Automated monitoring replaces manual regression testing
+- **Stay Current**: Never miss new AWS Cognito features or provider updates
 - **Proactive Maintenance**: Identify deprecations before they break
-- **Automated Tracking**: Comprehensive feature database
+- **Structured Validation**: Every change includes AI validation checklists
+- **Automated Tracking**: Comprehensive feature database with validation history
+- **Security Assurance**: Security changes automatically flagged for terraform-security agent review
 - **Community Value**: Users benefit from latest AWS capabilities
-- **Reduced Manual Work**: No need for manual provider monitoring
+- **Reduced Manual Work**: No need for manual provider monitoring or test maintenance
 
 #### Contributing to Discovery
 
