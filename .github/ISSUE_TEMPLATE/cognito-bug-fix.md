@@ -39,7 +39,6 @@ assignees: []
 - [ ] `variables.tf` - [VARIABLE_CHANGES]
 - [ ] `outputs.tf` - [OUTPUT_CHANGES]
 - [ ] `examples/*/` - [EXAMPLE_CHANGES]
-- [ ] `test/*/` - [TEST_UPDATES]
 
 ### Analysis Required
 
@@ -48,7 +47,7 @@ assignees: []
   - [ ] Reproduce the original bug with current module version
   - [ ] Document current workarounds (if any)
   - [ ] Identify users who might be affected
-- [ ] **Test Provider Fix**
+- [ ] **Validate Provider Fix**
   - [ ] Update to fixed provider version
   - [ ] Verify fix resolves the issue
   - [ ] Check for any breaking changes in behavior
@@ -78,11 +77,11 @@ assignees: []
 
 #### Phase 1: Investigation
 - [ ] **Reproduce Original Bug**
-  - [ ] Create test case demonstrating the bug
+  - [ ] Create validation scenario demonstrating the bug
   - [ ] Document exact conditions that trigger the issue
   - [ ] Verify impact on module functionality
-- [ ] **Test Provider Fix**
-  - [ ] Update test environment to fixed provider version
+- [ ] **Validate Provider Fix**
+  - [ ] Update validation environment to fixed provider version
   - [ ] Confirm bug is resolved
   - [ ] Check for any behavioral changes
 
@@ -97,16 +96,16 @@ assignees: []
   - [ ] Update README with new requirements
   - [ ] Check compatibility matrix
 
-#### Phase 3: Testing & Validation
-- [ ] **Comprehensive Testing**
-  - [ ] Test all affected examples
-  - [ ] Run full test suite with new provider version
+#### Phase 3: AI Validation & Quality Checks
+- [ ] **Comprehensive Validation**
+  - [ ] Validate all affected examples
+  - [ ] Request AI validation with specialized agents for new provider version
   - [ ] Validate backward compatibility (if maintaining support for older versions)
-  - [ ] Test edge cases that might be affected
+  - [ ] Validate edge cases that might be affected
 - [ ] **Example Updates**
   - [ ] Update examples to use fixed behavior
   - [ ] Remove workaround code from examples
-  - [ ] Add test case that would have failed before fix
+  - [ ] Add validation scenario that would have failed before fix
 
 #### Phase 4: Documentation
 - [ ] **Update Documentation**
@@ -137,32 +136,29 @@ assignees: []
   - [ ] Effect on advanced security features
   - [ ] Changes to risk-based authentication
 
-### Testing Strategy
+### Validation Strategy
 
-#### Test Cases to Create/Update
+#### Validation Scenarios to Create/Update
 ```bash
-# Test that would have failed before the fix
-[TEST_CASE_EXAMPLE]
+# Scenario that would have failed before the fix
+[VALIDATION_SCENARIO_EXAMPLE]
 
-# Regression test to ensure fix works
-[REGRESSION_TEST]
+# Regression validation to ensure fix works
+[REGRESSION_VALIDATION]
 ```
 
 #### Validation Commands
 ```bash
-# Test with examples
+# Validate with examples
 cd examples/[affected-example]
 terraform init -upgrade
+terraform validate
 terraform plan
-terraform apply
-terraform destroy
 
-# Run specific tests
-cd test/
-go test -v -timeout 30m -run TestTerraformCognito[AffectedFeature]
-
-# Full test suite
-go test -v -timeout 45m ./...
+# Request AI validation
+# @claude Use terraform-cognito and terraform-security agents to validate
+# the bug fix. Ensure the fix resolves the issue without introducing
+# regressions or security concerns.
 ```
 
 ### Provider Version Strategy
@@ -220,7 +216,7 @@ module "cognito_after" {
 - [ ] Original bug reproduced and documented
 - [ ] Provider fix verified to resolve the issue
 - [ ] Module updated to work with fixed provider
-- [ ] All tests pass with new provider version
+- [ ] AI validation completed with specialized agents
 - [ ] Documentation updated to reflect changes
 - [ ] Examples demonstrate proper usage with fix
 - [ ] User migration path documented (if needed)

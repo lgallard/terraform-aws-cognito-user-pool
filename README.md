@@ -778,9 +778,9 @@ The system identifies and categorizes findings as:
 
 Each discovery type uses a structured template:
 
-- **New Features**: Implementation checklist, examples, testing requirements
+- **New Features**: Implementation checklist, examples, validation requirements
 - **Deprecations**: Migration guidance, timeline, impact assessment
-- **Bug Fixes**: Impact analysis, testing strategy, version requirements
+- **Bug Fixes**: Impact analysis, validation strategy, version requirements
 
 #### Feature Tracking
 
