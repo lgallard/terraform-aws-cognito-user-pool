@@ -5,6 +5,17 @@
 
 * Phase 3 - Modernize client configs with dynamic block bug fixes ([#359](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/359)) ([3c42a1f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/3c42a1fa862ab7d666bd0a5f5ac322dc8993ec26))
 
+## [4.0.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/3.1.6...4.0.0) (2025-11-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove Terratest-based testing infrastructure in favor of AI-powered validation using specialized Claude Code subagents
+
+### Miscellaneous Chores
+
+* Remove tests and add AI validation analysis ([#389](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/389)) ([4917ec5](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/4917ec5f098c492b725cdaeac91a34dfc214b190))
+
 ## [3.1.6](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/3.1.5...3.1.6) (2025-11-19)
 
 
