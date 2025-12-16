@@ -483,8 +483,8 @@ variable "password_policy_minimum_length" {
   default     = 8
 
   validation {
-    condition     = var.password_policy_minimum_length >= 8 && var.password_policy_minimum_length <= 99
-    error_message = "Password minimum length must be between 8 and 99 characters for security (legacy variable validation)."
+    condition     = var.password_policy_minimum_length >= 6 && var.password_policy_minimum_length <= 99
+    error_message = "Password minimum length must be between 6 and 99 characters for security (legacy variable validation)."
   }
 }
 
