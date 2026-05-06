@@ -5,6 +5,13 @@
 
 * Phase 3 - Modernize client configs with dynamic block bug fixes ([#359](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/359)) ([3c42a1f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/3c42a1fa862ab7d666bd0a5f5ac322dc8993ec26))
 
+## [4.0.1](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/4.0.0...4.0.1) (2026-05-06)
+
+
+### Bug Fixes
+
+* pass through ui_customization_css/image_file in clients_parsed ([#395](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/395)) ([14cb470](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/14cb470104216f520e865bd9cb33cc40c754e924)), closes [#394](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/394)
+
 ## [4.0.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/3.1.6...4.0.0) (2025-11-24)
 
 
