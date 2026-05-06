@@ -103,9 +103,11 @@ locals {
       e.prevent_user_existence_errors,
       try(e.client_prevent_user_existence_errors, null)
     )
-    write_attributes        = try(e.write_attributes, null)
-    enable_token_revocation = try(e.enable_token_revocation, null)
-    refresh_token_rotation  = try(e.refresh_token_rotation, {})
+    write_attributes            = try(e.write_attributes, null)
+    enable_token_revocation     = try(e.enable_token_revocation, null)
+    refresh_token_rotation      = try(e.refresh_token_rotation, {})
+    ui_customization_css        = try(e.ui_customization_css, null)
+    ui_customization_image_file = try(e.ui_customization_image_file, null)
     }
   ]
 
