@@ -77,6 +77,8 @@ locals {
       write_attributes                              = var.client_write_attributes
       enable_token_revocation                       = var.client_enable_token_revocation
       refresh_token_rotation                        = var.client_refresh_token_rotation
+      ui_customization_css                          = null
+      ui_customization_image_file                   = null
     }
   ]
 
