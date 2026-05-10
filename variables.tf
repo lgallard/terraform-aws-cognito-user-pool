@@ -128,6 +128,14 @@ variable "sms_configuration" {
   description = "The SMS Configuration"
   type        = map(any)
   default     = {}
+
+  validation {
+    condition = length(var.sms_configuration) == 0 ? true : (
+      (try(var.sms_configuration.external_id, null) != null && try(var.sms_configuration.sns_caller_arn, null) != null) ||
+      (try(var.sms_configuration.external_id, null) == null && try(var.sms_configuration.sns_caller_arn, null) == null)
+    )
+    error_message = "SMS configuration requires both external_id and sns_caller_arn to be provided together, or neither should be specified."
+  }
 }
 
 variable "sms_configuration_external_id" {
