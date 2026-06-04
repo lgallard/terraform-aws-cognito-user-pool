@@ -40,7 +40,7 @@ jobs:
     steps:
       - name: Checkout repository
         # Pin to specific SHA for supply chain security
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 1
 
@@ -143,9 +143,10 @@ jobs:
       - name: Run Claude Code Feature Discovery
         id: claude-discovery
         # Pin to specific version for supply chain security
-        uses: anthropics/claude-code-action@v1.0.0
+        uses: anthropics/claude-code-action@70a6e5256e9e2366a1ed5c041904a982ba3a328f # v1.0.135
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: "--model claude-sonnet-4-6"
 
           # MCP Configuration for Terraform and Context7 documentation access
           # Dependencies pinned to specific versions for supply chain security
