@@ -5,6 +5,18 @@
 
 * Phase 3 - Modernize client configs with dynamic block bug fixes ([#359](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/359)) ([3c42a1f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/3c42a1fa862ab7d666bd0a5f5ac322dc8993ec26))
 
+## [4.0.3](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/4.0.2...4.0.3) (2026-06-08)
+
+
+### Bug Fixes
+
+* release Terraform refactor commits ([#406](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/406)) ([5811c38](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/5811c38e92eb3188df428ad040b9c4a0151c7f07))
+
+
+### Code Refactoring
+
+* Phase 5 - Modernize security configurations (password, MFA, advanced security) ([#369](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/369)) ([cf917c9](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/cf917c9426e52a3980f4aac229b0412bfd2fd9f9))
+
 ## [4.0.2](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/4.0.1...4.0.2) (2026-05-07)
 
 
