@@ -37,36 +37,16 @@ jobs:
         uses: anthropics/claude-code-action@0cb4f3e5e764d2e00407d29b6bf0aa9df0976d88 # v1.0.146
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          claude_args: "--model claude-sonnet-4-6"
+          claude_args: >-
+            --model claude-sonnet-4-6
+            --mcp-config ${{ github.workspace }}/.github/claude-mcp-config.json
+            --allowedTools Bash(pre-commit run --files),Bash(terraform fmt),Bash(terraform validate),Bash(terraform-docs),mcp__terraform-server__get_provider_details,mcp__terraform-server__search_providers,mcp__terraform-server__search_modules,mcp__terraform-server__get_module_details,mcp__context7__resolve-library-id,mcp__context7__get-library-docs
 
           # This is an optional setting that allows Claude to read CI results on PRs
           additional_permissions: |
             actions: read
 
-          # MCP Configuration for Terraform and Context7 documentation access
-          # Dependencies pinned to specific versions for supply chain security
-          mcp_config: |
-            {
-              "mcpServers": {
-                "terraform": {
-                  "command": "npx",
-                  "args": [
-                    "-y",
-                    "@modelcontextprotocol/server-terraform@0.6.0"
-                  ]
-                },
-                "context7": {
-                  "command": "npx",
-                  "args": [
-                    "-y",
-                    "@upstash/context7-mcp@1.0.0"
-                  ]
-                }
-              }
-            }
-
-          # Allow Bash permissions for pre-commit hooks and documentation updates + MCP tools
-          allowed_tools: "Bash(pre-commit run --files),Bash(terraform fmt),Bash(terraform validate),Bash(terraform-docs),mcp__terraform-server__get_provider_details,mcp__terraform-server__search_providers,mcp__terraform-server__search_modules,mcp__terraform-server__get_module_details,mcp__context7__resolve-library-id,mcp__context7__get-library-docs"
+          # MCP config and allowed tools are passed through claude_args for claude-code-action v1.0.74+.
 
           # Optional: Specify model (defaults to Claude Sonnet 4, uncomment for Claude Opus 4)
           # model: "claude-sonnet-4-6"
@@ -78,7 +58,7 @@ jobs:
           # assignee_trigger: "claude-bot"
 
           # Subagent routing for specialized expertise
-          custom_instructions: |
+          prompt: |
             You have access to specialized subagents for this Terraform AWS Cognito User Pool module. Use them for relevant questions:
 
             **Subagent Routing Rules:**
