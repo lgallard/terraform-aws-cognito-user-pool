@@ -5,6 +5,74 @@
 
 * Phase 3 - Modernize client configs with dynamic block bug fixes ([#359](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/359)) ([3c42a1f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/3c42a1fa862ab7d666bd0a5f5ac322dc8993ec26))
 
+## [4.0.3](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/4.0.2...4.0.3) (2026-06-08)
+
+
+### Bug Fixes
+
+* release Terraform refactor commits ([#406](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/406)) ([5811c38](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/5811c38e92eb3188df428ad040b9c4a0151c7f07))
+
+
+### Code Refactoring
+
+* Phase 5 - Modernize security configurations (password, MFA, advanced security) ([#369](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/369)) ([cf917c9](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/cf917c9426e52a3980f4aac229b0412bfd2fd9f9))
+
+## [4.0.2](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/4.0.1...4.0.2) (2026-05-07)
+
+
+### Bug Fixes
+
+* align `clients_default` with `clients_parsed` to fix ternary types ([#399](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/399)) ([b49d5c0](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/b49d5c0940495a480e13aee694f00098c3888551))
+
+## [4.0.1](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/4.0.0...4.0.1) (2026-05-06)
+
+
+### Bug Fixes
+
+* pass through ui_customization_css/image_file in clients_parsed ([#395](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/395)) ([14cb470](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/14cb470104216f520e865bd9cb33cc40c754e924)), closes [#394](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/394)
+
+## [4.0.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/3.1.6...4.0.0) (2025-11-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove Terratest-based testing infrastructure in favor of AI-powered validation using specialized Claude Code subagents
+
+### Miscellaneous Chores
+
+* Remove tests and add AI validation analysis ([#389](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/389)) ([4917ec5](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/4917ec5f098c492b725cdaeac91a34dfc214b190))
+
+## [3.1.6](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/3.1.5...3.1.6) (2025-11-19)
+
+
+### Bug Fixes
+
+* use empty list instead of null for lambda_config when not configured ([#386](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/386)) ([34bfe85](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/34bfe85453fb51497b8e57ee3c4bed2b50810420)), closes [#385](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/385)
+
+## [3.1.5](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/3.1.4...3.1.5) (2025-11-14)
+
+
+### Bug Fixes
+
+* prevent lambda_config drift when no triggers are defined ([#383](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/383)) ([6103618](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/6103618644d5f7883f5772a2f80958786dbdee86)), closes [#382](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/382)
+
+## [3.1.4](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/3.1.3...3.1.4) (2025-11-02)
+
+
+### Bug Fixes
+
+* correct GitHub MCP server tool names for comment posting ([#376](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/376)) ([6494e76](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/6494e7613af289df2272c4860e0ad27e02975f9c))
+* enable GitHub MCP tools for codebot comment posting ([#375](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/375)) ([10299e8](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/10299e8d6d264ab07705f64855d08e5d008d5188))
+* enable subagent tools and verification to reduce false positives ([#373](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/373)) ([d73603a](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/d73603aa5b167fcc950f3f06923f6e6fc0b24f97))
+* prevent Invalid index error in UI customization during destroy ([#378](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/378)) ([adbf3d1](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/adbf3d190751228924dc1942a276ae7b25a4386e))
+
+## [3.1.3](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/3.1.2...3.1.3) (2025-10-27)
+
+
+### Bug Fixes
+
+* expand identity provider drift prevention for OAuth providers ([#371](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/371)) ([b2a9dfb](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/b2a9dfb927137e530ae21a82f995b1975b7efc28))
+
 ## [3.1.2](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/3.1.1...3.1.2) (2025-10-14)
 
 

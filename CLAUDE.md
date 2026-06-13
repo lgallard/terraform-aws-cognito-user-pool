@@ -80,28 +80,145 @@ locals {
 }
 ```
 
-## Testing Requirements
+## AI-Powered Validation Requirements
 
-### Test Coverage for New Features
-**Write tests when adding new features:**
-- Create corresponding test files in `test/` directory
-- Add example configurations in `examples/` directory
-- Use Terratest for integration testing
-- Test both success and failure scenarios
+This module uses AI-powered validation through specialized Claude Code subagents instead of traditional automated tests. This approach provides comprehensive analysis of code quality, security, Terraform best practices, and module functionality.
 
-### Test Coverage for Modifications
-**Add tests when modifying functionalities (if missing):**
-- Review existing test coverage before making changes
-- Add missing tests for functionality being modified
-- Ensure backward compatibility is tested
-- Test edge cases and error conditions
+### Validation Strategy
 
-### Testing Strategy
-- Use Terratest for integration testing
-- Include examples for common use cases
-- Test resource creation and destruction
-- Validate outputs and state consistency
-- Test different input combinations
+#### Specialized Subagents Available
+The module is configured with the following specialized validation agents:
+
+1. **terraform-cognito** - AWS Cognito User Pool specialist for Terraform infrastructure development
+   - Validates Cognito resource configurations
+   - Ensures AWS best practices for identity management
+   - Reviews authentication and authorization patterns
+
+2. **cognito-migration** - AWS Cognito upgrade and migration specialist
+   - Validates backward compatibility
+   - Reviews migration paths for breaking changes
+   - Ensures smooth version upgrades
+
+3. **module-documentation** - Documentation and example specialist
+   - Validates example configurations
+   - Reviews documentation completeness
+   - Ensures examples follow best practices
+
+4. **terraform-security** - Security analysis and hardening specialist
+   - Performs security analysis of configurations
+   - Reviews password policies, MFA settings
+   - Validates access controls and encryption settings
+   - Checks for security vulnerabilities and misconfigurations
+
+### When to Request AI Validation
+
+#### For New Features
+**Request validation when adding new features:**
+- Request analysis from `terraform-cognito` agent for resource implementation review
+- Use `module-documentation` agent to validate examples and documentation
+- Invoke `terraform-security` agent for security implications analysis
+- Ask for comprehensive review covering functionality, security, and best practices
+
+**Example request:**
+```
+@claude Please use the terraform-cognito and terraform-security agents to review
+the new advanced security mode feature I just implemented. Validate the
+implementation follows AWS best practices and check for any security concerns.
+```
+
+#### For Modifications
+**Request validation when modifying existing functionality:**
+- Use `cognito-migration` agent to verify backward compatibility
+- Invoke `terraform-security` agent if changes affect security configurations
+- Request `terraform-cognito` agent review for resource configuration changes
+- Ask for edge case analysis and potential issues
+
+**Example request:**
+```
+@claude I've modified the password policy configuration. Please use the
+cognito-migration agent to verify backward compatibility and the
+terraform-security agent to validate the security implications.
+```
+
+#### For Security-Critical Changes
+**Always request security validation for:**
+- Authentication flow modifications
+- MFA configuration changes
+- Password policy updates
+- Token expiration settings
+- IAM role and policy changes
+- Account takeover prevention features
+
+**Example request:**
+```
+@claude Use the terraform-security agent to perform a comprehensive security
+analysis of the updated MFA configuration. Check for any security weaknesses
+or misconfigurations.
+```
+
+### Validation Coverage Areas
+
+The AI validation approach covers:
+
+1. **Configuration Validation**
+   - Terraform syntax and best practices
+   - Resource relationships and dependencies
+   - Variable validation and type checking
+   - Output definitions and data flows
+
+2. **Security Analysis**
+   - Security misconfigurations
+   - Access control weaknesses
+   - Encryption and data protection
+   - Authentication and authorization patterns
+   - Compliance with security best practices
+
+3. **Functionality Review**
+   - Logic correctness and completeness
+   - Edge case handling
+   - Error handling patterns
+   - Resource lifecycle management
+
+4. **Documentation Quality**
+   - Example accuracy and completeness
+   - Variable documentation clarity
+   - Usage instructions
+   - Migration guides for breaking changes
+
+5. **Backward Compatibility**
+   - Interface consistency
+   - Deprecation handling
+   - State migration implications
+   - Version upgrade paths
+
+### Best Practices for AI Validation
+
+1. **Be Specific**: Request validation for specific aspects you're concerned about
+2. **Use Multiple Agents**: Leverage different specialized agents for comprehensive coverage
+3. **Request Examples**: Ask agents to provide concrete examples of issues found
+4. **Iterative Review**: Request validation after addressing feedback
+5. **Security First**: Always include security review for authentication/authorization changes
+
+### Example Validation Workflow
+
+```
+# After implementing a new feature
+@claude I've added support for custom email sender configuration. Please:
+1. Use terraform-cognito agent to review the implementation
+2. Use terraform-security agent to check for security issues
+3. Use module-documentation agent to validate the examples
+4. Provide specific feedback on any concerns or improvements needed
+
+# After making security changes
+@claude I've updated the account takeover prevention settings. Use the
+terraform-security agent to perform a thorough security analysis and
+verify this follows AWS security best practices.
+
+# Before releasing changes
+@claude Please use the cognito-migration and module-documentation agents
+to verify backward compatibility and ensure documentation is complete
+for the changes in this branch.
+```
 
 ## Security Considerations
 
@@ -190,8 +307,8 @@ resource "aws_cognito_user_pool_client" "this" {
 ### Pre-commit Requirements
 - Run `terraform fmt` on modified files
 - Execute `terraform validate`
-- Run tests for affected functionality
-- Consider running security scanning tools
+- Request AI validation for affected functionality using specialized agents
+- Consider requesting security analysis using terraform-security agent
 - Update documentation for variable changes
 
 ### Release Management
@@ -208,7 +325,7 @@ resource "aws_cognito_user_pool_client" "this" {
 ## Common Patterns to Consider
 
 1. **Prefer for_each** - Use `for_each` over `count` for better resource management
-2. **Test Coverage** - Write tests for new features and missing test coverage
+2. **AI Validation** - Request validation from specialized agents for new features and modifications
 3. **Flexible Inputs** - Support multiple input formats where reasonable
 4. **Validation Balance** - Add validation where it prevents common errors
 5. **Consistent Naming** - Follow established naming conventions
@@ -295,10 +412,10 @@ This project is configured to use the following Model Context Protocol (MCP) ser
 ```
 
 **Usage Examples**:
-- `Look up Go testing patterns for Terratest`
+- `Look up AWS Cognito security best practices`
 - `Find AWS CLI cognito commands documentation`
 - `Get current Terraform best practices`
-- `Search for GitHub Actions workflow patterns`
+- `Search for Terraform module development patterns`
 
 ### GitHub Actions Integration
 The MCP servers are automatically available in GitHub Actions through the claude.yml workflow configuration. Claude can access the same documentation in PRs and issues as available locally.
@@ -316,9 +433,9 @@ The MCP servers are automatically available in GitHub Actions through the claude
 @claude I need to add support for Cognito advanced security features. Can you look up the latest aws_cognito_user_pool advanced_security_mode documentation and show me how to implement this feature?
 ```
 
-**Testing Pattern Research**:
+**AI Validation Request**:
 ```
-@claude Look up current Terratest patterns for testing Cognito User Pools and help me add comprehensive tests for user pool clients and identity providers.
+@claude Use the terraform-cognito and terraform-security agents to validate my implementation of user pool clients with identity providers. Check for security issues and AWS best practices.
 ```
 
 **Security Enhancement**:

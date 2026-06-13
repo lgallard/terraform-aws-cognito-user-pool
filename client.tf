@@ -77,6 +77,8 @@ locals {
       write_attributes                              = var.client_write_attributes
       enable_token_revocation                       = var.client_enable_token_revocation
       refresh_token_rotation                        = var.client_refresh_token_rotation
+      ui_customization_css                          = null
+      ui_customization_image_file                   = null
     }
   ]
 
@@ -103,9 +105,11 @@ locals {
       e.prevent_user_existence_errors,
       try(e.client_prevent_user_existence_errors, null)
     )
-    write_attributes        = try(e.write_attributes, null)
-    enable_token_revocation = try(e.enable_token_revocation, null)
-    refresh_token_rotation  = try(e.refresh_token_rotation, {})
+    write_attributes            = try(e.write_attributes, null)
+    enable_token_revocation     = try(e.enable_token_revocation, null)
+    refresh_token_rotation      = try(e.refresh_token_rotation, {})
+    ui_customization_css        = try(e.ui_customization_css, null)
+    ui_customization_image_file = try(e.ui_customization_image_file, null)
     }
   ]
 

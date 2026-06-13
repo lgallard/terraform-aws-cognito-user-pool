@@ -40,10 +40,11 @@ assignees: []
 - [ ] Update main `README.md`
 - [ ] Add to `CHANGELOG.md` (will be automated by release-please)
 
-#### Testing & Validation
-- [ ] Add Terratest in `test/[feature-name]_test.go`
-- [ ] Add test fixtures in `test/fixtures/[feature-name]/`
-- [ ] Test with `examples/complete` scenario
+#### AI Validation & Quality Checks
+- [ ] Request validation from `terraform-cognito` agent for implementation review
+- [ ] Request validation from `terraform-security` agent for security analysis
+- [ ] Request validation from `module-documentation` agent for examples
+- [ ] Validate with `examples/complete` scenario
 - [ ] Run `terraform fmt`, `terraform validate`
 - [ ] Run `pre-commit run --all-files`
 
@@ -81,18 +82,19 @@ output "[feature_output]" {
 }
 ```
 
-### Testing Commands
+### Validation Commands
 ```bash
-# Test the specific example
+# Validate the specific example
 cd examples/[feature-name]
 terraform init
+terraform validate
 terraform plan
-terraform apply
-terraform destroy
 
-# Run comprehensive tests
-cd test/
-go test -v -timeout 30m -run TestTerraformCognito[FeatureName]
+# Request AI validation
+# Use specialized agents for comprehensive validation:
+# @claude Use terraform-cognito and terraform-security agents to validate
+# the [feature-name] implementation. Check for AWS best practices,
+# security concerns, and proper integration with existing module patterns.
 ```
 
 ### Implementation Notes
@@ -115,7 +117,7 @@ go test -v -timeout 30m -run TestTerraformCognito[FeatureName]
 
 ### Acceptance Criteria
 - [ ] Feature implemented following module patterns
-- [ ] All tests pass (`go test ./test/...`)
+- [ ] AI validation completed with specialized agents
 - [ ] Examples work as documented
 - [ ] Pre-commit hooks pass
 - [ ] Documentation complete and accurate

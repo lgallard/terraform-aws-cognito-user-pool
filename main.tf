@@ -199,7 +199,7 @@ resource "aws_cognito_user_pool" "pool" {
       advanced_security_mode = try(user_pool_add_ons.value.advanced_security_mode, null)
 
       dynamic "advanced_security_additional_flows" {
-        for_each = can(user_pool_add_ons.value.advanced_security_additional_flows) ? [1] : []
+        for_each = try(user_pool_add_ons.value.advanced_security_additional_flows, null) != null ? [1] : []
         content {
           custom_auth_mode = try(user_pool_add_ons.value.advanced_security_additional_flows, null)
         }
@@ -457,7 +457,7 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
       advanced_security_mode = try(user_pool_add_ons.value.advanced_security_mode, null)
 
       dynamic "advanced_security_additional_flows" {
-        for_each = can(user_pool_add_ons.value.advanced_security_additional_flows) ? [1] : []
+        for_each = try(user_pool_add_ons.value.advanced_security_additional_flows, null) != null ? [1] : []
         content {
           custom_auth_mode = try(user_pool_add_ons.value.advanced_security_additional_flows, null)
         }

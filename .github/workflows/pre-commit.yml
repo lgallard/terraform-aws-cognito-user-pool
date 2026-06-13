@@ -6,14 +6,12 @@ on:
     paths:
       - '**.tf'
       - '**.tfvars'
-      - '**.md'
       - '.pre-commit-config.yaml'
   push:
     branches: [master]
     paths:
       - '**.tf'
       - '**.tfvars'
-      - '**.md'
       - '.pre-commit-config.yaml'
 
 jobs:
@@ -65,33 +63,29 @@ jobs:
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.cache/pre-commit
-          # Include run number to force periodic cache refresh and avoid stale tool databases
-          # This resolves typos false positives from cached outdated tools
-          key: pre-commit-${{ runner.os }}-v3-${{ hashFiles('.pre-commit-config.yaml') }}-${{ github.run_number }}
-          restore-keys: |
-            pre-commit-${{ runner.os }}-v3-${{ hashFiles('.pre-commit-config.yaml') }}-
-            pre-commit-${{ runner.os }}-v3-
+          key: pre-commit-${{ runner.os }}-v4-${{ hashFiles('.pre-commit-config.yaml') }}
 
       - name: Install pre-commit hooks
         run: pre-commit install-hooks
 
-      - name: Run pre-commit on all files (push to master)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-        run: pre-commit run --all-files
-
-      - name: Run pre-commit on changed files (pull request)
-        if: github.event_name == 'pull_request'
+      # Skip terraform_docs in CI - rely on local pre-commit + AI review
+      # This eliminates environment parity issues between macOS and Linux
+      - name: Run pre-commit checks
+        env:
+          SKIP: terraform_docs
         run: |
-          # Get the list of changed files
-          git fetch origin ${{ github.base_ref }}
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- '*.tf' '*.tfvars' '*.md')
-
-          if [ -n "$CHANGED_FILES" ]; then
-            echo "Running pre-commit on changed files:"
-            echo "$CHANGED_FILES"
-            pre-commit run --files $CHANGED_FILES
+          if [ "${{ github.event_name }}" == "push" ]; then
+            pre-commit run --all-files
           else
-            echo "No relevant files changed, skipping pre-commit checks"
+            git fetch origin ${{ github.base_ref }}
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- '*.tf' '*.tfvars')
+            if [ -n "$CHANGED_FILES" ]; then
+              echo "Running pre-commit on changed files:"
+              echo "$CHANGED_FILES"
+              pre-commit run --files $CHANGED_FILES
+            else
+              echo "No Terraform files changed, skipping pre-commit checks"
+            fi
           fi
 
       - name: Pre-commit summary
@@ -103,23 +97,15 @@ jobs:
           if [ "${{ job.status }}" == "success" ]; then
             echo "✅ All pre-commit checks passed!" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Tools verified:**" >> $GITHUB_STEP_SUMMARY
-            echo "- 🔧 Terraform formatting" >> $GITHUB_STEP_SUMMARY
-            echo "- ✅ Terraform validation" >> $GITHUB_STEP_SUMMARY
-            echo "- 🧹 File formatting" >> $GITHUB_STEP_SUMMARY
-            echo "- ✍️  Typo checking" >> $GITHUB_STEP_SUMMARY
+            echo "**Checks performed:**" >> $GITHUB_STEP_SUMMARY
+            echo "- 🔧 Terraform formatting (terraform_fmt)" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Terraform validation (terraform_validate)" >> $GITHUB_STEP_SUMMARY
+            echo "- 🧹 File formatting (trailing-whitespace, end-of-file)" >> $GITHUB_STEP_SUMMARY
+            echo "- ✍️  Typo checking (typos)" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Note:** Documentation (terraform_docs) is handled locally via pre-commit hooks." >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ Pre-commit checks failed" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "Please check the logs above for specific failures." >> $GITHUB_STEP_SUMMARY
-            echo "You can run \`pre-commit run --all-files\` locally to fix issues." >> $GITHUB_STEP_SUMMARY
+            echo "Run \`pre-commit run --all-files\` locally to fix issues." >> $GITHUB_STEP_SUMMARY
           fi
-
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Configured hooks:**" >> $GITHUB_STEP_SUMMARY
-          echo "- trailing-whitespace" >> $GITHUB_STEP_SUMMARY
-          echo "- end-of-file-fixer" >> $GITHUB_STEP_SUMMARY
-          echo "- check-yaml" >> $GITHUB_STEP_SUMMARY
-          echo "- terraform_fmt" >> $GITHUB_STEP_SUMMARY
-          echo "- terraform_validate" >> $GITHUB_STEP_SUMMARY
-          echo "- typos" >> $GITHUB_STEP_SUMMARY

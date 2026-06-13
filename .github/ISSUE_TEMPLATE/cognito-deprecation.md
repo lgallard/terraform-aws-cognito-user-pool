@@ -55,8 +55,8 @@ assignees: []
   - [ ] Search all module files for deprecated feature usage
   - [ ] Identify all examples using the deprecated feature
   - [ ] Document impact on existing users
-- [ ] **Test Migration**
-  - [ ] Create test branch with new implementation
+- [ ] **Validate Migration**
+  - [ ] Create validation branch with new implementation
   - [ ] Validate functionality with new approach
   - [ ] Ensure backward compatibility during transition
 
@@ -82,12 +82,12 @@ assignees: []
   - [ ] Include migration instructions in validation messages
   - [ ] Plan timeline for complete removal
 
-#### Phase 4: Testing & Validation
-- [ ] **Comprehensive Testing**
-  - [ ] Test all examples with new implementation
-  - [ ] Run full test suite (`go test ./test/...`)
+#### Phase 4: AI Validation & Quality Assurance
+- [ ] **Comprehensive Validation**
+  - [ ] Validate all examples with new implementation
+  - [ ] Request AI validation with specialized agents
   - [ ] Validate backward compatibility
-  - [ ] Test upgrade scenarios
+  - [ ] Validate upgrade scenarios
 - [ ] **Quality Assurance**
   - [ ] Run `terraform fmt`, `terraform validate`
   - [ ] Run `pre-commit run --all-files`
@@ -175,26 +175,28 @@ module "cognito_new" {
 }
 ```
 
-### Testing Commands
+### Validation Commands
 ```bash
-# Test with deprecated feature (should show warnings)
+# Validate with deprecated feature (should show warnings)
 terraform plan
 
-# Test migration path
+# Validate migration path
 terraform init -upgrade
+terraform validate
 terraform plan
 
-# Run comprehensive tests
-cd test/
-go test -v -timeout 30m
+# Request AI validation
+# @claude Use cognito-migration and terraform-security agents to validate
+# the deprecation migration. Ensure backward compatibility and proper
+# migration path for users.
 ```
 
 ### Acceptance Criteria
 - [ ] All deprecated usage removed from module
-- [ ] Migration path documented and tested
+- [ ] Migration path documented and validated
 - [ ] Backward compatibility maintained (if possible)
 - [ ] Users have clear migration instructions
-- [ ] All tests pass with new implementation
+- [ ] AI validation completed with specialized agents
 - [ ] Documentation updated with migration guidance
 - [ ] Deprecation warnings implemented (if gradual migration)
 
