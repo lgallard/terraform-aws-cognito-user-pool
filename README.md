@@ -31,6 +31,39 @@ module "aws_cognito_user_pool_simple" {
 }
 ```
 
+### Example (log delivery configuration)
+
+You can configure Cognito user pool log delivery for notification errors and threat-protection user activity logs. Notification logs use `userNotification` with `ERROR` and CloudWatch Logs. User activity logs use `userAuthEvents` with `INFO` and require Cognito threat protection in audit-only or full-function mode plus the `PLUS` user pool tier.
+
+Configure the destination resources and required delivery permissions outside this module before enabling log delivery. For CloudWatch Logs destinations, the caller must have the Cognito and CloudWatch Logs delivery permissions documented by AWS, including `logs:CreateLogDelivery`, `logs:PutResourcePolicy`, `logs:DescribeResourcePolicies`, and `logs:DescribeLogGroups`; the target log group must be in the same AWS account as the user pool and must not be KMS-encrypted. For Firehose and S3 destinations, follow the AWS Cognito log export prerequisites for the target stream or bucket policy. Log payloads can include user identifiers and notification-delivery details, so set retention and access controls according to your compliance requirements. See `examples/log_delivery` for a complete example.
+
+```hcl
+resource "aws_cloudwatch_log_group" "cognito_user_notification_errors" {
+  name              = "/aws/vendedlogs/cognito/mypool/user-notification-errors"
+  retention_in_days = 30
+}
+
+module "aws_cognito_user_pool_with_log_delivery" {
+  source = "lgallard/cognito-user-pool/aws"
+
+  user_pool_name        = "mypool"
+  ignore_schema_changes = true
+
+  log_delivery_configuration = {
+    log_configurations = [
+      {
+        event_source = "userNotification"
+        log_level    = "ERROR"
+
+        cloud_watch_logs_configuration = {
+          log_group_arn = aws_cloudwatch_log_group.cognito_user_notification_errors.arn
+        }
+      }
+    ]
+  }
+}
+```
+
 ### Example (conditional creation)
 
 If you need to create Cognito User Pool resources conditionally in earlier form versions such as 0.11, 0.12 and 0.13 you can set the input variable `enabled` to false:
@@ -413,14 +446,14 @@ If you define lambda triggers using the `lambda_config` block or any `lambda_con
 
 This is needed because all parameters for the `lambda_config` block are optional and keeping all block attributes empty or null forces to create a `lambda_config {}` block very time a plan/apply is run.
 
-<!-- BEGIN_TF_DOCS -->
-
-
 ## ⚠️ Breaking Change Notice
 
 **Version 1.14.1+ requires AWS Provider 6.0+** due to changes in `advanced_security_additional_flows` syntax.
 
 📋 **[Migration Guide](MIGRATION.md)** - Complete upgrade instructions and troubleshooting
+
+<!-- BEGIN_TF_DOCS -->
+
 
 ## Requirements
 
@@ -433,8 +466,8 @@ This is needed because all parameters for the `lambda_config` block are optional
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.2.0 |
-| <a name="provider_awscc"></a> [awscc](#provider\_awscc) | 1.49.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.50.0 |
+| <a name="provider_awscc"></a> [awscc](#provider\_awscc) | 1.88.0 |
 
 ## Modules
 
@@ -445,6 +478,7 @@ No modules.
 | Name | Type |
 |------|------|
 | [aws_cognito_identity_provider.identity_provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_identity_provider) | resource |
+| [aws_cognito_log_delivery_configuration.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_log_delivery_configuration) | resource |
 | [aws_cognito_resource_server.resource](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_resource_server) | resource |
 | [aws_cognito_user_group.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_group) | resource |
 | [aws_cognito_user_pool.pool](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_pool) | resource |
@@ -474,13 +508,14 @@ No modules.
 | <a name="input_client_callback_urls"></a> [client\_callback\_urls](#input\_client\_callback\_urls) | List of allowed callback URLs for the identity providers | `list(string)` | `[]` | no |
 | <a name="input_client_default_redirect_uri"></a> [client\_default\_redirect\_uri](#input\_client\_default\_redirect\_uri) | The default redirect URI. Must be in the list of callback URLs | `string` | `""` | no |
 | <a name="input_client_enable_token_revocation"></a> [client\_enable\_token\_revocation](#input\_client\_enable\_token\_revocation) | Whether the client token can be revoked | `bool` | `true` | no |
-| <a name="input_client_explicit_auth_flows"></a> [client\_explicit\_auth\_flows](#input\_client\_explicit\_auth\_flows) | List of authentication flows (ADMIN\_NO\_SRP\_AUTH, CUSTOM\_AUTH\_FLOW\_ONLY, USER\_PASSWORD\_AUTH) | `list(string)` | `[]` | no |
+| <a name="input_client_explicit_auth_flows"></a> [client\_explicit\_auth\_flows](#input\_client\_explicit\_auth\_flows) | List of authentication flows (ADMIN\_NO\_SRP\_AUTH, CUSTOM\_AUTH\_FLOW\_ONLY, ALLOW\_USER\_PASSWORD\_AUTH, ALLOW\_ADMIN\_USER\_PASSWORD\_AUTH) | `list(string)` | `[]` | no |
 | <a name="input_client_generate_secret"></a> [client\_generate\_secret](#input\_client\_generate\_secret) | Should an application secret be generated | `bool` | `true` | no |
 | <a name="input_client_id_token_validity"></a> [client\_id\_token\_validity](#input\_client\_id\_token\_validity) | Time limit, between 5 minutes and 1 day, after which the ID token is no longer valid and cannot be used. Must be between 5 minutes and 1 day. Cannot be greater than refresh token expiration. This value will be overridden if you have entered a value in `token_validity_units`. | `number` | `60` | no |
 | <a name="input_client_logout_urls"></a> [client\_logout\_urls](#input\_client\_logout\_urls) | List of allowed logout URLs for the identity providers | `list(string)` | `[]` | no |
 | <a name="input_client_name"></a> [client\_name](#input\_client\_name) | The name of the application client | `string` | `null` | no |
 | <a name="input_client_prevent_user_existence_errors"></a> [client\_prevent\_user\_existence\_errors](#input\_client\_prevent\_user\_existence\_errors) | Choose which errors and responses are returned by Cognito APIs during authentication, account confirmation, and password recovery when the user does not exist in the user pool. When set to ENABLED and the user does not exist, authentication returns an error indicating either the username or password was incorrect, and account confirmation and password recovery return a response indicating a code was sent to a simulated destination. When set to LEGACY, those APIs will return a UserNotFoundException exception if the user does not exist in the user pool. | `string` | `null` | no |
 | <a name="input_client_read_attributes"></a> [client\_read\_attributes](#input\_client\_read\_attributes) | List of user pool attributes the application client can read from | `list(string)` | `[]` | no |
+| <a name="input_client_refresh_token_rotation"></a> [client\_refresh\_token\_rotation](#input\_client\_refresh\_token\_rotation) | Configuration block for refresh token rotation. When enabled, refresh token rotation is a security feature that provides a new set of tokens (ID, access, and refresh tokens) each time a client exchanges a refresh token to get new tokens. | <pre>object({<br/>    feature                    = optional(string)<br/>    retry_grace_period_seconds = optional(number)<br/>  })</pre> | `{}` | no |
 | <a name="input_client_refresh_token_validity"></a> [client\_refresh\_token\_validity](#input\_client\_refresh\_token\_validity) | The time limit in days refresh tokens are valid for. Must be between 60 minutes and 3650 days. This value will be overridden if you have entered a value in `token_validity_units` | `number` | `30` | no |
 | <a name="input_client_supported_identity_providers"></a> [client\_supported\_identity\_providers](#input\_client\_supported\_identity\_providers) | List of provider names for the identity providers that are supported on this client | `list(string)` | `[]` | no |
 | <a name="input_client_token_validity_units"></a> [client\_token\_validity\_units](#input\_client\_token\_validity\_units) | Configuration block for units in which the validity times are represented in. Valid values for the following arguments are: `seconds`, `minutes`, `hours` or `days`. | `any` | <pre>{<br/>  "access_token": "minutes",<br/>  "id_token": "minutes",<br/>  "refresh_token": "days"<br/>}</pre> | no |
@@ -488,7 +523,7 @@ No modules.
 | <a name="input_clients"></a> [clients](#input\_clients) | A container with the clients definitions | `any` | `[]` | no |
 | <a name="input_default_ui_customization_css"></a> [default\_ui\_customization\_css](#input\_default\_ui\_customization\_css) | CSS file content for default UI customization | `string` | `null` | no |
 | <a name="input_default_ui_customization_image_file"></a> [default\_ui\_customization\_image\_file](#input\_default\_ui\_customization\_image\_file) | Image file path for default UI customization | `string` | `null` | no |
-| <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection) | When active, DeletionProtection prevents accidental deletion of your user pool. Before you can delete a user pool that you have protected against deletion, you must deactivate this feature. Valid values are `ACTIVE` and `INACTIVE`. | `string` | `"INACTIVE"` | no |
+| <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection) | When active, DeletionProtection prevents accidental deletion of your user pool. Before you can delete a user pool that you have protected against deletion, you must deactivate this feature. Valid values are `ACTIVE` and `INACTIVE`. | `string` | `"ACTIVE"` | no |
 | <a name="input_device_configuration"></a> [device\_configuration](#input\_device\_configuration) | The configuration for the user pool's device tracking | `map(any)` | `{}` | no |
 | <a name="input_device_configuration_challenge_required_on_new_device"></a> [device\_configuration\_challenge\_required\_on\_new\_device](#input\_device\_configuration\_challenge\_required\_on\_new\_device) | Indicates whether a challenge is required on a new device. Only applicable to a new device | `bool` | `null` | no |
 | <a name="input_device_configuration_device_only_remembered_on_user_prompt"></a> [device\_configuration\_device\_only\_remembered\_on\_user\_prompt](#input\_device\_configuration\_device\_only\_remembered\_on\_user\_prompt) | If true, a device is only remembered on user prompt | `bool` | `null` | no |
@@ -506,7 +541,7 @@ No modules.
 | <a name="input_email_verification_subject"></a> [email\_verification\_subject](#input\_email\_verification\_subject) | A string representing the email verification subject | `string` | `null` | no |
 | <a name="input_enable_propagate_additional_user_context_data"></a> [enable\_propagate\_additional\_user\_context\_data](#input\_enable\_propagate\_additional\_user\_context\_data) | Enables the propagation of additional user context data | `bool` | `false` | no |
 | <a name="input_enabled"></a> [enabled](#input\_enabled) | Change to false to avoid deploying any resources | `bool` | `true` | no |
-| <a name="input_identity_providers"></a> [identity\_providers](#input\_identity\_providers) | Cognito Pool Identity Providers | `list(any)` | `[]` | no |
+| <a name="input_identity_providers"></a> [identity\_providers](#input\_identity\_providers) | List of identity provider configurations | <pre>list(object({<br/>    provider_name     = string<br/>    provider_type     = string<br/>    attribute_mapping = optional(map(string), {})<br/>    idp_identifiers   = optional(list(string), [])<br/>    provider_details  = optional(map(string), {})<br/>  }))</pre> | `[]` | no |
 | <a name="input_ignore_schema_changes"></a> [ignore\_schema\_changes](#input\_ignore\_schema\_changes) | Whether to ignore changes to Cognito User Pool schemas after creation. Set to true to prevent perpetual diffs when using custom schemas. This prevents AWS API errors since schema attributes cannot be modified or removed once created in Cognito. Due to Terraform limitations with conditional lifecycle blocks, this uses a dual-resource approach. Default is false for backward compatibility - set to true to enable the fix. | `bool` | `false` | no |
 | <a name="input_lambda_config"></a> [lambda\_config](#input\_lambda\_config) | A container for the AWS Lambda triggers associated with the user pool | `any` | `{}` | no |
 | <a name="input_lambda_config_create_auth_challenge"></a> [lambda\_config\_create\_auth\_challenge](#input\_lambda\_config\_create\_auth\_challenge) | The ARN of the lambda creating an authentication challenge. | `string` | `null` | no |
@@ -523,9 +558,10 @@ No modules.
 | <a name="input_lambda_config_pre_token_generation_config"></a> [lambda\_config\_pre\_token\_generation\_config](#input\_lambda\_config\_pre\_token\_generation\_config) | Allow to customize identity token claims before token generation | `any` | `{}` | no |
 | <a name="input_lambda_config_user_migration"></a> [lambda\_config\_user\_migration](#input\_lambda\_config\_user\_migration) | The user migration Lambda config type | `string` | `null` | no |
 | <a name="input_lambda_config_verify_auth_challenge_response"></a> [lambda\_config\_verify\_auth\_challenge\_response](#input\_lambda\_config\_verify\_auth\_challenge\_response) | Verifies the authentication challenge response | `string` | `null` | no |
+| <a name="input_log_delivery_configuration"></a> [log\_delivery\_configuration](#input\_log\_delivery\_configuration) | Cognito user pool log delivery configuration. Configure userNotification ERROR logs to CloudWatch Logs and userAuthEvents INFO logs to CloudWatch Logs, Firehose, or S3. userAuthEvents log export requires Cognito threat protection and the PLUS user pool tier. Target destinations and required delivery permissions/policies must be configured outside this module; CloudWatch log groups must be in the same AWS account as the user pool and must not be KMS-encrypted. | <pre>object({<br/>    log_configurations = list(object({<br/>      event_source = string<br/>      log_level    = string<br/><br/>      cloud_watch_logs_configuration = optional(object({<br/>        log_group_arn = string<br/>      }))<br/><br/>      firehose_configuration = optional(object({<br/>        stream_arn = string<br/>      }))<br/><br/>      s3_configuration = optional(object({<br/>        bucket_arn = string<br/>      }))<br/>    }))<br/>  })</pre> | `null` | no |
 | <a name="input_managed_login_branding"></a> [managed\_login\_branding](#input\_managed\_login\_branding) | Configuration for managed login branding. Map of branding configurations where each key represents a branding instance | <pre>map(object({<br/>    client_id = string<br/>    assets = optional(list(object({<br/>      bytes       = string<br/>      category    = string<br/>      color_mode  = string<br/>      extension   = string<br/>      resource_id = optional(string)<br/>    })), [])<br/>    settings                    = optional(string)<br/>    return_merged_resources     = optional(bool, false)<br/>    use_cognito_provided_values = optional(bool, false)<br/>  }))</pre> | `{}` | no |
 | <a name="input_managed_login_branding_enabled"></a> [managed\_login\_branding\_enabled](#input\_managed\_login\_branding\_enabled) | Whether to enable managed login branding. Requires awscc provider to be configured in root module. See README for setup instructions. | `bool` | `false` | no |
-| <a name="input_mfa_configuration"></a> [mfa\_configuration](#input\_mfa\_configuration) | Set to enable multi-factor authentication. Must be one of the following values (ON, OFF, OPTIONAL) | `string` | `"OFF"` | no |
+| <a name="input_mfa_configuration"></a> [mfa\_configuration](#input\_mfa\_configuration) | Set to enable multi-factor authentication. Must be one of the following values (ON, OFF, OPTIONAL) | `string` | `"OPTIONAL"` | no |
 | <a name="input_number_schemas"></a> [number\_schemas](#input\_number\_schemas) | A container with the number schema attributes of a user pool. Maximum of 50 attributes | `list(any)` | `[]` | no |
 | <a name="input_password_policy"></a> [password\_policy](#input\_password\_policy) | A container for information about the user pool password policy | <pre>object({<br/>    minimum_length                   = number,<br/>    require_lowercase                = bool,<br/>    require_numbers                  = bool,<br/>    require_symbols                  = bool,<br/>    require_uppercase                = bool,<br/>    temporary_password_validity_days = number<br/>    password_history_size            = number<br/>  })</pre> | `null` | no |
 | <a name="input_password_policy_minimum_length"></a> [password\_policy\_minimum\_length](#input\_password\_policy\_minimum\_length) | The minimum length of the password policy that you have set | `number` | `8` | no |
@@ -534,13 +570,13 @@ No modules.
 | <a name="input_password_policy_require_numbers"></a> [password\_policy\_require\_numbers](#input\_password\_policy\_require\_numbers) | Whether you have required users to use at least one number in their password | `bool` | `true` | no |
 | <a name="input_password_policy_require_symbols"></a> [password\_policy\_require\_symbols](#input\_password\_policy\_require\_symbols) | Whether you have required users to use at least one symbol in their password | `bool` | `true` | no |
 | <a name="input_password_policy_require_uppercase"></a> [password\_policy\_require\_uppercase](#input\_password\_policy\_require\_uppercase) | Whether you have required users to use at least one uppercase letter in their password | `bool` | `true` | no |
-| <a name="input_password_policy_temporary_password_validity_days"></a> [password\_policy\_temporary\_password\_validity\_days](#input\_password\_policy\_temporary\_password\_validity\_days) | The minimum length of the password policy that you have set | `number` | `7` | no |
+| <a name="input_password_policy_temporary_password_validity_days"></a> [password\_policy\_temporary\_password\_validity\_days](#input\_password\_policy\_temporary\_password\_validity\_days) | The user account expiration limit, in days, after which the account is no longer usable | `number` | `7` | no |
 | <a name="input_recovery_mechanisms"></a> [recovery\_mechanisms](#input\_recovery\_mechanisms) | The list of Account Recovery Options | `list(any)` | `[]` | no |
 | <a name="input_resource_server_identifier"></a> [resource\_server\_identifier](#input\_resource\_server\_identifier) | An identifier for the resource server | `string` | `null` | no |
 | <a name="input_resource_server_name"></a> [resource\_server\_name](#input\_resource\_server\_name) | A name for the resource server | `string` | `null` | no |
 | <a name="input_resource_server_scope_description"></a> [resource\_server\_scope\_description](#input\_resource\_server\_scope\_description) | The scope description | `string` | `null` | no |
 | <a name="input_resource_server_scope_name"></a> [resource\_server\_scope\_name](#input\_resource\_server\_scope\_name) | The scope name | `string` | `null` | no |
-| <a name="input_resource_servers"></a> [resource\_servers](#input\_resource\_servers) | A container with the user\_groups definitions | `list(any)` | `[]` | no |
+| <a name="input_resource_servers"></a> [resource\_servers](#input\_resource\_servers) | A container with the resource\_servers definitions | `list(any)` | `[]` | no |
 | <a name="input_schemas"></a> [schemas](#input\_schemas) | A container with the schema attributes of a user pool. Maximum of 50 attributes | `list(any)` | `[]` | no |
 | <a name="input_sign_in_policy"></a> [sign\_in\_policy](#input\_sign\_in\_policy) | Configuration block for sign-in policy. Allows configuring additional sign-in mechanisms like OTP | <pre>object({<br/>    allowed_first_auth_factors = list(string)<br/>  })</pre> | `null` | no |
 | <a name="input_sign_in_policy_allowed_first_auth_factors"></a> [sign\_in\_policy\_allowed\_first\_auth\_factors](#input\_sign\_in\_policy\_allowed\_first\_auth\_factors) | List of allowed first authentication factors. Valid values: PASSWORD, EMAIL\_OTP, SMS\_OTP | `list(string)` | `[]` | no |
@@ -594,6 +630,7 @@ No modules.
 | <a name="output_endpoint"></a> [endpoint](#output\_endpoint) | The endpoint name of the user pool. Example format: cognito-idp.REGION.amazonaws.com/xxxx\_yyyyy |
 | <a name="output_id"></a> [id](#output\_id) | The id of the user pool |
 | <a name="output_last_modified_date"></a> [last\_modified\_date](#output\_last\_modified\_date) | The date the user pool was last modified |
+| <a name="output_log_delivery_configuration"></a> [log\_delivery\_configuration](#output\_log\_delivery\_configuration) | The Cognito user pool log delivery configuration |
 | <a name="output_managed_login_branding"></a> [managed\_login\_branding](#output\_managed\_login\_branding) | Map of managed login branding configurations (deprecated - use managed\_login\_branding\_details) |
 | <a name="output_managed_login_branding_details"></a> [managed\_login\_branding\_details](#output\_managed\_login\_branding\_details) | Complete managed login branding details |
 | <a name="output_managed_login_branding_ids"></a> [managed\_login\_branding\_ids](#output\_managed\_login\_branding\_ids) | Map of managed login branding IDs (deprecated - use managed\_login\_branding\_details.ids) |
