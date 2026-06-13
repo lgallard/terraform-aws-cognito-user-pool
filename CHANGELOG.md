@@ -5,6 +5,13 @@
 
 * Phase 3 - Modernize client configs with dynamic block bug fixes ([#359](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/359)) ([3c42a1f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/3c42a1fa862ab7d666bd0a5f5ac322dc8993ec26))
 
+## [4.0.4](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/4.0.3...4.0.4) (2026-06-13)
+
+
+### Code Refactoring
+
+* modernize core user pool configuration ([#405](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/405)) ([df6a801](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/df6a801816ebd55cf240463aaa6ca55d6babc4e9))
+
 ## [4.0.3](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/4.0.2...4.0.3) (2026-06-08)
 
 
