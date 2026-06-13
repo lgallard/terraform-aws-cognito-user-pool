@@ -29,6 +29,17 @@ output "name" {
 }
 
 #
+# aws_cognito_log_delivery_configuration
+#
+output "log_delivery_configuration" {
+  description = "The Cognito user pool log delivery configuration"
+  value = var.enabled && var.log_delivery_configuration != null ? {
+    user_pool_id       = aws_cognito_log_delivery_configuration.this["this"].user_pool_id
+    log_configurations = aws_cognito_log_delivery_configuration.this["this"].log_configurations
+  } : null
+}
+
+#
 # aws_cognito_user_pool_domain
 #
 output "domain_aws_account_id" {
