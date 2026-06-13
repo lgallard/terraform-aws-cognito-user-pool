@@ -62,7 +62,7 @@ jobs:
     steps:
       - name: Checkout repository
         # Pin to specific SHA for supply chain security
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 1
 
@@ -125,7 +125,7 @@ jobs:
       - name: Run Claude Code
         id: claude
         # Pin to specific version for supply chain security
-        uses: anthropics/claude-code-action@v1.0.0
+        uses: anthropics/claude-code-action@0cb4f3e5e764d2e00407d29b6bf0aa9df0976d88 # v1.0.146
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
@@ -133,32 +133,12 @@ jobs:
           additional_permissions: |
             actions: read
 
-          # MCP Configuration for Terraform and Context7 documentation access
-          # Dependencies pinned to specific versions for supply chain security
-          mcp_config: |
-            {
-              "mcpServers": {
-                "terraform": {
-                  "command": "npx",
-                  "args": [
-                    "-y",
-                    "@modelcontextprotocol/server-terraform@0.6.0"
-                  ]
-                },
-                "context7": {
-                  "command": "npx",
-                  "args": [
-                    "-y",
-                    "@upstash/context7-mcp@1.0.0"
-                  ]
-                }
-              }
-            }
+          # MCP configuration is passed through claude_args for claude-code-action v1.0.74+.
 
           # Required tool permissions for GitHub commenting (v1.0 format)
           # Task: enables subagent invocation | Read/Grep/Glob: enables code examination
           # mcp__github_comment__*: enables GitHub comment posting | mcp__github_ci__*: enables CI status checks
-          claude_args: "--allowedTools Task,Read,Grep,Glob,Bash(gh pr comment:*),Bash(gh api:*),mcp__github_comment__*,mcp__github_ci__*,mcp__terraform-server__get_provider_details,mcp__terraform-server__search_providers,mcp__terraform-server__search_modules,mcp__terraform-server__get_module_details,mcp__context7__resolve-library-id,mcp__context7__get-library-docs"
+          claude_args: '--model claude-sonnet-4-6 --mcp-config ${{ github.workspace }}/.github/claude-mcp-config.json --allowedTools Task,Read,Grep,Glob,Bash(gh pr comment:*),Bash(gh api:*),mcp__github_comment__*,mcp__github_ci__*,mcp__terraform-server__get_provider_details,mcp__terraform-server__search_providers,mcp__terraform-server__search_modules,mcp__terraform-server__get_module_details,mcp__context7__resolve-library-id,mcp__context7__get-library-docs'
 
           # Set trigger phrase for codebot mentions
           trigger_phrase: "codebot"

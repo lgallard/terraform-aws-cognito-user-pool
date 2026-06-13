@@ -40,7 +40,7 @@ jobs:
     steps:
       - name: Checkout repository
         # Pin to specific SHA for supply chain security
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 1
 
@@ -143,51 +143,19 @@ jobs:
       - name: Run Claude Code Feature Discovery
         id: claude-discovery
         # Pin to specific version for supply chain security
-        uses: anthropics/claude-code-action@v1.0.0
+        uses: anthropics/claude-code-action@0cb4f3e5e764d2e00407d29b6bf0aa9df0976d88 # v1.0.146
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: >-
+            --model claude-sonnet-4-6
+            --mcp-config ${{ github.workspace }}/.github/claude-mcp-config.json
+            --allowedTools mcp__terraform-server__getProviderDocs,mcp__terraform-server__resolveProviderDocID,mcp__terraform-server__searchModules,mcp__terraform-server__moduleDetails,mcp__context7__resolve-library-id,mcp__context7__get-library-docs,Bash(git diff),Bash(git status),Bash(gh issue create),Bash(gh issue list),Bash(jq),Bash(cat),Bash(echo)
 
-          # MCP Configuration for Terraform and Context7 documentation access
-          # Dependencies pinned to specific versions for supply chain security
-          mcp_config: |
-            {
-              "mcpServers": {
-                "terraform": {
-                  "command": "npx",
-                  "args": [
-                    "-y",
-                    "@modelcontextprotocol/server-terraform@0.6.0"
-                  ]
-                },
-                "context7": {
-                  "command": "npx",
-                  "args": [
-                    "-y",
-                    "@upstash/context7-mcp@1.0.0"
-                  ]
-                }
-              }
-            }
+          # MCP config and allowed tools are passed through claude_args for claude-code-action v1.0.74+.
 
-          # Allow necessary tools for feature discovery
-          allowed_tools: |
-            mcp__terraform-server__getProviderDocs
-            mcp__terraform-server__resolveProviderDocID
-            mcp__terraform-server__searchModules
-            mcp__terraform-server__moduleDetails
-            mcp__context7__resolve-library-id
-            mcp__context7__get-library-docs
-            Bash(git diff)
-            Bash(git status)
-            Bash(gh issue create)
-            Bash(gh issue list)
-            Bash(jq)
-            Bash(cat)
-            Bash(echo)
-
-          # Direct prompt for Claude Code to perform feature discovery
+          # Prompt for Claude Code to perform feature discovery
           # Use environment variables for secure parameter passing
-          direct_prompt: |
+          prompt: |
             # Cognito User Pool Feature Discovery Analysis
 
             You are performing automated feature discovery for the terraform-aws-cognito-user-pool module.

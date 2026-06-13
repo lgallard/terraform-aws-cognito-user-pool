@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "terraform-server": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-terraform@0.6.0"
+      ]
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp@1.0.0"
+      ]
+    }
+  }
+}
