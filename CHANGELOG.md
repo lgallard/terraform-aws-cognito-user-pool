@@ -5,6 +5,13 @@
 
 * Phase 3 - Modernize client configs with dynamic block bug fixes ([#359](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/359)) ([3c42a1f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/3c42a1fa862ab7d666bd0a5f5ac322dc8993ec26))
 
+## [4.1.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/4.0.4...4.1.0) (2026-06-29)
+
+
+### Features
+
+* add Cognito log delivery configuration ([#413](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/413)) ([15b51ab](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/15b51ab9570e72421adc7d422c385766cddf7628))
+
 ## [4.0.4](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/4.0.3...4.0.4) (2026-06-13)
 
 
