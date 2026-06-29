@@ -28,6 +28,15 @@ user_pool_add_ons {
 }
 ```
 
+## ⚠️ Action required: documented defaults now match module code
+
+> ⚠️ **Review these defaults before upgrading.** This release regenerates the README input table with current module defaults. The module code already used these defaults before this release, but the published README table was stale. If your configuration relied on the previously documented values, pin the variables explicitly before applying.
+
+- `deletion_protection` is `"ACTIVE"` in module code. If you require destroy-friendly behavior, set `deletion_protection = "INACTIVE"` explicitly before destroying a user pool.
+- `mfa_configuration` is `"OPTIONAL"` in module code. If you require MFA to remain disabled, set `mfa_configuration = "OFF"` explicitly.
+
+Review your Terraform plan and pin these inputs explicitly if your intended behavior differs from the module defaults.
+
 ### Migration Steps
 
 #### 1. Update Your Provider Version

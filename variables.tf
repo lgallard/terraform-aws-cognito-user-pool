@@ -624,6 +624,86 @@ variable "user_pool_add_ons_advanced_security_additional_flows" {
   }
 }
 
+# aws_cognito_log_delivery_configuration
+variable "log_delivery_configuration" {
+  description = "Cognito user pool log delivery configuration. Configure userNotification ERROR logs to CloudWatch Logs and userAuthEvents INFO logs to CloudWatch Logs, Firehose, or S3. userAuthEvents log export requires Cognito threat protection and the PLUS user pool tier. Target destinations and required delivery permissions/policies must be configured outside this module; CloudWatch log groups must be in the same AWS account as the user pool and must not be KMS-encrypted."
+  type = object({
+    log_configurations = list(object({
+      event_source = string
+      log_level    = string
+
+      cloud_watch_logs_configuration = optional(object({
+        log_group_arn = string
+      }))
+
+      firehose_configuration = optional(object({
+        stream_arn = string
+      }))
+
+      s3_configuration = optional(object({
+        bucket_arn = string
+      }))
+    }))
+  })
+  default = null
+
+  validation {
+    condition     = var.log_delivery_configuration == null ? true : length(var.log_delivery_configuration.log_configurations) >= 1 && length(var.log_delivery_configuration.log_configurations) <= 2
+    error_message = "log_delivery_configuration.log_configurations must contain one or two log configurations."
+  }
+
+  validation {
+    condition = var.log_delivery_configuration == null ? true : alltrue([
+      for config in var.log_delivery_configuration.log_configurations : contains(["userNotification", "userAuthEvents"], config.event_source)
+    ])
+    error_message = "Each log delivery configuration event_source must be one of: userNotification, userAuthEvents."
+  }
+
+  validation {
+    condition = var.log_delivery_configuration == null ? true : alltrue([
+      for config in var.log_delivery_configuration.log_configurations : contains(["ERROR", "INFO"], config.log_level)
+    ])
+    error_message = "Each log delivery configuration log_level must be one of: ERROR, INFO."
+  }
+
+  # AWS Cognito LogConfigurationType currently pairs event sources and log levels:
+  # userNotification sends error-level notification delivery logs to CloudWatch Logs,
+  # while userAuthEvents sends info-level threat-protection activity logs.
+  validation {
+    condition = var.log_delivery_configuration == null ? true : alltrue([
+      for config in var.log_delivery_configuration.log_configurations :
+      (config.event_source == "userNotification" && config.log_level == "ERROR") ||
+      (config.event_source == "userAuthEvents" && config.log_level == "INFO")
+    ])
+    error_message = "userNotification log configurations must use log_level ERROR; userAuthEvents log configurations must use log_level INFO."
+  }
+
+  validation {
+    condition = var.log_delivery_configuration == null ? true : alltrue([
+      for config in var.log_delivery_configuration.log_configurations :
+      length(compact([
+        config.cloud_watch_logs_configuration != null ? "cloudwatch" : "",
+        config.firehose_configuration != null ? "firehose" : "",
+        config.s3_configuration != null ? "s3" : ""
+      ])) == 1
+    ])
+    error_message = "Each log delivery configuration must specify exactly one destination configuration."
+  }
+
+  validation {
+    condition = var.log_delivery_configuration == null ? true : alltrue([
+      for config in var.log_delivery_configuration.log_configurations :
+      config.event_source == "userNotification" ? try(config.cloud_watch_logs_configuration, null) != null : true
+    ])
+    error_message = "userNotification log configurations can only use cloud_watch_logs_configuration."
+  }
+
+  validation {
+    condition     = var.log_delivery_configuration == null ? true : length(distinct([for config in var.log_delivery_configuration.log_configurations : config.event_source])) == length(var.log_delivery_configuration.log_configurations)
+    error_message = "log_delivery_configuration.log_configurations can contain at most one configuration for each event_source."
+  }
+}
+
 # verification_message_template
 variable "verification_message_template" {
   description = "The verification message templates configuration"
