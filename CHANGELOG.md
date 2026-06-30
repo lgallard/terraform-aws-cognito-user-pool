@@ -5,6 +5,13 @@
 
 * Phase 3 - Modernize client configs with dynamic block bug fixes ([#359](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/359)) ([3c42a1f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/3c42a1fa862ab7d666bd0a5f5ac322dc8993ec26))
 
+## [4.1.1](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/4.1.0...4.1.1) (2026-06-30)
+
+
+### Bug Fixes
+
+* ignore Apple private_key and Google auto-populated provider_details keys ([#416](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/416)) ([0971164](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/09711642c8a23551db1f69a0d5af2f9503f48289))
+
 ## [4.1.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/4.0.4...4.1.0) (2026-06-29)
 
 
