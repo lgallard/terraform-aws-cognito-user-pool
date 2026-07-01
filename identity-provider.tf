@@ -18,6 +18,7 @@ resource "aws_cognito_identity_provider" "identity_provider" {
     ignore_changes = [
       # SAML provider auto-managed fields
       provider_details["ActiveEncryptionCertificate"],
+      provider_details["SSORedirectBindingURI"], # Auto-derived by AWS from the SAML metadata SingleSignOnService (HTTP-Redirect)
 
       # OAuth provider auto-managed fields that may cause drift
       provider_details["authorize_url"], # May be updated via OIDC discovery
