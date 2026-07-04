@@ -1114,7 +1114,7 @@ variable "sign_in_policy_allowed_first_auth_factors" {
 # Managed Login Branding
 #
 variable "managed_login_branding_enabled" {
-  description = "Whether to enable managed login branding. Requires awscc provider to be configured in root module. See README for setup instructions."
+  description = "Whether to enable managed login branding using the native AWS provider resource."
 
   type    = bool
   default = false
@@ -1132,7 +1132,7 @@ variable "managed_login_branding" {
       resource_id = optional(string)
     })), [])
     settings                    = optional(string)
-    return_merged_resources     = optional(bool, false)
+    return_merged_resources     = optional(bool, false) # Deprecated legacy awscc option; native AWS provider exposes merged settings via settings_all.
     use_cognito_provided_values = optional(bool, false)
   }))
   default = {}

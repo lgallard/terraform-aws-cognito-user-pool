@@ -37,6 +37,43 @@ user_pool_add_ons {
 
 Review your Terraform plan and pin these inputs explicitly if your intended behavior differs from the module defaults.
 
+## ⚠️ Managed login branding moved from AWSCC to native AWS provider
+
+Managed login branding now uses the native `hashicorp/aws` provider resource:
+
+- old resource address: `awscc_cognito_managed_login_branding.branding`
+- new resource address: `aws_cognito_managed_login_branding.branding`
+
+The module input shape is intentionally preserved for compatibility. Existing `managed_login_branding` configurations can keep using `assets` with the singular `extension` attribute; the module maps those values to the native provider `asset` blocks internally.
+
+### What changed
+
+- The `awscc` provider is no longer required for managed login branding.
+- `return_merged_resources` is retained as a legacy input for compatibility, but the native provider exposes merged Cognito defaults through the `settings_all` attribute instead.
+- Outputs continue to expose `managed_login_branding_details`, `managed_login_branding`, and `managed_login_branding_ids`.
+
+### Existing state migration
+
+If you already applied managed login branding with an older module version, move or import state before applying the new version to avoid Terraform planning a replacement.
+
+For each branding key, move the Terraform state address from the AWSCC resource to the native AWS resource:
+
+```bash
+terraform state mv \
+  'module.cognito_user_pool.awscc_cognito_managed_login_branding.branding["main"]' \
+  'module.cognito_user_pool.aws_cognito_managed_login_branding.branding["main"]'
+```
+
+If state move is not possible, import the native resource using the user pool ID and managed login branding ID separated by a comma:
+
+```bash
+terraform import \
+  'module.cognito_user_pool.aws_cognito_managed_login_branding.branding["main"]' \
+  'us-east-1_example,managed-login-branding-id'
+```
+
+Then run `terraform plan` and confirm Terraform does not intend to recreate the branding resource.
+
 ### Migration Steps
 
 #### 1. Update Your Provider Version
