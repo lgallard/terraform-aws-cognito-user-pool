@@ -263,10 +263,12 @@ resource "aws_cognito_user_pool" "pool" {
   # tags
   tags = var.tags
 
+  # WebAuthn constraints depend on multiple module inputs, so lifecycle
+  # preconditions keep the failure close to the managed user pool resource.
   lifecycle {
     precondition {
-      condition     = var.web_authn_configuration == null || (var.domain != null && var.domain != "" && var.domain_managed_login_version == 2)
-      error_message = "web_authn_configuration requires domain to be set and domain_managed_login_version = 2 (managed login v2)."
+      condition     = var.web_authn_configuration == null || (var.domain != null && var.domain != "" && var.domain_managed_login_version >= 2)
+      error_message = "web_authn_configuration requires domain to be set and domain_managed_login_version >= 2 (managed login v2)."
     }
 
     precondition {
@@ -545,9 +547,11 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   lifecycle {
     ignore_changes = [schema]
 
+    # WebAuthn constraints depend on multiple module inputs, so lifecycle
+    # preconditions keep the failure close to the managed user pool resource.
     precondition {
-      condition     = var.web_authn_configuration == null || (var.domain != null && var.domain != "" && var.domain_managed_login_version == 2)
-      error_message = "web_authn_configuration requires domain to be set and domain_managed_login_version = 2 (managed login v2)."
+      condition     = var.web_authn_configuration == null || (var.domain != null && var.domain != "" && var.domain_managed_login_version >= 2)
+      error_message = "web_authn_configuration requires domain to be set and domain_managed_login_version >= 2 (managed login v2)."
     }
 
     precondition {
