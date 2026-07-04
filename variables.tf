@@ -1121,7 +1121,7 @@ variable "managed_login_branding_enabled" {
 }
 
 variable "managed_login_branding" {
-  description = "Configuration for managed login branding. Map of branding configurations where each key represents a branding instance. The legacy return_merged_resources option is retained for input compatibility but is a no-op with the native AWS provider; merged Cognito defaults are exposed through managed_login_branding_details.configurations[*].settings_all. The settings and use_cognito_provided_values arguments are mutually exclusive; when settings is provided the module omits use_cognito_provided_values for the native provider."
+  description = "Configuration for managed login branding. Map of branding configurations where each key represents a branding instance. client_id accepts either a module-managed client name or a literal Cognito app client ID. The legacy return_merged_resources option is no longer supported with the native AWS provider; merged Cognito defaults are exposed through managed_login_branding_details.configurations[*].settings_all. The settings and use_cognito_provided_values arguments are mutually exclusive; when settings is provided the module omits use_cognito_provided_values for the native provider."
   type = map(object({
     client_id = string
     assets = optional(list(object({
@@ -1186,5 +1186,19 @@ variable "managed_login_branding" {
       for config in values(var.managed_login_branding) : !(config.settings != null && config.use_cognito_provided_values)
     ])
     error_message = "Each managed_login_branding entry must not set both settings and use_cognito_provided_values = true; these arguments are mutually exclusive in the native AWS provider."
+  }
+
+  validation {
+    condition = alltrue([
+      for config in values(var.managed_login_branding) : config.settings == null ? true : can(jsondecode(config.settings))
+    ])
+    error_message = "Each managed_login_branding settings value must be valid JSON when provided."
+  }
+
+  validation {
+    condition = alltrue([
+      for config in values(var.managed_login_branding) : !config.return_merged_resources
+    ])
+    error_message = "return_merged_resources is not supported with the native AWS provider and has no effect. Use managed_login_branding_details.configurations[*].settings_all to read effective merged Cognito defaults."
   }
 }

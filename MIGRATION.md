@@ -39,7 +39,7 @@ Review your Terraform plan and pin these inputs explicitly if your intended beha
 
 ## ⚠️ Managed login branding moved from AWSCC to native AWS provider
 
-Managed login branding now uses the native `hashicorp/aws` provider resource, introduced in AWS provider **6.12.0**:
+Managed login branding now uses the native `hashicorp/aws` provider resource, introduced in AWS provider **6.12.0**. This raises the module's AWS provider floor and changes the shape of the managed login branding `assets` output, so consumers should treat this as a breaking migration and follow the steps below before applying:
 
 - old resource address: `awscc_cognito_managed_login_branding.branding`
 - new resource address: `aws_cognito_managed_login_branding.branding`
@@ -62,7 +62,13 @@ If you already applied managed login branding with an older module version, move
 Recommended safe order:
 
 1. Keep both `aws` and `awscc` provider blocks available in the root module.
-2. Back up state before any state operation:
+2. Back up state before any state operation. Terraform state can contain sensitive values such as Cognito app client secrets, identity provider credentials, and Base64 asset bytes. Verify `*.tfstate` is ignored by version control before creating a local backup, never commit state backups, and prefer encrypting the backup when possible:
+
+   ```bash
+   terraform state pull | gpg --symmetric > pre-managed-login-branding-migration.tfstate.gpg
+   ```
+
+   If you create an unencrypted backup instead, protect it carefully and delete it after the migration is verified:
 
    ```bash
    terraform state pull > pre-managed-login-branding-migration.tfstate
