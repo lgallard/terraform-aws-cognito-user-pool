@@ -42,10 +42,11 @@ module "aws_cognito_user_pool" {
 
       # ALLOW_USER_AUTH enables Cognito choice-based auth, including passkeys,
       # OTP, password, and SRP challenges, without separate password flow grants.
-      # During migration, keep ALLOW_USER_PASSWORD_AUTH until SDK clients stop
+      # During migration, uncomment ALLOW_USER_PASSWORD_AUTH until SDK clients stop
       # initiating the legacy USER_PASSWORD_AUTH flow directly.
       explicit_auth_flows = [
         "ALLOW_USER_AUTH",
+        # "ALLOW_USER_PASSWORD_AUTH",
         "ALLOW_USER_SRP_AUTH",
         "ALLOW_REFRESH_TOKEN_AUTH"
       ]

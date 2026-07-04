@@ -1165,8 +1165,18 @@ variable "web_authn_configuration" {
   }
 
   validation {
+    condition     = var.web_authn_configuration == null ? true : try(var.web_authn_configuration.relying_party_id, null) != null || try(var.web_authn_configuration.user_verification, null) != null
+    error_message = "web_authn_configuration must specify at least one of relying_party_id or user_verification."
+  }
+
+  validation {
     condition     = var.web_authn_configuration == null ? true : try(var.web_authn_configuration.relying_party_id, null) == null || can(regex("^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$", var.web_authn_configuration.relying_party_id))
     error_message = "web_authn_configuration.relying_party_id must be a registrable domain such as example.com, not a full URL."
+  }
+
+  validation {
+    condition     = var.web_authn_configuration == null ? true : try(var.web_authn_configuration.relying_party_id, null) == null || !can(regex("^\\d+\\.\\d+\\.\\d+\\.\\d+$", var.web_authn_configuration.relying_party_id))
+    error_message = "web_authn_configuration.relying_party_id must be a registrable domain name, not an IP address."
   }
 }
 

@@ -275,6 +275,16 @@ resource "aws_cognito_user_pool" "pool" {
       condition     = var.web_authn_configuration == null || contains(["ESSENTIALS", "PLUS"], var.user_pool_tier)
       error_message = "web_authn_configuration requires user_pool_tier to be ESSENTIALS or PLUS; LITE does not support WebAuthn/passkeys."
     }
+
+    precondition {
+      condition     = !contains(concat(try(var.sign_in_policy.allowed_first_auth_factors, []), var.sign_in_policy_allowed_first_auth_factors), "WEB_AUTHN") || var.web_authn_configuration != null
+      error_message = "WEB_AUTHN in sign_in_policy requires web_authn_configuration to be set."
+    }
+
+    precondition {
+      condition     = !contains(concat(var.client_explicit_auth_flows, flatten([for client in var.clients : coalesce(try(client.explicit_auth_flows, null), [])])), "ALLOW_USER_AUTH") || contains(["ESSENTIALS", "PLUS"], var.user_pool_tier)
+      error_message = "ALLOW_USER_AUTH requires user_pool_tier to be ESSENTIALS or PLUS."
+    }
   }
 }
 
@@ -557,6 +567,16 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
     precondition {
       condition     = var.web_authn_configuration == null || contains(["ESSENTIALS", "PLUS"], var.user_pool_tier)
       error_message = "web_authn_configuration requires user_pool_tier to be ESSENTIALS or PLUS; LITE does not support WebAuthn/passkeys."
+    }
+
+    precondition {
+      condition     = !contains(concat(try(var.sign_in_policy.allowed_first_auth_factors, []), var.sign_in_policy_allowed_first_auth_factors), "WEB_AUTHN") || var.web_authn_configuration != null
+      error_message = "WEB_AUTHN in sign_in_policy requires web_authn_configuration to be set."
+    }
+
+    precondition {
+      condition     = !contains(concat(var.client_explicit_auth_flows, flatten([for client in var.clients : coalesce(try(client.explicit_auth_flows, null), [])])), "ALLOW_USER_AUTH") || contains(["ESSENTIALS", "PLUS"], var.user_pool_tier)
+      error_message = "ALLOW_USER_AUTH requires user_pool_tier to be ESSENTIALS or PLUS."
     }
   }
 }
