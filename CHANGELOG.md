@@ -5,6 +5,13 @@
 
 * Phase 3 - Modernize client configs with dynamic block bug fixes ([#359](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/359)) ([3c42a1f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/3c42a1fa862ab7d666bd0a5f5ac322dc8993ec26))
 
+## [5.1.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/5.0.0...5.1.0) (2026-07-04)
+
+
+### Features
+
+* add WebAuthn passkey support ([#424](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/424)) ([506344a](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/506344a6955e35030692a42c22e65b3fedb2b75b))
+
 ## [5.0.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/4.1.2...5.0.0) (2026-07-04)
 
 
