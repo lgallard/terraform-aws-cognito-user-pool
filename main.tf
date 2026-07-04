@@ -228,6 +228,15 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
+  # web_authn_configuration
+  dynamic "web_authn_configuration" {
+    for_each = local.web_authn_configuration
+    content {
+      relying_party_id  = try(web_authn_configuration.value.relying_party_id, null)
+      user_verification = try(web_authn_configuration.value.user_verification, null)
+    }
+  }
+
   # account_recovery_setting
   dynamic "account_recovery_setting" {
     for_each = length(var.recovery_mechanisms) == 0 ? [] : [1]
@@ -253,6 +262,30 @@ resource "aws_cognito_user_pool" "pool" {
 
   # tags
   tags = var.tags
+
+  # WebAuthn constraints depend on multiple module inputs, so lifecycle
+  # preconditions keep the failure close to the managed user pool resource.
+  lifecycle {
+    precondition {
+      condition     = var.web_authn_configuration == null || (var.domain != null && var.domain != "" && var.domain_managed_login_version >= 2)
+      error_message = "web_authn_configuration requires domain to be set and domain_managed_login_version >= 2 (managed login v2)."
+    }
+
+    precondition {
+      condition     = var.web_authn_configuration == null || contains(["ESSENTIALS", "PLUS"], var.user_pool_tier)
+      error_message = "web_authn_configuration requires user_pool_tier to be ESSENTIALS or PLUS; LITE does not support WebAuthn/passkeys."
+    }
+
+    precondition {
+      condition     = !contains(concat(try(var.sign_in_policy.allowed_first_auth_factors, []), var.sign_in_policy_allowed_first_auth_factors), "WEB_AUTHN") || var.web_authn_configuration != null
+      error_message = "WEB_AUTHN in sign_in_policy requires web_authn_configuration to be set."
+    }
+
+    precondition {
+      condition     = !contains(concat(var.client_explicit_auth_flows, flatten([for client in var.clients : coalesce(try(client.explicit_auth_flows, null), [])])), "ALLOW_USER_AUTH") || contains(["ESSENTIALS", "PLUS"], var.user_pool_tier)
+      error_message = "ALLOW_USER_AUTH requires user_pool_tier to be ESSENTIALS or PLUS."
+    }
+  }
 }
 
 # Separate resource definition with schema ignore_changes lifecycle
@@ -485,6 +518,15 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
     }
   }
 
+  # web_authn_configuration
+  dynamic "web_authn_configuration" {
+    for_each = local.web_authn_configuration
+    content {
+      relying_party_id  = try(web_authn_configuration.value.relying_party_id, null)
+      user_verification = try(web_authn_configuration.value.user_verification, null)
+    }
+  }
+
   # account_recovery_setting
   dynamic "account_recovery_setting" {
     for_each = length(var.recovery_mechanisms) == 0 ? [] : [1]
@@ -514,6 +556,28 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   # lifecycle management to prevent perpetual diffs on schema changes
   lifecycle {
     ignore_changes = [schema]
+
+    # WebAuthn constraints depend on multiple module inputs, so lifecycle
+    # preconditions keep the failure close to the managed user pool resource.
+    precondition {
+      condition     = var.web_authn_configuration == null || (var.domain != null && var.domain != "" && var.domain_managed_login_version >= 2)
+      error_message = "web_authn_configuration requires domain to be set and domain_managed_login_version >= 2 (managed login v2)."
+    }
+
+    precondition {
+      condition     = var.web_authn_configuration == null || contains(["ESSENTIALS", "PLUS"], var.user_pool_tier)
+      error_message = "web_authn_configuration requires user_pool_tier to be ESSENTIALS or PLUS; LITE does not support WebAuthn/passkeys."
+    }
+
+    precondition {
+      condition     = !contains(concat(try(var.sign_in_policy.allowed_first_auth_factors, []), var.sign_in_policy_allowed_first_auth_factors), "WEB_AUTHN") || var.web_authn_configuration != null
+      error_message = "WEB_AUTHN in sign_in_policy requires web_authn_configuration to be set."
+    }
+
+    precondition {
+      condition     = !contains(concat(var.client_explicit_auth_flows, flatten([for client in var.clients : coalesce(try(client.explicit_auth_flows, null), [])])), "ALLOW_USER_AUTH") || contains(["ESSENTIALS", "PLUS"], var.user_pool_tier)
+      error_message = "ALLOW_USER_AUTH requires user_pool_tier to be ESSENTIALS or PLUS."
+    }
   }
 }
 

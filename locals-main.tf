@@ -41,6 +41,10 @@ locals {
     }] : []
   ) : [var.user_attribute_update_settings]
 
+  # web_authn_configuration
+  # Build WebAuthn/passkey configuration when configured.
+  web_authn_configuration = var.web_authn_configuration == null ? [] : [var.web_authn_configuration]
+
   # sign_in_policy
   # Build sign-in policy configuration for allowed authentication factors
   sign_in_policy_default = {
