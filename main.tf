@@ -265,8 +265,8 @@ resource "aws_cognito_user_pool" "pool" {
 
   lifecycle {
     precondition {
-      condition     = var.web_authn_configuration == null || var.domain_managed_login_version == 2
-      error_message = "web_authn_configuration requires domain_managed_login_version = 2 (managed login v2)."
+      condition     = var.web_authn_configuration == null || (var.domain != null && var.domain != "" && var.domain_managed_login_version == 2)
+      error_message = "web_authn_configuration requires domain to be set and domain_managed_login_version = 2 (managed login v2)."
     }
 
     precondition {
@@ -546,8 +546,8 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
     ignore_changes = [schema]
 
     precondition {
-      condition     = var.web_authn_configuration == null || var.domain_managed_login_version == 2
-      error_message = "web_authn_configuration requires domain_managed_login_version = 2 (managed login v2)."
+      condition     = var.web_authn_configuration == null || (var.domain != null && var.domain != "" && var.domain_managed_login_version == 2)
+      error_message = "web_authn_configuration requires domain to be set and domain_managed_login_version = 2 (managed login v2)."
     }
 
     precondition {

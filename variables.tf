@@ -799,6 +799,26 @@ variable "clients" {
   description = "A container with the clients definitions"
   type        = any
   default     = []
+
+  validation {
+    condition = alltrue(flatten([
+      for client in var.clients : [
+        for flow in coalesce(try(client.explicit_auth_flows, null), []) :
+        contains(["ADMIN_NO_SRP_AUTH", "CUSTOM_AUTH_FLOW_ONLY", "USER_SRP_AUTH", "USER_PASSWORD_AUTH", "ALLOW_CUSTOM_AUTH", "ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_ADMIN_USER_PASSWORD_AUTH", "ALLOW_USER_PASSWORD_AUTH", "ALLOW_USER_AUTH"], flow)
+      ]
+    ]))
+    error_message = "Each clients[*].explicit_auth_flows entry must be a valid value: ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_SRP_AUTH, USER_PASSWORD_AUTH, ALLOW_CUSTOM_AUTH, ALLOW_USER_SRP_AUTH, ALLOW_REFRESH_TOKEN_AUTH, ALLOW_ADMIN_USER_PASSWORD_AUTH, ALLOW_USER_PASSWORD_AUTH, ALLOW_USER_AUTH."
+  }
+
+  validation {
+    condition = alltrue([
+      for client in var.clients :
+      length(setintersection(toset(coalesce(try(client.explicit_auth_flows, null), [])), toset(["ADMIN_NO_SRP_AUTH", "CUSTOM_AUTH_FLOW_ONLY", "USER_SRP_AUTH", "USER_PASSWORD_AUTH"]))) == 0 || length([
+        for flow in coalesce(try(client.explicit_auth_flows, null), []) : flow if startswith(flow, "ALLOW_")
+      ]) == 0
+    ])
+    error_message = "Legacy clients[*].explicit_auth_flows values (ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_SRP_AUTH, USER_PASSWORD_AUTH) cannot be mixed with ALLOW_* explicit auth flows."
+  }
 }
 
 variable "client_allowed_oauth_flows" {
@@ -1132,7 +1152,7 @@ variable "sign_in_policy_allowed_first_auth_factors" {
 }
 
 variable "web_authn_configuration" {
-  description = "Configuration block for WebAuthn/passkey sign-in. Passkeys require a managed login domain, managed_login_version = 2, app clients with ALLOW_USER_AUTH, and a user pool feature plan above Lite."
+  description = "Configuration block for WebAuthn/passkey sign-in. Passkeys require a managed login domain, managed_login_version = 2, app clients with ALLOW_USER_AUTH, and a user pool feature plan above Lite. user_verification defaults to PREFERRED in AWS when omitted; use REQUIRED for high-assurance passkeys. Set relying_party_id to your registrable application domain, not a full URL."
   type = object({
     relying_party_id  = optional(string)
     user_verification = optional(string)
@@ -1142,6 +1162,11 @@ variable "web_authn_configuration" {
   validation {
     condition     = var.web_authn_configuration == null ? true : try(var.web_authn_configuration.user_verification, null) == null || contains(["PREFERRED", "REQUIRED"], var.web_authn_configuration.user_verification)
     error_message = "web_authn_configuration.user_verification must be one of: PREFERRED, REQUIRED."
+  }
+
+  validation {
+    condition     = var.web_authn_configuration == null ? true : try(var.web_authn_configuration.relying_party_id, null) == null || can(regex("^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$", var.web_authn_configuration.relying_party_id))
+    error_message = "web_authn_configuration.relying_party_id must be a registrable domain such as example.com, not a full URL."
   }
 }
 

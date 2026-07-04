@@ -40,6 +40,8 @@ module "aws_cognito_user_pool" {
       allowed_oauth_flows                  = ["code"]
       allowed_oauth_scopes                 = ["email", "openid", "profile"]
 
+      # ALLOW_USER_AUTH enables Cognito choice-based auth, including passkeys,
+      # OTP, password, and SRP challenges, without separate password flow grants.
       explicit_auth_flows = [
         "ALLOW_USER_AUTH",
         "ALLOW_USER_SRP_AUTH",
