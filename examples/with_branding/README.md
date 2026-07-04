@@ -1,6 +1,6 @@
 # Cognito User Pool with Managed Login Branding Example
 
-This example demonstrates how to create an AWS Cognito User Pool with managed login branding using the `awscc` provider.
+This example demonstrates how to create an AWS Cognito User Pool with managed login branding using the native `hashicorp/aws` provider.
 
 ## Features
 
@@ -15,23 +15,19 @@ This example demonstrates how to create an AWS Cognito User Pool with managed lo
 
 1. **AWS Account** with appropriate permissions
 2. **Terraform** >= 1.3.0
-3. **AWSCC Provider** configured (for managed login branding)
+3. **AWS Provider** configured
 4. **Branding Assets** (logos, backgrounds, favicon)
 
 ## Provider Requirements
 
-This example requires both the `aws` and `awscc` providers:
+This example requires the `aws` provider:
 
 ```hcl
 terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 6.0"
-    }
-    awscc = {
-      source  = "hashicorp/awscc"
-      version = ">= 1.0"
+      version = ">= 6.12.0"
     }
   }
 }
@@ -111,7 +107,7 @@ After deployment, you can test the branding by:
 
 ## Important Notes
 
-- **Provider Requirement**: This feature requires the `awscc` provider
+- **Provider Requirement**: This feature uses the native `hashicorp/aws` provider
 - **Regional Support**: Managed login branding is available in most AWS regions
 - **Client Association**: Each branding configuration is linked to a specific app client
 - **Cost**: Managed login branding may have associated costs
@@ -127,7 +123,7 @@ terraform destroy
 ## References
 
 - [AWS Cognito Managed Login Branding](https://docs.aws.amazon.com/cognito/latest/developerguide/managed-login-brandingeditor.html)
-- [AWSCC Provider Documentation](https://registry.terraform.io/providers/hashicorp/awscc/latest/docs/resources/cognito_managed_login_branding)
+- [AWS Provider Documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_managed_login_branding)
 
 <!-- BEGIN_TF_DOCS -->
 
@@ -137,8 +133,7 @@ terraform destroy
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.0 |
-| <a name="requirement_awscc"></a> [awscc](#requirement\_awscc) | >= 1.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.12.0 |
 
 ## Providers
 

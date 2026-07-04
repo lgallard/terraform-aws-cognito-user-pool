@@ -4,22 +4,12 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 6.0"
-    }
-
-    # Required for managed login branding
-    awscc = {
-      source  = "hashicorp/awscc"
-      version = ">= 1.0"
+      version = ">= 6.12.0"
     }
   }
 }
 
 provider "aws" {
-  region = var.aws_region
-}
-
-provider "awscc" {
   region = var.aws_region
 }
 

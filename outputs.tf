@@ -140,23 +140,24 @@ output "resource_servers_scope_identifiers" {
 }
 
 #
-# awscc_cognito_managed_login_branding
+# aws_cognito_managed_login_branding
 #
 output "managed_login_branding_details" {
-  description = "Complete managed login branding details"
+  description = "Complete managed login branding details. The configurations[*].assets key is preserved for compatibility but now reflects the native AWS provider asset set shape, not the previous AWSCC assets list shape."
   value = var.enabled && var.managed_login_branding_enabled ? {
     configurations = {
-      for k, v in awscc_cognito_managed_login_branding.branding : k => {
+      for k, v in aws_cognito_managed_login_branding.branding : k => {
         id                        = v.id
         managed_login_branding_id = v.managed_login_branding_id
         client_id                 = v.client_id
         user_pool_id              = v.user_pool_id
-        assets                    = v.assets
+        assets                    = v.asset
         settings                  = v.settings
+        settings_all              = v.settings_all
       }
     }
     ids = {
-      for k, v in awscc_cognito_managed_login_branding.branding : k => v.managed_login_branding_id
+      for k, v in aws_cognito_managed_login_branding.branding : k => v.managed_login_branding_id
     }
     } : {
     configurations = {}
@@ -175,6 +176,6 @@ output "managed_login_branding_ids" {
   description = "Map of managed login branding IDs (deprecated - use managed_login_branding_details.ids)"
 
   value = var.enabled && var.managed_login_branding_enabled ? {
-    for k, v in awscc_cognito_managed_login_branding.branding : k => v.managed_login_branding_id
+    for k, v in aws_cognito_managed_login_branding.branding : k => v.managed_login_branding_id
   } : {}
 }
