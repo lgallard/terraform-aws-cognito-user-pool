@@ -21,7 +21,10 @@ module "aws_cognito_user_pool" {
   ]
 
   web_authn_configuration = {
-    user_verification = "PREFERRED"
+    # Set relying_party_id to your application's registrable domain (for example, "example.com").
+    # Omitting this defaults to the Cognito domain and can invalidate passkeys if the domain changes.
+    # relying_party_id = "example.com"
+    user_verification = "REQUIRED"
   }
 
   # User pool client configuration
@@ -39,7 +42,6 @@ module "aws_cognito_user_pool" {
 
       explicit_auth_flows = [
         "ALLOW_USER_AUTH",
-        "ALLOW_USER_PASSWORD_AUTH",
         "ALLOW_USER_SRP_AUTH",
         "ALLOW_REFRESH_TOKEN_AUTH"
       ]

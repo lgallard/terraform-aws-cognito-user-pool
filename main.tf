@@ -262,6 +262,18 @@ resource "aws_cognito_user_pool" "pool" {
 
   # tags
   tags = var.tags
+
+  lifecycle {
+    precondition {
+      condition     = var.web_authn_configuration == null || var.domain_managed_login_version == 2
+      error_message = "web_authn_configuration requires domain_managed_login_version = 2 (managed login v2)."
+    }
+
+    precondition {
+      condition     = var.web_authn_configuration == null || contains(["ESSENTIALS", "PLUS"], var.user_pool_tier)
+      error_message = "web_authn_configuration requires user_pool_tier to be ESSENTIALS or PLUS; LITE does not support WebAuthn/passkeys."
+    }
+  }
 }
 
 # Separate resource definition with schema ignore_changes lifecycle
@@ -532,6 +544,16 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
   # lifecycle management to prevent perpetual diffs on schema changes
   lifecycle {
     ignore_changes = [schema]
+
+    precondition {
+      condition     = var.web_authn_configuration == null || var.domain_managed_login_version == 2
+      error_message = "web_authn_configuration requires domain_managed_login_version = 2 (managed login v2)."
+    }
+
+    precondition {
+      condition     = var.web_authn_configuration == null || contains(["ESSENTIALS", "PLUS"], var.user_pool_tier)
+      error_message = "web_authn_configuration requires user_pool_tier to be ESSENTIALS or PLUS; LITE does not support WebAuthn/passkeys."
+    }
   }
 }
 

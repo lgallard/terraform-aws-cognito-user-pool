@@ -853,16 +853,23 @@ variable "client_enable_token_revocation" {
 }
 
 variable "client_explicit_auth_flows" {
-  description = "List of authentication flows. Valid values include legacy flows (ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_SRP_AUTH) and ALLOW_* flows such as ALLOW_USER_AUTH for Cognito choice-based authentication."
+  description = "List of authentication flows. Valid values include legacy flows (ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_SRP_AUTH, USER_PASSWORD_AUTH) and ALLOW_* flows such as ALLOW_USER_AUTH for Cognito choice-based authentication. Legacy bare values can't be mixed with ALLOW_* values."
   type        = list(string)
   default     = []
 
   validation {
     condition = alltrue([
       for flow in var.client_explicit_auth_flows :
-      contains(["ADMIN_NO_SRP_AUTH", "CUSTOM_AUTH_FLOW_ONLY", "USER_SRP_AUTH", "ALLOW_CUSTOM_AUTH", "ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_ADMIN_USER_PASSWORD_AUTH", "ALLOW_USER_PASSWORD_AUTH", "ALLOW_USER_AUTH", "USER_PASSWORD_AUTH"], flow)
+      contains(["ADMIN_NO_SRP_AUTH", "CUSTOM_AUTH_FLOW_ONLY", "USER_SRP_AUTH", "USER_PASSWORD_AUTH", "ALLOW_CUSTOM_AUTH", "ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_ADMIN_USER_PASSWORD_AUTH", "ALLOW_USER_PASSWORD_AUTH", "ALLOW_USER_AUTH"], flow)
     ])
-    error_message = "Authentication flows must be valid values: ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_SRP_AUTH, ALLOW_CUSTOM_AUTH, ALLOW_USER_SRP_AUTH, ALLOW_REFRESH_TOKEN_AUTH, ALLOW_ADMIN_USER_PASSWORD_AUTH, ALLOW_USER_PASSWORD_AUTH, ALLOW_USER_AUTH, USER_PASSWORD_AUTH. Avoid password-based flows unless explicitly required."
+    error_message = "Authentication flows must be valid values: ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_SRP_AUTH, USER_PASSWORD_AUTH, ALLOW_CUSTOM_AUTH, ALLOW_USER_SRP_AUTH, ALLOW_REFRESH_TOKEN_AUTH, ALLOW_ADMIN_USER_PASSWORD_AUTH, ALLOW_USER_PASSWORD_AUTH, ALLOW_USER_AUTH. Avoid password-based flows unless explicitly required."
+  }
+
+  validation {
+    condition = length(setintersection(toset(var.client_explicit_auth_flows), toset(["ADMIN_NO_SRP_AUTH", "CUSTOM_AUTH_FLOW_ONLY", "USER_SRP_AUTH", "USER_PASSWORD_AUTH"]))) == 0 || length([
+      for flow in var.client_explicit_auth_flows : flow if startswith(flow, "ALLOW_")
+    ]) == 0
+    error_message = "Legacy explicit auth flows (ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_SRP_AUTH, USER_PASSWORD_AUTH) cannot be mixed with ALLOW_* explicit auth flows."
   }
 }
 
