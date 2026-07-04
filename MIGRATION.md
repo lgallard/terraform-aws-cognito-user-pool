@@ -39,7 +39,7 @@ Review your Terraform plan and pin these inputs explicitly if your intended beha
 
 ## ⚠️ Managed login branding moved from AWSCC to native AWS provider
 
-Managed login branding now uses the native `hashicorp/aws` provider resource:
+Managed login branding now uses the native `hashicorp/aws` provider resource, introduced in AWS provider **6.12.0**:
 
 - old resource address: `awscc_cognito_managed_login_branding.branding`
 - new resource address: `aws_cognito_managed_login_branding.branding`
@@ -48,22 +48,38 @@ The module input shape is intentionally preserved for compatibility. Existing `m
 
 ### What changed
 
-- The `awscc` provider is no longer required for managed login branding.
+- The `awscc` provider is no longer required for managed login branding after state migration is complete.
 - `return_merged_resources` is retained as a legacy input for compatibility, but the native provider exposes merged Cognito defaults through the `settings_all` attribute instead.
 - Outputs continue to expose `managed_login_branding_details`, `managed_login_branding`, and `managed_login_branding_ids`.
-- The `managed_login_branding_details.configurations[*].assets` output key is preserved, but its value now comes from the native AWS provider `asset` block shape.
+- The `managed_login_branding_details.configurations[*].assets` output key is preserved, but its value now comes from the native AWS provider `asset` block shape. This may affect callers that relied on the previous AWSCC list shape or index-based access.
 
 ### Existing state migration
 
 If you already applied managed login branding with an older module version, move or import state before applying the new version to avoid Terraform planning a replacement.
 
-For each branding key, move the Terraform state address from the AWSCC resource to the native AWS resource. Replace `<your_module_name>` with your actual module block label and `"main"` with your branding map key:
+> ⚠️ **Do not remove the `awscc` provider block from your root module until after `terraform state mv` is complete and `terraform plan` shows no branding changes.** Removing the provider first can leave the old AWSCC state entry orphaned or cause Terraform to plan a destroy/create replacement that temporarily removes branding from the hosted UI.
 
-```bash
-terraform state mv \
-  'module.<your_module_name>.awscc_cognito_managed_login_branding.branding["main"]' \
-  'module.<your_module_name>.aws_cognito_managed_login_branding.branding["main"]'
-```
+Recommended safe order:
+
+1. Keep both `aws` and `awscc` provider blocks available in the root module.
+2. Back up state before any state operation:
+
+   ```bash
+   terraform state pull > pre-managed-login-branding-migration.tfstate
+   ```
+
+3. Move each branding key from the AWSCC resource address to the native AWS resource address. Replace `<your_module_name>` with your actual module block label and `"main"` with your branding map key:
+
+   ```bash
+   terraform state mv \
+     'module.<your_module_name>.awscc_cognito_managed_login_branding.branding["main"]' \
+     'module.<your_module_name>.aws_cognito_managed_login_branding.branding["main"]'
+   ```
+
+4. Run `terraform plan` after each state move, especially when migrating multiple branding keys, to catch partial migrations early.
+5. After all branding keys are moved and `terraform plan` shows no branding replacement, remove the `awscc` provider block from your root module.
+6. Run `terraform init -upgrade` and `terraform plan` again to confirm the configuration is clean.
+7. Remove local state backup files such as `.terraform.tfstate.backup` after confirming they are no longer needed. Do not commit state backups; they can contain Base64 asset bytes and other state data.
 
 If state move is not possible, import the native resource using the user pool ID and managed login branding ID separated by a comma:
 
@@ -75,18 +91,18 @@ terraform import \
 
 Then run `terraform plan` and confirm Terraform does not intend to recreate the branding resource.
 
-### Migration Steps
+## Migration Steps
 
 #### 1. Update Your Provider Version
 
-Update your Terraform configuration to require AWS provider 6.x:
+Update your Terraform configuration to require AWS provider 6.12.0 or later:
 
 ```hcl
 terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 6.0"
+      version = ">= 6.12.0"
     }
   }
 }
@@ -158,7 +174,7 @@ module "cognito_user_pool" {
 
 #### Error: "Module requires newer AWS provider"
 ```
-Error: Module requires aws provider version >= 6.0
+Error: Module requires aws provider version >= 6.12.0
 ```
 
 **Solution**: Update your provider constraint and run `terraform init -upgrade`.
@@ -178,7 +194,7 @@ This indicates you're still using AWS provider 5.x.
 
 | Module Version | AWS Provider | Terraform |
 |----------------|-------------|-----------|
-| 1.14.1+        | >= 6.0      | >= 1.3.0  |
+| 1.14.1+        | >= 6.12.0   | >= 1.3.0  |
 | 1.14.0         | >= 5.98     | >= 1.3.0  |
 | < 1.14.0       | >= 5.0      | >= 1.0    |
 

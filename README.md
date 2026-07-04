@@ -328,7 +328,7 @@ This module supports AWS Cognito Managed Login Branding, which allows you to cus
 
 To use managed login branding, you need:
 
-1. **AWS Provider**: Use `hashicorp/aws >= 6.0`
+1. **AWS Provider**: Use `hashicorp/aws >= 6.12.0`
 2. **User Pool Domain**: Required for hosted UI
 3. **App Client**: Branding is associated with specific clients
 4. **Asset Files**: Images for logos, backgrounds, etc.
@@ -340,7 +340,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 6.0"
+      version = ">= 6.12.0"
     }
   }
 }
@@ -457,7 +457,7 @@ This is needed because all parameters for the `lambda_config` block are optional
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.12.0 |
 
 ## Providers
 
@@ -555,8 +555,8 @@ No modules.
 | <a name="input_lambda_config_user_migration"></a> [lambda\_config\_user\_migration](#input\_lambda\_config\_user\_migration) | The user migration Lambda config type | `string` | `null` | no |
 | <a name="input_lambda_config_verify_auth_challenge_response"></a> [lambda\_config\_verify\_auth\_challenge\_response](#input\_lambda\_config\_verify\_auth\_challenge\_response) | Verifies the authentication challenge response | `string` | `null` | no |
 | <a name="input_log_delivery_configuration"></a> [log\_delivery\_configuration](#input\_log\_delivery\_configuration) | Cognito user pool log delivery configuration. Configure userNotification ERROR logs to CloudWatch Logs and userAuthEvents INFO logs to CloudWatch Logs, Firehose, or S3. userAuthEvents log export requires Cognito threat protection and the PLUS user pool tier. Target destinations and required delivery permissions/policies must be configured outside this module; CloudWatch log groups must be in the same AWS account as the user pool and must not be KMS-encrypted. | <pre>object({<br/>    log_configurations = list(object({<br/>      event_source = string<br/>      log_level    = string<br/><br/>      cloud_watch_logs_configuration = optional(object({<br/>        log_group_arn = string<br/>      }))<br/><br/>      firehose_configuration = optional(object({<br/>        stream_arn = string<br/>      }))<br/><br/>      s3_configuration = optional(object({<br/>        bucket_arn = string<br/>      }))<br/>    }))<br/>  })</pre> | `null` | no |
-| <a name="input_managed_login_branding"></a> [managed\_login\_branding](#input\_managed\_login\_branding) | Configuration for managed login branding. Map of branding configurations where each key represents a branding instance. The legacy return\_merged\_resources option is retained for input compatibility but is a no-op with the native AWS provider; merged Cognito defaults are exposed through managed\_login\_branding\_details.configurations[*].settings\_all. | <pre>map(object({<br/>    client_id = string<br/>    assets = optional(list(object({<br/>      bytes       = string<br/>      category    = string<br/>      color_mode  = string<br/>      extension   = string<br/>      resource_id = optional(string)<br/>    })), [])<br/>    settings                    = optional(string)<br/>    return_merged_resources     = optional(bool, false)<br/>    use_cognito_provided_values = optional(bool, false)<br/>  }))</pre> | `{}` | no |
-| <a name="input_managed_login_branding_enabled"></a> [managed\_login\_branding\_enabled](#input\_managed\_login\_branding\_enabled) | Whether to enable managed login branding using the native AWS provider (requires hashicorp/aws >= 6.0). | `bool` | `false` | no |
+| <a name="input_managed_login_branding"></a> [managed\_login\_branding](#input\_managed\_login\_branding) | Configuration for managed login branding. Map of branding configurations where each key represents a branding instance. The legacy return\_merged\_resources option is retained for input compatibility but is a no-op with the native AWS provider; merged Cognito defaults are exposed through managed\_login\_branding\_details.configurations[*].settings\_all. The settings and use\_cognito\_provided\_values arguments are mutually exclusive; when settings is provided the module omits use\_cognito\_provided\_values for the native provider. | <pre>map(object({<br/>    client_id = string<br/>    assets = optional(list(object({<br/>      bytes       = string<br/>      category    = string<br/>      color_mode  = string<br/>      extension   = string<br/>      resource_id = optional(string)<br/>    })), [])<br/>    settings                    = optional(string)<br/>    return_merged_resources     = optional(bool, false)<br/>    use_cognito_provided_values = optional(bool, false)<br/>  }))</pre> | `{}` | no |
+| <a name="input_managed_login_branding_enabled"></a> [managed\_login\_branding\_enabled](#input\_managed\_login\_branding\_enabled) | Whether to enable managed login branding using the native AWS provider (requires hashicorp/aws >= 6.12.0). | `bool` | `false` | no |
 | <a name="input_mfa_configuration"></a> [mfa\_configuration](#input\_mfa\_configuration) | Set to enable multi-factor authentication. Must be one of the following values (ON, OFF, OPTIONAL) | `string` | `"OPTIONAL"` | no |
 | <a name="input_number_schemas"></a> [number\_schemas](#input\_number\_schemas) | A container with the number schema attributes of a user pool. Maximum of 50 attributes | `list(any)` | `[]` | no |
 | <a name="input_password_policy"></a> [password\_policy](#input\_password\_policy) | A container for information about the user pool password policy | <pre>object({<br/>    minimum_length                   = number,<br/>    require_lowercase                = bool,<br/>    require_numbers                  = bool,<br/>    require_symbols                  = bool,<br/>    require_uppercase                = bool,<br/>    temporary_password_validity_days = number<br/>    password_history_size            = number<br/>  })</pre> | `null` | no |
@@ -628,7 +628,7 @@ No modules.
 | <a name="output_last_modified_date"></a> [last\_modified\_date](#output\_last\_modified\_date) | The date the user pool was last modified |
 | <a name="output_log_delivery_configuration"></a> [log\_delivery\_configuration](#output\_log\_delivery\_configuration) | The Cognito user pool log delivery configuration |
 | <a name="output_managed_login_branding"></a> [managed\_login\_branding](#output\_managed\_login\_branding) | Map of managed login branding configurations (deprecated - use managed\_login\_branding\_details) |
-| <a name="output_managed_login_branding_details"></a> [managed\_login\_branding\_details](#output\_managed\_login\_branding\_details) | Complete managed login branding details |
+| <a name="output_managed_login_branding_details"></a> [managed\_login\_branding\_details](#output\_managed\_login\_branding\_details) | Complete managed login branding details. The configurations[*].assets key is preserved for compatibility but now reflects the native AWS provider asset set shape, not the previous AWSCC assets list shape. |
 | <a name="output_managed_login_branding_ids"></a> [managed\_login\_branding\_ids](#output\_managed\_login\_branding\_ids) | Map of managed login branding IDs (deprecated - use managed\_login\_branding\_details.ids) |
 | <a name="output_name"></a> [name](#output\_name) | The name of the user pool |
 | <a name="output_resource_servers_scope_identifiers"></a> [resource\_servers\_scope\_identifiers](#output\_resource\_servers\_scope\_identifiers) | A list of all scopes configured in the format identifier/scope\_name |

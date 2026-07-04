@@ -143,7 +143,7 @@ output "resource_servers_scope_identifiers" {
 # aws_cognito_managed_login_branding
 #
 output "managed_login_branding_details" {
-  description = "Complete managed login branding details"
+  description = "Complete managed login branding details. The configurations[*].assets key is preserved for compatibility but now reflects the native AWS provider asset set shape, not the previous AWSCC assets list shape."
   value = var.enabled && var.managed_login_branding_enabled ? {
     configurations = {
       for k, v in aws_cognito_managed_login_branding.branding : k => {
