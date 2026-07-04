@@ -1190,6 +1190,13 @@ variable "managed_login_branding" {
 
   validation {
     condition = alltrue([
+      for config in values(var.managed_login_branding) : config.settings != null || config.use_cognito_provided_values
+    ])
+    error_message = "Each managed_login_branding entry must set either settings JSON or use_cognito_provided_values = true."
+  }
+
+  validation {
+    condition = alltrue([
       for config in values(var.managed_login_branding) : config.settings == null ? true : can(jsondecode(config.settings))
     ])
     error_message = "Each managed_login_branding settings value must be valid JSON when provided."

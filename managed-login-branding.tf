@@ -23,8 +23,8 @@ resource "aws_cognito_managed_login_branding" "branding" {
   }
 
   # Settings is mutually exclusive with use_cognito_provided_values in the native
-  # provider. Use null when settings is present so the provider omits the bool;
-  # setting false explicitly would still violate the provider ExactlyOneOf rule.
+  # provider. Passing null omits use_cognito_provided_values when settings is
+  # present, so the provider sees only one configured argument.
   settings                    = each.value.settings
   use_cognito_provided_values = each.value.settings != null ? null : each.value.use_cognito_provided_values
 

@@ -82,7 +82,7 @@ Recommended safe order:
      'module.<your_module_name>.aws_cognito_managed_login_branding.branding["main"]'
    ```
 
-4. Run `terraform plan` after each state move, especially when migrating multiple branding keys, to catch partial migrations early.
+4. Run `terraform plan` after each state move, especially when migrating multiple branding keys, to catch partial migrations early. The first plan after `state mv` may show asset block changes because the old AWSCC state used an `assets` list and the native AWS provider uses an `asset` set. That is expected; confirm Terraform does **not** plan a destroy/create replacement for the branding resource.
 5. After all branding keys are moved and `terraform plan` shows no branding replacement, remove the `awscc` provider block from your root module.
 6. Run `terraform init -upgrade` and `terraform plan` again to confirm the configuration is clean.
 7. Remove local state backup files such as `.terraform.tfstate.backup` after confirming they are no longer needed. Do not commit state backups; they can contain Base64 asset bytes and other state data.
@@ -96,6 +96,26 @@ terraform import \
 ```
 
 Then run `terraform plan` and confirm Terraform does not intend to recreate the branding resource.
+
+If you removed the `awscc` provider block before moving state and Terraform reports `Provider configuration not available`, temporarily restore the `awscc` provider block, run `terraform init`, then perform the `terraform state mv` steps above before removing `awscc` again.
+
+### Output shape changes
+
+The `managed_login_branding_details.configurations[*].assets` key is preserved, but it now reflects the native AWS provider `asset` set. Index-based access that worked with the old AWSCC list output will fail.
+
+Before, with the AWSCC list shape:
+
+```hcl
+module.pool.managed_login_branding_details.configurations["main"].assets[0].bytes
+```
+
+After, use a `for` expression over the native provider set:
+
+```hcl
+[for a in module.pool.managed_login_branding_details.configurations["main"].assets : a.bytes if a.category == "FORM_LOGO"][0]
+```
+
+The deprecated `managed_login_branding` output also keeps its `id` key, but the value now comes from the native provider ID format rather than the previous AWSCC provider ID.
 
 ## Migration Steps
 
@@ -121,7 +141,7 @@ Update to the latest module version in your configuration:
 ```hcl
 module "cognito_user_pool" {
   source = "lgallard/cognito-user-pool/aws"
-  version = "1.14.1"  # or latest version
+  version = "5.0.0"  # or latest version
 
   # Your existing configuration remains the same
   user_pool_name = "my-pool"
@@ -200,9 +220,9 @@ This indicates you're still using AWS provider 5.x.
 
 | Module Version | AWS Provider | Terraform |
 |----------------|-------------|-----------|
-| 1.14.1+        | >= 6.12.0   | >= 1.3.0  |
-| 1.14.0         | >= 5.98     | >= 1.3.0  |
-| < 1.14.0       | >= 5.0      | >= 1.0    |
+| 5.0.0+         | >= 6.12.0   | >= 1.3.0  |
+| 4.1.2          | >= 6.0      | >= 1.3.0  |
+| < 4.1.2        | >= 5.0      | >= 1.0    |
 
 ### Need Help?
 
