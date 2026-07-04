@@ -5,6 +5,17 @@
 
 * Phase 3 - Modernize client configs with dynamic block bug fixes ([#359](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/359)) ([3c42a1f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/3c42a1fa862ab7d666bd0a5f5ac322dc8993ec26))
 
+## [5.0.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/4.1.2...5.0.0) (2026-07-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* managed login branding now requires hashicorp/aws >= 6.12.0 and exposes native provider asset set output semantics. The legacy return_merged_resources input now fails validation; use managed_login_branding_details.configurations[*].settings_all instead.
+
+### Features
+
+* migrate managed login branding to native aws provider ([#422](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/422)) ([07beee0](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/07beee091082151f5fd61490dc6c691b2408316e))
+
 ## [4.1.2](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/4.1.1...4.1.2) (2026-07-01)
 
 
