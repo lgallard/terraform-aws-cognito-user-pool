@@ -853,16 +853,16 @@ variable "client_enable_token_revocation" {
 }
 
 variable "client_explicit_auth_flows" {
-  description = "List of authentication flows (ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, ALLOW_USER_PASSWORD_AUTH, ALLOW_ADMIN_USER_PASSWORD_AUTH)"
+  description = "List of authentication flows. Valid values include legacy flows (ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_SRP_AUTH) and ALLOW_* flows such as ALLOW_USER_AUTH for Cognito choice-based authentication."
   type        = list(string)
   default     = []
 
   validation {
     condition = alltrue([
       for flow in var.client_explicit_auth_flows :
-      contains(["ADMIN_NO_SRP_AUTH", "CUSTOM_AUTH_FLOW_ONLY", "USER_SRP_AUTH", "ALLOW_CUSTOM_AUTH", "ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_ADMIN_USER_PASSWORD_AUTH", "ALLOW_USER_PASSWORD_AUTH"], flow)
+      contains(["ADMIN_NO_SRP_AUTH", "CUSTOM_AUTH_FLOW_ONLY", "USER_SRP_AUTH", "ALLOW_CUSTOM_AUTH", "ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_ADMIN_USER_PASSWORD_AUTH", "ALLOW_USER_PASSWORD_AUTH", "ALLOW_USER_AUTH", "USER_PASSWORD_AUTH"], flow)
     ])
-    error_message = "Authentication flows must be valid values: ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_SRP_AUTH, ALLOW_CUSTOM_AUTH, ALLOW_USER_SRP_AUTH, ALLOW_REFRESH_TOKEN_AUTH, ALLOW_ADMIN_USER_PASSWORD_AUTH, ALLOW_USER_PASSWORD_AUTH. Avoid password-based flows for security."
+    error_message = "Authentication flows must be valid values: ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_SRP_AUTH, ALLOW_CUSTOM_AUTH, ALLOW_USER_SRP_AUTH, ALLOW_REFRESH_TOKEN_AUTH, ALLOW_ADMIN_USER_PASSWORD_AUTH, ALLOW_USER_PASSWORD_AUTH, ALLOW_USER_AUTH, USER_PASSWORD_AUTH. Avoid password-based flows unless explicitly required."
   }
 }
 
@@ -1097,17 +1097,45 @@ variable "enable_propagate_additional_user_context_data" {
 # sign_in_policy
 #
 variable "sign_in_policy" {
-  description = "Configuration block for sign-in policy. Allows configuring additional sign-in mechanisms like OTP"
+  description = "Configuration block for sign-in policy. Allows configuring choice-based first authentication factors such as PASSWORD, EMAIL_OTP, SMS_OTP, and WEB_AUTHN."
   type = object({
     allowed_first_auth_factors = list(string)
   })
   default = null
+
+  validation {
+    condition = var.sign_in_policy == null ? true : alltrue([
+      for factor in var.sign_in_policy.allowed_first_auth_factors : contains(["PASSWORD", "EMAIL_OTP", "SMS_OTP", "WEB_AUTHN"], factor)
+    ])
+    error_message = "sign_in_policy.allowed_first_auth_factors must contain only: PASSWORD, EMAIL_OTP, SMS_OTP, WEB_AUTHN."
+  }
 }
 
 variable "sign_in_policy_allowed_first_auth_factors" {
-  description = "List of allowed first authentication factors. Valid values: PASSWORD, EMAIL_OTP, SMS_OTP"
+  description = "List of allowed first authentication factors for Cognito choice-based authentication. Valid values: PASSWORD, EMAIL_OTP, SMS_OTP, WEB_AUTHN."
   type        = list(string)
   default     = []
+
+  validation {
+    condition = alltrue([
+      for factor in var.sign_in_policy_allowed_first_auth_factors : contains(["PASSWORD", "EMAIL_OTP", "SMS_OTP", "WEB_AUTHN"], factor)
+    ])
+    error_message = "sign_in_policy_allowed_first_auth_factors must contain only: PASSWORD, EMAIL_OTP, SMS_OTP, WEB_AUTHN."
+  }
+}
+
+variable "web_authn_configuration" {
+  description = "Configuration block for WebAuthn/passkey sign-in. Passkeys require a managed login domain, managed_login_version = 2, app clients with ALLOW_USER_AUTH, and a user pool feature plan above Lite."
+  type = object({
+    relying_party_id  = optional(string)
+    user_verification = optional(string)
+  })
+  default = null
+
+  validation {
+    condition     = var.web_authn_configuration == null ? true : try(var.web_authn_configuration.user_verification, null) == null || contains(["PREFERRED", "REQUIRED"], var.web_authn_configuration.user_verification)
+    error_message = "web_authn_configuration.user_verification must be one of: PREFERRED, REQUIRED."
+  }
 }
 
 #

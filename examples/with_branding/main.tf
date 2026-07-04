@@ -7,8 +7,22 @@ module "aws_cognito_user_pool" {
   user_pool_name = var.user_pool_name
   user_pool_tier = var.user_pool_tier
 
+  # Passkeys require managed login v2 and a feature plan above Lite.
+  domain_managed_login_version = 2
+
   alias_attributes         = ["email", "preferred_username"]
   auto_verified_attributes = ["email"]
+
+  # Enable choice-based authentication factors for managed login and SDK auth.
+  sign_in_policy_allowed_first_auth_factors = [
+    "PASSWORD",
+    "WEB_AUTHN",
+    "EMAIL_OTP"
+  ]
+
+  web_authn_configuration = {
+    user_verification = "PREFERRED"
+  }
 
   # User pool client configuration
   clients = [
@@ -24,6 +38,7 @@ module "aws_cognito_user_pool" {
       allowed_oauth_scopes                 = ["email", "openid", "profile"]
 
       explicit_auth_flows = [
+        "ALLOW_USER_AUTH",
         "ALLOW_USER_PASSWORD_AUTH",
         "ALLOW_USER_SRP_AUTH",
         "ALLOW_REFRESH_TOKEN_AUTH"

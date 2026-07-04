@@ -228,6 +228,15 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
+  # web_authn_configuration
+  dynamic "web_authn_configuration" {
+    for_each = local.web_authn_configuration
+    content {
+      relying_party_id  = try(web_authn_configuration.value.relying_party_id, null)
+      user_verification = try(web_authn_configuration.value.user_verification, null)
+    }
+  }
+
   # account_recovery_setting
   dynamic "account_recovery_setting" {
     for_each = length(var.recovery_mechanisms) == 0 ? [] : [1]
@@ -482,6 +491,15 @@ resource "aws_cognito_user_pool" "pool_with_schema_ignore" {
     for_each = local.user_attribute_update_settings
     content {
       attributes_require_verification_before_update = user_attribute_update_settings.value.attributes_require_verification_before_update
+    }
+  }
+
+  # web_authn_configuration
+  dynamic "web_authn_configuration" {
+    for_each = local.web_authn_configuration
+    content {
+      relying_party_id  = try(web_authn_configuration.value.relying_party_id, null)
+      user_verification = try(web_authn_configuration.value.user_verification, null)
     }
   }
 
