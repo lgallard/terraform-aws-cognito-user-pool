@@ -62,7 +62,8 @@ If you already applied managed login branding with an older module version, move
 Recommended safe order:
 
 1. Keep both `aws` and `awscc` provider blocks available in the root module.
-2. Back up state before any state operation. Terraform state can contain sensitive values such as Cognito app client secrets, identity provider credentials, and Base64 asset bytes. Verify `*.tfstate` is ignored by version control before creating a local backup, never commit state backups, and prefer encrypting the backup when possible:
+2. Before applying the upgraded module, remove any `return_merged_resources = true` entries from `managed_login_branding`; the native AWS provider exposes effective merged defaults through `managed_login_branding_details.configurations[*].settings_all` instead.
+3. Back up state before any state operation. Terraform state can contain sensitive values such as Cognito app client secrets, identity provider credentials, and Base64 asset bytes. Verify `*.tfstate` is ignored by version control before creating a local backup, never commit state backups, and prefer encrypting the backup when possible:
 
    ```bash
    terraform state pull | gpg --symmetric > pre-managed-login-branding-migration.tfstate.gpg
@@ -74,7 +75,7 @@ Recommended safe order:
    terraform state pull > pre-managed-login-branding-migration.tfstate
    ```
 
-3. Move each branding key from the AWSCC resource address to the native AWS resource address. Replace `<your_module_name>` with your actual module block label and `"main"` with your branding map key:
+4. Move each branding key from the AWSCC resource address to the native AWS resource address. Replace `<your_module_name>` with your actual module block label and `"main"` with your branding map key:
 
    ```bash
    terraform state mv \
@@ -82,10 +83,10 @@ Recommended safe order:
      'module.<your_module_name>.aws_cognito_managed_login_branding.branding["main"]'
    ```
 
-4. Run `terraform plan` after each state move, especially when migrating multiple branding keys, to catch partial migrations early. The first plan after `state mv` may show asset block changes because the old AWSCC state used an `assets` list and the native AWS provider uses an `asset` set. That is expected; confirm Terraform does **not** plan a destroy/create replacement for the branding resource.
-5. After all branding keys are moved and `terraform plan` shows no branding replacement, remove the `awscc` provider block from your root module.
-6. Run `terraform init -upgrade` and `terraform plan` again to confirm the configuration is clean.
-7. Remove local state backup files such as `.terraform.tfstate.backup` after confirming they are no longer needed. Do not commit state backups; they can contain Base64 asset bytes and other state data.
+5. Run `terraform plan` after each state move, especially when migrating multiple branding keys, to catch partial migrations early. The first plan after `state mv` may show asset block changes because the old AWSCC state used an `assets` list and the native AWS provider uses an `asset` set. That is expected; confirm Terraform does **not** plan a destroy/create replacement for the branding resource.
+6. After all branding keys are moved and `terraform plan` shows no branding replacement, remove the `awscc` provider block from your root module.
+7. Run `terraform init -upgrade` and `terraform plan` again to confirm the configuration is clean.
+8. Remove local state backup files such as `.terraform.tfstate.backup` after confirming they are no longer needed. Do not commit state backups; they can contain Base64 asset bytes and other state data.
 
 If state move is not possible, import the native resource using the user pool ID and managed login branding ID separated by a comma:
 
