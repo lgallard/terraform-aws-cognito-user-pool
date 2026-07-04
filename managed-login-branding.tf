@@ -18,15 +18,15 @@ resource "aws_cognito_managed_login_branding" "branding" {
       category    = asset.value.category
       color_mode  = asset.value.color_mode
       extension   = upper(asset.value.extension)
-      resource_id = try(asset.value.resource_id, null)
+      resource_id = asset.value.resource_id
     }
   }
 
   # Settings is mutually exclusive with use_cognito_provided_values in the native
-  # provider. Prefer explicit settings when supplied, and otherwise pass through
-  # the default-values flag for users who want Cognito's provided style.
-  settings                    = try(each.value.settings, null)
-  use_cognito_provided_values = try(each.value.settings, null) != null ? null : try(each.value.use_cognito_provided_values, false)
+  # provider. Use null when settings is present so the provider omits the bool;
+  # setting false explicitly would still violate the provider ExactlyOneOf rule.
+  settings                    = each.value.settings
+  use_cognito_provided_values = each.value.settings != null ? null : each.value.use_cognito_provided_values
 
   depends_on = [
     aws_cognito_user_pool_client.client

@@ -51,6 +51,7 @@ The module input shape is intentionally preserved for compatibility. Existing `m
 - The `awscc` provider is no longer required for managed login branding.
 - `return_merged_resources` is retained as a legacy input for compatibility, but the native provider exposes merged Cognito defaults through the `settings_all` attribute instead.
 - Outputs continue to expose `managed_login_branding_details`, `managed_login_branding`, and `managed_login_branding_ids`.
+- The `managed_login_branding_details.configurations[*].assets` output key is preserved, but its value now comes from the native AWS provider `asset` block shape.
 
 ### Existing state migration
 

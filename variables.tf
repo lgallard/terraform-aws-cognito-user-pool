@@ -1132,7 +1132,7 @@ variable "managed_login_branding" {
       resource_id = optional(string)
     })), [])
     settings                    = optional(string)
-    return_merged_resources     = optional(bool, false) # Deprecated legacy awscc option; native AWS provider exposes merged settings via settings_all.
+    return_merged_resources     = optional(bool, false)
     use_cognito_provided_values = optional(bool, false)
   }))
   default = {}
