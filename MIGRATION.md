@@ -56,20 +56,20 @@ The module input shape is intentionally preserved for compatibility. Existing `m
 
 If you already applied managed login branding with an older module version, move or import state before applying the new version to avoid Terraform planning a replacement.
 
-For each branding key, move the Terraform state address from the AWSCC resource to the native AWS resource:
+For each branding key, move the Terraform state address from the AWSCC resource to the native AWS resource. Replace `<your_module_name>` with your actual module block label and `"main"` with your branding map key:
 
 ```bash
 terraform state mv \
-  'module.cognito_user_pool.awscc_cognito_managed_login_branding.branding["main"]' \
-  'module.cognito_user_pool.aws_cognito_managed_login_branding.branding["main"]'
+  'module.<your_module_name>.awscc_cognito_managed_login_branding.branding["main"]' \
+  'module.<your_module_name>.aws_cognito_managed_login_branding.branding["main"]'
 ```
 
 If state move is not possible, import the native resource using the user pool ID and managed login branding ID separated by a comma:
 
 ```bash
 terraform import \
-  'module.cognito_user_pool.aws_cognito_managed_login_branding.branding["main"]' \
-  'us-east-1_example,managed-login-branding-id'
+  'module.<your_module_name>.aws_cognito_managed_login_branding.branding["main"]' \
+  'us-east-1_AbCdEfGhI,<managed-login-branding-id>'
 ```
 
 Then run `terraform plan` and confirm Terraform does not intend to recreate the branding resource.

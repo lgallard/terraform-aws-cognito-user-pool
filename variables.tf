@@ -1114,14 +1114,14 @@ variable "sign_in_policy_allowed_first_auth_factors" {
 # Managed Login Branding
 #
 variable "managed_login_branding_enabled" {
-  description = "Whether to enable managed login branding using the native AWS provider resource."
+  description = "Whether to enable managed login branding using the native AWS provider (requires hashicorp/aws >= 6.0)."
 
   type    = bool
   default = false
 }
 
 variable "managed_login_branding" {
-  description = "Configuration for managed login branding. Map of branding configurations where each key represents a branding instance"
+  description = "Configuration for managed login branding. Map of branding configurations where each key represents a branding instance. The legacy return_merged_resources option is retained for input compatibility but is a no-op with the native AWS provider; merged Cognito defaults are exposed through managed_login_branding_details.configurations[*].settings_all."
   type = map(object({
     client_id = string
     assets = optional(list(object({
