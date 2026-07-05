@@ -5,6 +5,13 @@
 
 * Phase 3 - Modernize client configs with dynamic block bug fixes ([#359](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/359)) ([3c42a1f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/3c42a1fa862ab7d666bd0a5f5ac322dc8993ec26))
 
+## [5.1.1](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/5.1.0...5.1.1) (2026-07-05)
+
+
+### Bug Fixes
+
+* align ui customization client fallback keys ([b0aec1f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/b0aec1f54ee18245b9651d77cf6b91318ad30a15))
+
 ## [5.1.0](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/5.0.0...5.1.0) (2026-07-04)
 
 
