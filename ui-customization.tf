@@ -11,7 +11,7 @@ locals {
   # Preserve the historical empty-string client key (_${idx}) for state safety.
   client_ui_customizations = var.enabled ? {
     for idx, c in local.clients :
-    lookup(c, "name", null) == null ? "client_${idx}" : (lookup(c, "name", null) == "" ? "_${idx}" : lookup(c, "name", null)) => {
+    local.client_lookup_keys[idx] => {
       css        = try(c.ui_customization_css, null)
       image_file = try(c.ui_customization_image_file, null)
     } if try(c.ui_customization_css, null) != null || try(c.ui_customization_image_file, null) != null

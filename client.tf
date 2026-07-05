@@ -1,8 +1,5 @@
 resource "aws_cognito_user_pool_client" "client" {
-  for_each = var.enabled ? {
-    for idx, client in local.clients :
-    "${lookup(client, "name", null) == null ? "client" : lookup(client, "name", null)}_${idx}" => client
-  } : {}
+  for_each = var.enabled ? local.clients_by_key : {}
 
   allowed_oauth_flows                           = try(each.value.allowed_oauth_flows, null)
   allowed_oauth_flows_user_pool_client          = try(each.value.allowed_oauth_flows_user_pool_client, null)
@@ -114,5 +111,24 @@ locals {
   ]
 
   clients = length(var.clients) == 0 && (var.client_name == null || var.client_name == "") ? [] : (length(var.clients) > 0 ? local.clients_parsed : local.clients_default)
+
+  # Shared client keys for resource addressing and downstream client ID lookups.
+  # - omitted/null name: deterministic fallback key such as client_0
+  # - explicit empty name: preserve historical Terraform key shape such as _0
+  # - non-empty name: preserve the existing name_<idx> resource key shape
+  client_resource_keys = [
+    for idx, client in local.clients :
+    client.name == null ? "client_${idx}" : "${client.name}_${idx}"
+  ]
+
+  clients_by_key = {
+    for idx, client in local.clients :
+    local.client_resource_keys[idx] => client
+  }
+
+  client_lookup_keys = [
+    for idx, client in local.clients :
+    client.name == null || client.name == "" ? local.client_resource_keys[idx] : client.name
+  ]
 
 }
