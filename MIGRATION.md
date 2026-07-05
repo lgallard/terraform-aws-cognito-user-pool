@@ -28,6 +28,36 @@ user_pool_add_ons {
 }
 ```
 
+## ⚠️ State note: UI customization for clients without names
+
+This release fixes UI customization handling for clients without configured names. Named clients are unaffected.
+
+For clients where `name` is omitted, the module now uses a deterministic fallback key/name such as `client_0`. Previous versions could fail during planning or silently skip the `aws_cognito_user_pool_ui_customization` resource.
+
+For clients explicitly configured with `name = ""`, the module preserves the historical Terraform key shape such as `_0` to avoid unnecessary state address churn.
+
+After upgrading, review `terraform plan` carefully. Some configurations may now show net-new `aws_cognito_user_pool_ui_customization` resources because they were previously skipped. If you somehow have state for an old hyphenated UI customization address such as:
+
+```hcl
+module.<your_module_name>.aws_cognito_user_pool_ui_customization.ui_customization["client-0"]
+```
+
+and Terraform proposes recreation at:
+
+```hcl
+module.<your_module_name>.aws_cognito_user_pool_ui_customization.ui_customization["client_0"]
+```
+
+prefer a manual state move after reviewing the plan:
+
+```bash
+terraform state mv \
+  'module.<your_module_name>.aws_cognito_user_pool_ui_customization.ui_customization["client-0"]' \
+  'module.<your_module_name>.aws_cognito_user_pool_ui_customization.ui_customization["client_0"]'
+```
+
+This module release intentionally does not add static `moved` blocks for this edge case because the old hyphenated address was not a reliable, generally creatable state shape and Terraform `moved` blocks cannot express dynamic moves for arbitrary client indexes.
+
 ## ⚠️ Action required: documented defaults now match module code
 
 > ⚠️ **Review these defaults before upgrading.** This release regenerates the README input table with current module defaults. The module code already used these defaults before this release, but the published README table was stale. If your configuration relied on the previously documented values, pin the variables explicitly before applying.
