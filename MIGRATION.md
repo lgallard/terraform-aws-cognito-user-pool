@@ -28,6 +28,38 @@ user_pool_add_ons {
 }
 ```
 
+## ⚠️ State note: UI customization for clients without names
+
+This release fixes UI customization handling for clients without configured names. Named clients are unaffected.
+
+For clients where `name` is omitted, the module now uses a deterministic fallback key/name such as `client_0`. Previous versions could fail during planning or silently skip the `aws_cognito_user_pool_ui_customization` resource.
+
+Clients with omitted `name` also use a new Terraform resource address for the client itself, from a possible historical `aws_cognito_user_pool_client.client["_0"]` address to `aws_cognito_user_pool_client.client["client_0"]`. Because the old key format caused planning errors in practice, this is unlikely to affect existing workspaces, but verify with `terraform state list` before applying if you previously configured clients without names.
+
+For clients explicitly configured with `name = ""`, the module preserves the historical Terraform key shape such as `_0` to avoid unnecessary state address churn. The module now also sends a non-empty fallback name such as `_0` to Cognito for these clients because the AWS provider marks the client `name` argument as required. Review plans for a possible in-place name update from `""` to the key shape such as `_0`; this should not require resource replacement.
+
+After upgrading, review `terraform plan` carefully. Some configurations may now show net-new `aws_cognito_user_pool_ui_customization` resources because they were previously skipped. If you somehow have state for an old hyphenated UI customization address such as:
+
+```hcl
+module.<your_module_name>.aws_cognito_user_pool_ui_customization.ui_customization["client-0"]
+```
+
+and Terraform proposes recreation at:
+
+```hcl
+module.<your_module_name>.aws_cognito_user_pool_ui_customization.ui_customization["client_0"]
+```
+
+prefer a manual state move after reviewing the plan:
+
+```bash
+terraform state mv \
+  'module.<your_module_name>.aws_cognito_user_pool_ui_customization.ui_customization["client-0"]' \
+  'module.<your_module_name>.aws_cognito_user_pool_ui_customization.ui_customization["client_0"]'
+```
+
+This module release intentionally does not add static `moved` blocks for this edge case because the old hyphenated address was not a reliable, generally creatable state shape and Terraform `moved` blocks cannot express dynamic moves for arbitrary client indexes.
+
 ## ⚠️ Action required: documented defaults now match module code
 
 > ⚠️ **Review these defaults before upgrading.** This release regenerates the README input table with current module defaults. The module code already used these defaults before this release, but the published README table was stale. If your configuration relied on the previously documented values, pin the variables explicitly before applying.

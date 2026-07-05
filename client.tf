@@ -1,8 +1,5 @@
 resource "aws_cognito_user_pool_client" "client" {
-  for_each = var.enabled ? {
-    for idx, client in local.clients :
-    "${lookup(client, "name", "client")}_${idx}" => client
-  } : {}
+  for_each = var.enabled ? local.clients_by_key : {}
 
   allowed_oauth_flows                           = try(each.value.allowed_oauth_flows, null)
   allowed_oauth_flows_user_pool_client          = try(each.value.allowed_oauth_flows_user_pool_client, null)
@@ -13,7 +10,7 @@ resource "aws_cognito_user_pool_client" "client" {
   explicit_auth_flows                           = try(each.value.explicit_auth_flows, null)
   generate_secret                               = try(each.value.generate_secret, null)
   logout_urls                                   = try(each.value.logout_urls, null)
-  name                                          = try(each.value.name, null)
+  name                                          = coalesce(try(each.value.name, null), each.key)
   read_attributes                               = try(each.value.read_attributes, null)
   access_token_validity                         = try(each.value.access_token_validity, null)
   id_token_validity                             = try(each.value.id_token_validity, null)
@@ -114,5 +111,25 @@ locals {
   ]
 
   clients = length(var.clients) == 0 && (var.client_name == null || var.client_name == "") ? [] : (length(var.clients) > 0 ? local.clients_parsed : local.clients_default)
+
+  # Shared client keys for resource addressing and downstream client ID lookups.
+  # - omitted/null name: deterministic fallback key such as client_0
+  # - explicit empty name: preserve historical Terraform key shape such as _0
+  # - non-empty name: preserve the existing name_<idx> resource key shape
+  client_resource_keys = [
+    for idx, client in local.clients :
+    client.name == null ? "client_${idx}" : "${client.name}_${idx}"
+  ]
+
+  clients_by_key = {
+    for idx, client in local.clients :
+    local.client_resource_keys[idx] => client
+  }
+
+  # Used by ui-customization.tf to resolve client IDs with the same key strategy.
+  client_lookup_keys = [
+    for idx, client in local.clients :
+    client.name == null || client.name == "" ? local.client_resource_keys[idx] : client.name
+  ]
 
 }
