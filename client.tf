@@ -1,7 +1,7 @@
 resource "aws_cognito_user_pool_client" "client" {
   for_each = var.enabled ? {
     for idx, client in local.clients :
-    "${coalesce(lookup(client, "name", null), "client")}_${idx}" => client
+    "${lookup(client, "name", null) == null ? "client" : lookup(client, "name", null)}_${idx}" => client
   } : {}
 
   allowed_oauth_flows                           = try(each.value.allowed_oauth_flows, null)

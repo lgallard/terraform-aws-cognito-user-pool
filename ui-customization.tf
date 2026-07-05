@@ -8,9 +8,10 @@ locals {
 
   # Create UI customizations map using the same fallback key format as
   # aws_cognito_user_pool_client.client so unnamed clients resolve to their IDs.
+  # Preserve the historical empty-string client key (_${idx}) for state safety.
   client_ui_customizations = var.enabled ? {
     for idx, c in local.clients :
-    coalesce(lookup(c, "name", null), "client_${idx}") => {
+    lookup(c, "name", null) == null ? "client_${idx}" : (lookup(c, "name", null) == "" ? "_${idx}" : lookup(c, "name", null)) => {
       css        = try(c.ui_customization_css, null)
       image_file = try(c.ui_customization_image_file, null)
     } if try(c.ui_customization_css, null) != null || try(c.ui_customization_image_file, null) != null
