@@ -6,27 +6,22 @@ locals {
     coalesce(c.name, k) => c.id
   }
 
-  # Create UI customizations map using local.clients for consistency
-  # Preserves backward-compatible key format to avoid resource recreation
-  client_ui_customizations = {
+  # Create UI customizations map using the same fallback key format as
+  # aws_cognito_user_pool_client.client so unnamed clients resolve to their IDs.
+  client_ui_customizations = var.enabled ? {
     for idx, c in local.clients :
-    coalesce(lookup(c, "name", null), "client-${idx}") => {
+    coalesce(lookup(c, "name", null), "client_${idx}") => {
       css        = try(c.ui_customization_css, null)
       image_file = try(c.ui_customization_image_file, null)
     } if try(c.ui_customization_css, null) != null || try(c.ui_customization_image_file, null) != null
-  }
+  } : {}
 }
 
 # UI customizations for specific clients
 resource "aws_cognito_user_pool_ui_customization" "ui_customization" {
-  # Only create resources for clients that still exist in client_ids_map
-  for_each = {
-    for k, v in local.client_ui_customizations :
-    k => v
-    if contains(keys(local.client_ids_map), k)
-  }
+  for_each = local.client_ui_customizations
 
-  client_id = lookup(local.client_ids_map, each.key, null)
+  client_id = local.client_ids_map[each.key]
 
   css        = each.value.css
   image_file = each.value.image_file
