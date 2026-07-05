@@ -1,7 +1,7 @@
 resource "aws_cognito_user_pool_client" "client" {
   for_each = var.enabled ? {
     for idx, client in local.clients :
-    "${lookup(client, "name", "client")}_${idx}" => client
+    "${coalesce(lookup(client, "name", null), "client")}_${idx}" => client
   } : {}
 
   allowed_oauth_flows                           = try(each.value.allowed_oauth_flows, null)
@@ -13,7 +13,7 @@ resource "aws_cognito_user_pool_client" "client" {
   explicit_auth_flows                           = try(each.value.explicit_auth_flows, null)
   generate_secret                               = try(each.value.generate_secret, null)
   logout_urls                                   = try(each.value.logout_urls, null)
-  name                                          = try(each.value.name, null)
+  name                                          = coalesce(try(each.value.name, null), each.key)
   read_attributes                               = try(each.value.read_attributes, null)
   access_token_validity                         = try(each.value.access_token_validity, null)
   id_token_validity                             = try(each.value.id_token_validity, null)
