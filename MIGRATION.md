@@ -34,7 +34,9 @@ This release fixes UI customization handling for clients without configured name
 
 For clients where `name` is omitted, the module now uses a deterministic fallback key/name such as `client_0`. Previous versions could fail during planning or silently skip the `aws_cognito_user_pool_ui_customization` resource.
 
-For clients explicitly configured with `name = ""`, the module preserves the historical Terraform key shape such as `_0` to avoid unnecessary state address churn. The module now also sends a non-empty fallback name such as `_0` to Cognito for these clients because the AWS provider marks the client `name` argument as required. Review plans for a possible in-place name update on clients that previously used an explicit empty string.
+Clients with omitted `name` also use a new Terraform resource address for the client itself, from a possible historical `aws_cognito_user_pool_client.client["_0"]` address to `aws_cognito_user_pool_client.client["client_0"]`. Because the old key format caused planning errors in practice, this is unlikely to affect existing workspaces, but verify with `terraform state list` before applying if you previously configured clients without names.
+
+For clients explicitly configured with `name = ""`, the module preserves the historical Terraform key shape such as `_0` to avoid unnecessary state address churn. The module now also sends a non-empty fallback name such as `_0` to Cognito for these clients because the AWS provider marks the client `name` argument as required. Review plans for a possible in-place name update from `""` to the key shape such as `_0`; this should not require resource replacement.
 
 After upgrading, review `terraform plan` carefully. Some configurations may now show net-new `aws_cognito_user_pool_ui_customization` resources because they were previously skipped. If you somehow have state for an old hyphenated UI customization address such as:
 

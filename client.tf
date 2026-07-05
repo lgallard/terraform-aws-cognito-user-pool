@@ -126,6 +126,7 @@ locals {
     local.client_resource_keys[idx] => client
   }
 
+  # Used by ui-customization.tf to resolve client IDs with the same key strategy.
   client_lookup_keys = [
     for idx, client in local.clients :
     client.name == null || client.name == "" ? local.client_resource_keys[idx] : client.name
