@@ -821,165 +821,19 @@ AI validation covers:
 
 For detailed guidance on using AI validation, see [CLAUDE.md](CLAUDE.md).
 
-## Automation & Feature Discovery
+## Feature Discovery
 
-### Automated Feature Discovery System
+Feature discovery for this module is now handled by the external Hermes Terraform automation instead of an in-repository GitHub Actions workflow.
 
-This module includes an **automated feature discovery system** that runs weekly to identify new AWS Cognito User Pool features, deprecations, and bug fixes from the AWS provider. This system addresses the continuous validation concern by **proactively monitoring AWS provider changes** and creating structured validation checklists for each change.
+The Hermes cron job:
 
-**How it addresses provider update concerns:**
-- **Continuous monitoring** of AWS provider updates (weekly scans)
-- **Automated issue creation** with validation checklists for each discovery
-- **Structured templates** that include AI validation requirements
-- **Feature tracking** to prevent missed updates
-- **Deprecation warnings** before features are removed
+- runs weekly for `lgallard/terraform-aws-cognito-user-pool`
+- checks the latest `hashicorp/aws` provider version
+- uses current Terraform Registry and AWS documentation sources
+- compares Cognito provider capabilities with this module's implementation
+- searches existing open issues to avoid duplicates
+- posts a read-only report with triage-ready issue suggestions
 
-The system uses Claude Code with MCP (Model Context Protocol) servers to analyze provider documentation and automatically create GitHub issues for new functionality, ensuring no provider changes go unnoticed.
-
-#### How It Works
-
-1. **Weekly Scanning**: Every Sunday at 00:00 UTC, the system scans the latest AWS provider documentation
-2. **MCP Integration**: Uses Terraform and Context7 MCP servers to access up-to-date provider docs
-3. **Intelligent Analysis**: Compares provider capabilities with current module implementation
-4. **Automated Issues**: Creates categorized GitHub issues for discovered items:
-   - 🚀 **New Features** - Cognito resources/arguments not yet implemented
-   - ⚠️ **Deprecations** - Features being phased out requiring action
-   - 🐛 **Bug Fixes** - Important provider fixes affecting the module
-
-#### Feature Discovery Workflow
-
-The discovery process follows this workflow:
-
-```
-┌─────────────────┐    ┌──────────────────────┐    ┌─────────────────────┐
-│                 │    │                      │    │                     │
-│  Weekly Trigger │───▶│   Claude Code CLI    │───▶│   GitHub Issues     │
-│  (GitHub Action)│    │   + MCP Servers      │    │   (Auto-created)    │
-│                 │    │                      │    │                     │
-└─────────────────┘    └──────────────────────┘    └─────────────────────┘
-                                 │
-                                 ▼
-                       ┌──────────────────────┐
-                       │                      │
-                       │  Feature Tracking    │
-                       │    Database          │
-                       │  (.github/tracker/)  │
-                       │                      │
-                       └──────────────────────┘
-```
-
-#### Manual Discovery
-
-You can manually trigger feature discovery:
-
-```bash
-# Standard discovery
-gh workflow run feature-discovery.yml
-
-# Dry run mode (analyze without creating issues)
-gh workflow run feature-discovery.yml -f dry_run=true
-
-# Specific provider version
-gh workflow run feature-discovery.yml -f provider_version=5.82.0
-
-# Force full scan
-gh workflow run feature-discovery.yml -f force_scan=true
-```
-
-#### Discovery Categories
-
-The system identifies and categorizes findings as:
-
-**New Features (`enhancement` label):**
-- New Cognito resources (`aws_cognito_*`)
-- New arguments on existing resources
-- New data sources (`data.aws_cognito_*`)
-- New authentication flows and security features
-- New MFA and verification options
-- New branding and UI customization features
-
-**Deprecations (`deprecation` label):**
-- Arguments marked for removal
-- Resources being phased out
-- Authentication flows no longer recommended
-- Configuration patterns outdated
-
-**Bug Fixes (`bug` label):**
-- Provider fixes affecting module functionality
-- Authentication and security patches
-- Performance improvements
-
-#### Issue Templates with AI Validation
-
-Each discovery type uses a structured template that **includes AI validation checklists**:
-
-- **New Features**: Implementation checklist, examples, **AI validation requirements** (terraform-cognito, terraform-security, module-documentation agents)
-- **Deprecations**: Migration guidance, timeline, impact assessment, **AI validation with cognito-migration agent**
-- **Bug Fixes**: Impact analysis, **validation strategy with specialized agents**, version requirements
-
-These templates ensure that **every provider change triggers a structured validation process** using the appropriate AI agents, addressing the concern about continuous validation coverage.
-
-#### Feature Tracking
-
-All discoveries are tracked in `.github/feature-tracker/cognito-features.json`:
-
-```json
-{
-  "metadata": {
-    "last_scan": "2025-01-21T00:00:00Z",
-    "provider_version": "5.82.0",
-    "scan_count": 42
-  },
-  "current_implementation": {
-    "resources": {
-      "aws_cognito_user_pool": {
-        "implemented": ["name", "mfa_configuration", "password_policy"],
-        "pending": ["advanced_security_mode"]
-      }
-    }
-  },
-  "discovered_features": {
-    "new_resources": {},
-    "deprecations": {},
-    "bug_fixes": {}
-  }
-}
-```
-
-#### MCP Server Integration
-
-The system leverages Model Context Protocol servers for real-time documentation access:
-
-- **Terraform MCP**: `@modelcontextprotocol/server-terraform@latest`
-  - AWS provider resource documentation
-  - Argument specifications and examples
-  - Version compatibility information
-
-- **Context7 MCP**: `@upstash/context7-mcp@latest`
-  - Provider changelogs and release notes
-  - Community discussions and best practices
-  - Historical change tracking
-
-#### Benefits
-
-- **Continuous Validation Coverage**: Automated monitoring replaces manual regression testing
-- **Stay Current**: Never miss new AWS Cognito features or provider updates
-- **Proactive Maintenance**: Identify deprecations before they break
-- **Structured Validation**: Every change includes AI validation checklists
-- **Automated Tracking**: Comprehensive feature database with validation history
-- **Security Assurance**: Security changes automatically flagged for terraform-security agent review
-- **Community Value**: Users benefit from latest AWS capabilities
-- **Reduced Manual Work**: No need for manual provider monitoring or test maintenance
-
-#### Contributing to Discovery
-
-The system is designed to minimize false positives, but you can help improve accuracy:
-
-1. **Review Auto-Created Issues**: Validate and prioritize discoveries
-2. **Update Tracking**: Mark features as implemented when complete
-3. **Improve Templates**: Suggest enhancements to issue templates
-4. **Report Gaps**: Let us know if the system misses important features
-
-For more details on the discovery system architecture, see `.github/scripts/discovery-prompt.md`.
+GitHub issues are created only after review, so discovery does not require this repository to keep workflow secrets, MCP configuration, or feature-tracker state.
 
 <!-- CI trigger: All typos and formatting issues have been fixed -->
