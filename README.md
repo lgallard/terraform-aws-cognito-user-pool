@@ -641,93 +641,16 @@ No modules.
 
 ## Development
 
-### Pre-commit Setup
+### Validation Strategy
 
-This module uses [pre-commit](https://pre-commit.com/) hooks to ensure code quality and consistency. The pre-commit configuration includes:
+This module intentionally does not keep in-repository automated test, lint, or security-scan workflows. Validation is handled through AI-assisted reviews and maintainer/user feedback so the module does not spend maintenance time on toolchain-only dependency churn.
 
-#### Hooks Included
+For code changes:
 
-- **Code Quality:**
-  - `terraform_fmt` - Automatic Terraform formatting
-  - `terraform_validate` - Terraform syntax validation
-  - `terraform_docs` - Automatic documentation generation
-  - `terraform_tflint` - Terraform linting with identity-specific rules
-  - `terraform_tfsec` - Security scanning for Cognito/IAM configurations
-
-- **File Quality:**
-  - `trailing-whitespace` - Remove trailing whitespace
-  - `end-of-file-fixer` - Ensure files end with newline
-  - `check-yaml` - YAML file validation
-  - `check-json` - JSON file validation
-  - `detect-aws-credentials` - Prevent AWS credential commits
-  - `detect-private-key` - Prevent private key commits
-
-- **Content Quality:**
-  - `typos` - Markdown typo checking
-
-#### Installation
-
-1. **Install pre-commit** (if not already installed):
-   ```bash
-   # Using pip
-   pip install pre-commit
-
-   # Using brew (macOS)
-   brew install pre-commit
-   ```
-
-2. **Install the pre-commit hooks**:
-   ```bash
-   pre-commit install
-   ```
-
-3. **Install required tools**:
-   ```bash
-   # Install tfsec for security scanning
-   brew install tfsec
-
-   # Install tflint for Terraform linting
-   brew install tflint
-   ```
-
-#### Usage
-
-- **Run on all files:**
-  ```bash
-  pre-commit run --all-files
-  ```
-
-- **Run on staged files only:**
-  ```bash
-  pre-commit run
-  ```
-
-- **Run specific hook:**
-  ```bash
-  pre-commit run terraform_fmt
-  pre-commit run terraform_tfsec
-  ```
-
-#### Configuration Files
-
-The module includes several configuration files for the pre-commit hooks:
-
-- `.pre-commit-config.yaml` - Main pre-commit configuration
-- `.terraform-docs.yml` - Documentation generation settings
-- `.tflint.hcl` - TFLint rules with Cognito-specific validations
-- `.tfsec.yml` - Security scanning configuration for identity/auth patterns
-
-#### Development Workflow
-
-Following the [CLAUDE.md](CLAUDE.md) guidelines:
-
-1. Make your changes
-2. Run pre-commit hooks: `pre-commit run --all-files`
-3. Fix any issues reported by the hooks
-4. Commit your changes
-5. The hooks will run automatically on commit
-
-This ensures consistent code quality and catches common issues before they reach the repository.
+1. Make the Terraform or documentation change.
+2. Request AI validation from the relevant Claude Code subagents described below.
+3. Use maintainer review and user reports as the final validation gate.
+4. Commit using conventional commits so release-please can manage releases.
 
 ### AI-Powered Validation
 
@@ -791,24 +714,13 @@ this implementation. Check for AWS best practices, security concerns, and proper
 integration with existing module patterns.
 ```
 
-#### Automated Validation Triggers
+#### Validation Triggers
 
-While validation is requested on-demand, several automated systems support code quality:
+Validation is requested on demand instead of being enforced by repository workflows:
 
-1. **Pre-commit Hooks** (runs locally on every commit):
-   - Terraform syntax validation (`terraform validate`)
-   - Security scanning (`tfsec`)
-   - Linting (`tflint`)
-   - Format checking (`terraform fmt`)
-
-2. **Feature Discovery Workflow** (runs weekly):
-   - Scans AWS provider for new features, deprecations, and bug fixes
-   - Creates GitHub issues with validation checklists
-   - See "Automation & Feature Discovery" section below
-
-3. **Security Scanning** (runs on every push):
-   - Trivy for vulnerability scanning
-   - TFSec for Terraform-specific security issues
+- Ask the Cognito, security, migration, and documentation subagents to review changes relevant to their specialty.
+- Use the weekly external Hermes feature discovery report to identify new provider/AWS gaps and create reviewed follow-up issues.
+- Treat maintainer review and user reports as the final signal for behavior that cannot be proven without live consumer usage.
 
 #### Validation Coverage
 
