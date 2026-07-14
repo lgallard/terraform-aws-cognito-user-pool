@@ -260,9 +260,8 @@ variable "password_policy" {
 - Document version-specific changes
 
 ### Code Quality
-- Run `terraform fmt` before committing
-- Use `terraform validate` to check syntax
-- Consider pre-commit hooks for automated checks
+- Keep Terraform formatting and naming consistent with the surrounding module code
+- Prefer AI-assisted review over maintaining in-repository automated test/lint/security workflows
 - Use consistent naming conventions
 
 ## Specific Module Patterns
@@ -304,12 +303,11 @@ resource "aws_cognito_user_pool_client" "this" {
 
 ## Development Workflow
 
-### Pre-commit Requirements
-- Run `terraform fmt` on modified files
-- Execute `terraform validate`
+### Validation Requirements
 - Request AI validation for affected functionality using specialized agents
-- Consider requesting security analysis using terraform-security agent
+- Request security analysis with the terraform-security agent for authentication, authorization, MFA, password policy, token, or IAM-related changes
 - Update documentation for variable changes
+- Use maintainer review and user reports as the final validation signal instead of repository-owned automated tests
 
 ### Release Management
 - **DO NOT manually update CHANGELOG.md** - we use release-please for automated changelog generation
