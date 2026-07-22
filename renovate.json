@@ -1,47 +1,64 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
-    ":dependencyDashboard"
+    "github>lgallard/renovate-config"
   ],
   "major": {
     "dependencyDashboardApproval": true
   },
   "packageRules": [
     {
-      "managers": ["terraform"],
-      "matchPackageNames": ["terraform"],
+      "matchPackageNames": [
+        "terraform"
+      ],
+      "enabled": true,
+      "automerge": false,
+      "matchManagers": [
+        "terraform"
+      ]
+    },
+    {
+      "matchDatasources": [
+        "terraform-provider"
+      ],
       "enabled": true,
       "automerge": false
     },
     {
-      "matchDatasources": ["terraform-provider"],
+      "matchDatasources": [
+        "terraform-module"
+      ],
       "enabled": true,
       "automerge": false
     },
     {
-      "matchDatasources": ["terraform-module"],
       "enabled": true,
-      "automerge": false
+      "automerge": false,
+      "matchManagers": [
+        "terraform"
+      ],
+      "matchPackageNames": [
+        "/^hashicorp/terraform$/"
+      ]
     },
     {
-      "managers": ["terraform"],
-      "matchPackagePatterns": ["^hashicorp/terraform$"],
-      "enabled": true,
-      "automerge": false
-    },
-    {
-      "matchDatasources": ["golang-version"],
+      "matchDatasources": [
+        "golang-version"
+      ],
       "ignoreUnstable": true,
       "respectLatest": true,
       "description": "Prevent pre-release Go versions in GitHub Actions workflows"
     },
     {
-      "managers": ["github-actions"],
-      "matchPackageNames": ["actions/setup-go"],
+      "matchPackageNames": [
+        "actions/setup-go"
+      ],
       "ignoreUnstable": true,
       "respectLatest": true,
-      "description": "Ensure setup-go action only uses stable Go versions"
+      "description": "Ensure setup-go action only uses stable Go versions",
+      "matchManagers": [
+        "github-actions"
+      ]
     }
   ]
 }
