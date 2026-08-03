@@ -44,7 +44,7 @@ locals {
   # Create a map of branding configurations for outputs.
   managed_login_branding_map = var.enabled && var.managed_login_branding_enabled ? {
     for k, v in aws_cognito_managed_login_branding.branding : k => {
-      id                        = v.id
+      id                        = v.managed_login_branding_id
       managed_login_branding_id = v.managed_login_branding_id
       client_id                 = v.client_id
       user_pool_id              = v.user_pool_id
