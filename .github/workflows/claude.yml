@@ -40,7 +40,7 @@ jobs:
           claude_args: >-
             --model claude-sonnet-4-6
             --mcp-config ${{ github.workspace }}/.github/claude-mcp-config.json
-            --allowedTools Bash(pre-commit run --files),Bash(terraform fmt),Bash(terraform validate),Bash(terraform-docs),mcp__terraform-server__get_provider_details,mcp__terraform-server__search_providers,mcp__terraform-server__search_modules,mcp__terraform-server__get_module_details,mcp__context7__resolve-library-id,mcp__context7__get-library-docs
+            --allowedTools Bash(pre-commit:*),Bash(terraform:*),Bash(terraform-docs:*),mcp__terraform-server__get_provider_details,mcp__terraform-server__search_providers,mcp__terraform-server__search_modules,mcp__terraform-server__get_module_details,mcp__context7__resolve-library-id,mcp__context7__get-library-docs
 
           # This is an optional setting that allows Claude to read CI results on PRs
           additional_permissions: |
