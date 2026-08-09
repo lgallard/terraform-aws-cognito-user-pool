@@ -316,4 +316,50 @@ jobs:
 
             ---
 
-            **CRITICAL FINAL INSTRUCTION**: After completing your analysis, post your complete structured Markdown findings as a comment on this pull request using the GitHub commenting tools available to you.
+            **CRITICAL FINAL INSTRUCTION**: Return only the complete structured Markdown review as your final response. Do not post the PR comment yourself and do not call GitHub commenting tools; the workflow posts your final response after Claude exits.
+
+      - name: Post Codebot review comment
+        if: always() && steps.claude.outputs.execution_file != ''
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
+          EXECUTION_FILE: ${{ steps.claude.outputs.execution_file }}
+        run: |
+          set -euo pipefail
+
+          BODY_FILE="$RUNNER_TEMP/codebot-review.md"
+
+          python3 - <<'PY' "$EXECUTION_FILE" "$BODY_FILE"
+          import json
+          import sys
+          from pathlib import Path
+
+          execution_file = Path(sys.argv[1])
+          body_file = Path(sys.argv[2])
+          messages = json.loads(execution_file.read_text())
+
+          body = None
+          for message in reversed(messages):
+              if message.get("type") == "result" and message.get("result"):
+                  body = message["result"]
+                  break
+              if message.get("type") == "assistant":
+                  parts = []
+                  for item in message.get("message", {}).get("content", []):
+                      if item.get("type") == "text" and item.get("text"):
+                          parts.append(item["text"])
+                  if parts:
+                      body = "\n\n".join(parts)
+                      break
+
+          if not body or not body.strip():
+              raise SystemExit("No Claude review text found in execution output")
+
+          body = body.strip()
+          if "Codebot" not in body and "## Findings" not in body:
+              body = "🤖 **Codebot Review**\n\n" + body
+
+          body_file.write_text(body + "\n")
+          PY
+
+          gh pr comment "$PR_NUMBER" --body-file "$BODY_FILE"
