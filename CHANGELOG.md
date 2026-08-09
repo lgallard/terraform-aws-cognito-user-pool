@@ -5,6 +5,13 @@
 
 * Phase 3 - Modernize client configs with dynamic block bug fixes ([#359](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/359)) ([3c42a1f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/3c42a1fa862ab7d666bd0a5f5ac322dc8993ec26))
 
+## [5.1.2](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/5.1.1...5.1.2) (2026-08-09)
+
+
+### Bug Fixes
+
+* use managed login branding provider identifier ([37964b9](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/37964b9ed548640ce71c50d7a7f4f2b018428a0b)), closes [#432](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/432)
+
 ## [5.1.1](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/5.1.0...5.1.1) (2026-07-05)
 
 
