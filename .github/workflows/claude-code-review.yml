@@ -282,4 +282,38 @@ jobs:
 
             ---
 
-            **CRITICAL FINAL INSTRUCTION**: After completing your analysis, post your complete findings as a comment on this pull request using the GitHub commenting tools available to you.
+            **Required PR Comment Format - MUST FOLLOW:**
+            Post a structured Markdown comment, not a single compressed paragraph. Use this exact shape:
+
+            ```markdown
+            🤖 **Codebot ${{ steps.parse-command.outputs.mode || 'Hunt' }} — <short analysis title>**
+
+            **Scope:** <changed files or PR scope>
+            **Mode:** ${{ steps.parse-command.outputs.mode || 'hunt' }} (${{ steps.parse-command.outputs.focus || 'bugs,security,performance' }})
+
+            ## Verdict: <✅ approve / ⚠️ changes requested / ℹ️ informational>
+
+            ## Findings
+
+            ### Finding 1 — <short title>
+            **Confidence:** <High|Medium|Low> | **Severity:** <Critical|High|Medium|Low|N/A>
+
+            <clear explanation, with file/line references where useful>
+
+            **Recommendation:** <specific next action, or "No change required">
+
+            ### Finding 2 — <short title>
+            **Confidence:** <High|Medium|Low> | **Severity:** <Critical|High|Medium|Low|N/A>
+
+            <clear explanation>
+
+            ## Summary
+            - <concise bullet>
+            - <concise bullet>
+            ```
+
+            If there are no blocking findings, still include the sections above with an approval/informational verdict. Do not collapse the review into inline numbered sentences.
+
+            ---
+
+            **CRITICAL FINAL INSTRUCTION**: After completing your analysis, post your complete structured Markdown findings as a comment on this pull request using the GitHub commenting tools available to you.
