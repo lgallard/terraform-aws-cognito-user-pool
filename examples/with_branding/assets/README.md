@@ -14,15 +14,25 @@ This directory should contain the branding assets referenced in the example:
 ## Asset Guidelines
 
 ### Supported Formats
-- PNG, JPG, JPEG, SVG, ICO
+- PNG, JPEG/JPG, SVG, ICO, WEBP. JPG input is normalized to AWS's JPEG enum value.
 - Maximum file size: 2MB per asset
 
 ### Asset Categories
 - `FORM_LOGO` - Logo displayed on the login form
 - `PAGE_BACKGROUND` - Background image for the login page
 - `FAVICON_ICO` - Favicon for the browser tab
+- `FAVICON_SVG` - SVG favicon for the browser tab
+- `EMAIL_GRAPHIC` - Email verification graphic
+- `SMS_GRAPHIC` - SMS verification graphic
+- `AUTH_APP_GRAPHIC` - Authenticator app setup graphic
+- `PASSWORD_GRAPHIC` - Password reset graphic
+- `PASSKEY_GRAPHIC` - Passkey setup graphic
 - `PAGE_HEADER_LOGO` - Logo in the page header
+- `PAGE_HEADER_BACKGROUND` - Background image in the page header
 - `PAGE_FOOTER_LOGO` - Logo in the page footer
+- `PAGE_FOOTER_BACKGROUND` - Background image in the page footer
+- `FORM_BACKGROUND` - Background image on the form
+- `IDP_BUTTON_ICON` - Icon for an identity provider button
 - And more (see AWS documentation)
 
 ### Color Modes

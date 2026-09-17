@@ -1211,13 +1211,15 @@ variable "managed_login_branding" {
     condition = alltrue([
       for config in values(var.managed_login_branding) : alltrue([
         for asset in lookup(config, "assets", []) : contains([
-          "FORM_LOGO", "PAGE_BACKGROUND", "FAVICON_ICO",
-          "PAGE_HEADER_LOGO", "PAGE_FOOTER_LOGO", "EMAIL_GRAPHIC",
-          "SMS_GRAPHIC", "AUTH_APP_GRAPHIC", "PASSWORD_GRAPHIC", "PASSKEY_GRAPHIC"
+          "FAVICON_ICO", "FAVICON_SVG", "EMAIL_GRAPHIC",
+          "SMS_GRAPHIC", "AUTH_APP_GRAPHIC", "PASSWORD_GRAPHIC",
+          "PASSKEY_GRAPHIC", "PAGE_HEADER_LOGO", "PAGE_HEADER_BACKGROUND",
+          "PAGE_FOOTER_LOGO", "PAGE_FOOTER_BACKGROUND", "PAGE_BACKGROUND",
+          "FORM_BACKGROUND", "FORM_LOGO", "IDP_BUTTON_ICON"
         ], asset.category)
       ])
     ])
-    error_message = "Invalid asset category. Must be one of: FORM_LOGO, PAGE_BACKGROUND, FAVICON_ICO, PAGE_HEADER_LOGO, PAGE_FOOTER_LOGO, EMAIL_GRAPHIC, SMS_GRAPHIC, AUTH_APP_GRAPHIC, PASSWORD_GRAPHIC, PASSKEY_GRAPHIC"
+    error_message = "Invalid asset category. Must be one of: FAVICON_ICO, FAVICON_SVG, EMAIL_GRAPHIC, SMS_GRAPHIC, AUTH_APP_GRAPHIC, PASSWORD_GRAPHIC, PASSKEY_GRAPHIC, PAGE_HEADER_LOGO, PAGE_HEADER_BACKGROUND, PAGE_FOOTER_LOGO, PAGE_FOOTER_BACKGROUND, PAGE_BACKGROUND, FORM_BACKGROUND, FORM_LOGO, IDP_BUTTON_ICON"
   }
 
   validation {
@@ -1239,7 +1241,7 @@ variable "managed_login_branding" {
         ], upper(asset.extension))
       ])
     ])
-    error_message = "Invalid file extension. Must be one of: PNG, JPG, JPEG, SVG, ICO, WEBP"
+    error_message = "Invalid file extension. Must be one of: PNG, JPG, JPEG, SVG, ICO, WEBP. JPG is accepted for backward compatibility and normalized to JPEG before being sent to AWS."
   }
 
   validation {

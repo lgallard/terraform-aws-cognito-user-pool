@@ -78,8 +78,18 @@ Cognito supports various asset categories:
 | `FORM_LOGO` | Logo on login form | LIGHT, DARK, DYNAMIC |
 | `PAGE_BACKGROUND` | Page background | LIGHT, DARK, DYNAMIC |
 | `FAVICON_ICO` | Browser favicon | DYNAMIC |
+| `FAVICON_SVG` | Browser favicon | DYNAMIC |
+| `EMAIL_GRAPHIC` | Email verification graphic | LIGHT, DARK, DYNAMIC |
+| `SMS_GRAPHIC` | SMS verification graphic | LIGHT, DARK, DYNAMIC |
+| `AUTH_APP_GRAPHIC` | Authenticator app setup graphic | LIGHT, DARK, DYNAMIC |
+| `PASSWORD_GRAPHIC` | Password reset graphic | LIGHT, DARK, DYNAMIC |
+| `PASSKEY_GRAPHIC` | Passkey setup graphic | LIGHT, DARK, DYNAMIC |
 | `PAGE_HEADER_LOGO` | Header logo | LIGHT, DARK, DYNAMIC |
+| `PAGE_HEADER_BACKGROUND` | Header background | LIGHT, DARK, DYNAMIC |
 | `PAGE_FOOTER_LOGO` | Footer logo | LIGHT, DARK, DYNAMIC |
+| `PAGE_FOOTER_BACKGROUND` | Footer background | LIGHT, DARK, DYNAMIC |
+| `FORM_BACKGROUND` | Form background | LIGHT, DARK, DYNAMIC |
+| `IDP_BUTTON_ICON` | Identity provider button icon | LIGHT, DARK, DYNAMIC |
 
 ## Outputs
 
@@ -102,7 +112,7 @@ After deployment, you can test the branding by:
 ## Asset Requirements
 
 - **File Size**: Maximum 2MB per asset
-- **Formats**: PNG, JPG, JPEG, SVG, ICO
+- **Formats**: PNG, JPEG/JPG, SVG, ICO, WEBP. JPG input is normalized to AWS's JPEG enum value.
 - **Encoding**: Base64 (handled automatically by `filebase64()`)
 
 ## Important Notes

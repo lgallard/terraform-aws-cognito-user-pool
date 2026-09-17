@@ -322,7 +322,7 @@ This module supports AWS Cognito Managed Login Branding, which allows you to cus
 - **Multi-mode Support**: Light, dark, and browser-adaptive themes
 - **JSON Settings**: Advanced styling with colors, typography, and layout
 - **Client Association**: Link branding to specific app clients
-- **Asset Management**: Support for PNG, JPG, SVG, ICO formats (max 2MB each)
+- **Asset Management**: Support for PNG, JPEG/JPG, SVG, ICO, and WEBP formats (max 2MB each)
 
 ### 📋 **Requirements**
 
@@ -396,8 +396,18 @@ See the [with_branding example](examples/with_branding/) for a comprehensive imp
 | `FORM_LOGO` | Logo on login form | 200x60px |
 | `PAGE_BACKGROUND` | Page background image | 1920x1080px |
 | `FAVICON_ICO` | Browser favicon | 32x32px |
+| `FAVICON_SVG` | Browser favicon | 32x32px |
+| `EMAIL_GRAPHIC` | Email verification graphic | 200x200px |
+| `SMS_GRAPHIC` | SMS verification graphic | 200x200px |
+| `AUTH_APP_GRAPHIC` | Authenticator app setup graphic | 200x200px |
+| `PASSWORD_GRAPHIC` | Password reset graphic | 200x200px |
+| `PASSKEY_GRAPHIC` | Passkey setup graphic | 200x200px |
 | `PAGE_HEADER_LOGO` | Header logo | 200x60px |
+| `PAGE_HEADER_BACKGROUND` | Header background image | 1920x240px |
 | `PAGE_FOOTER_LOGO` | Footer logo | 200x60px |
+| `PAGE_FOOTER_BACKGROUND` | Footer background image | 1920x240px |
+| `FORM_BACKGROUND` | Form background image | 800x800px |
+| `IDP_BUTTON_ICON` | Identity provider button icon | 32x32px |
 
 ### ⚠️ **Important Notes**
 
@@ -425,7 +435,7 @@ See the [with_branding example](examples/with_branding/) for a comprehensive imp
 
 **Asset Problems:**
 - `Error: Asset file size exceeds limit`: Reduce image file size to under 2MB
-- `Error: Invalid file format`: Use supported formats (PNG, JPG, JPEG, SVG, ICO)
+- `Error: Invalid file format`: Use supported formats (PNG, JPEG/JPG, SVG, ICO, WEBP)
 - `Error: File not found`: Verify asset file paths are correct and files exist
 
 **Resource Dependencies:**
