@@ -5,6 +5,13 @@
 
 * Phase 3 - Modernize client configs with dynamic block bug fixes ([#359](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/359)) ([3c42a1f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/3c42a1fa862ab7d666bd0a5f5ac322dc8993ec26))
 
+## [5.1.3](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/5.1.2...5.1.3) (2026-09-19)
+
+
+### Bug Fixes
+
+* update managed login branding asset validation ([#445](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/445)) ([ba85785](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/ba857855ee3ea0199f50b9622c4e2ff59d07d5c5))
+
 ## [5.1.2](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/5.1.1...5.1.2) (2026-08-09)
 
 
