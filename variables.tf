@@ -1191,7 +1191,7 @@ variable "managed_login_branding_enabled" {
 }
 
 variable "managed_login_branding" {
-  description = "Configuration for managed login branding. Map of branding configurations where each key represents a branding instance. client_id accepts either a module-managed client name or a literal Cognito app client ID. The legacy return_merged_resources option is no longer supported with the native AWS provider; merged Cognito defaults are exposed through managed_login_branding_details.configurations[*].settings_all. The settings and use_cognito_provided_values arguments are mutually exclusive; when settings is provided the module omits use_cognito_provided_values for the native provider."
+  description = "Configuration for managed login branding. Map of branding configurations where each key represents a branding instance. client_id accepts either a module-managed client name or a literal Cognito app client ID. Asset categories and color modes are case-insensitive and normalized to AWS's uppercase enum values before being sent to the provider. The legacy return_merged_resources option is no longer supported with the native AWS provider; merged Cognito defaults are exposed through managed_login_branding_details.configurations[*].settings_all. The settings and use_cognito_provided_values arguments are mutually exclusive; when settings is provided the module omits use_cognito_provided_values for the native provider."
   type = map(object({
     client_id = string
     assets = optional(list(object({
@@ -1216,10 +1216,10 @@ variable "managed_login_branding" {
           "PASSKEY_GRAPHIC", "PAGE_HEADER_LOGO", "PAGE_HEADER_BACKGROUND",
           "PAGE_FOOTER_LOGO", "PAGE_FOOTER_BACKGROUND", "PAGE_BACKGROUND",
           "FORM_BACKGROUND", "FORM_LOGO", "IDP_BUTTON_ICON"
-        ], asset.category)
+        ], upper(asset.category))
       ])
     ])
-    error_message = "Invalid asset category. Must be one of: FAVICON_ICO, FAVICON_SVG, EMAIL_GRAPHIC, SMS_GRAPHIC, AUTH_APP_GRAPHIC, PASSWORD_GRAPHIC, PASSKEY_GRAPHIC, PAGE_HEADER_LOGO, PAGE_HEADER_BACKGROUND, PAGE_FOOTER_LOGO, PAGE_FOOTER_BACKGROUND, PAGE_BACKGROUND, FORM_BACKGROUND, FORM_LOGO, IDP_BUTTON_ICON"
+    error_message = "Invalid asset category. Must be one of: FAVICON_ICO, FAVICON_SVG, EMAIL_GRAPHIC, SMS_GRAPHIC, AUTH_APP_GRAPHIC, PASSWORD_GRAPHIC, PASSKEY_GRAPHIC, PAGE_HEADER_LOGO, PAGE_HEADER_BACKGROUND, PAGE_FOOTER_LOGO, PAGE_FOOTER_BACKGROUND, PAGE_BACKGROUND, FORM_BACKGROUND, FORM_LOGO, IDP_BUTTON_ICON. Input is case-insensitive."
   }
 
   validation {
@@ -1227,10 +1227,10 @@ variable "managed_login_branding" {
       for config in values(var.managed_login_branding) : alltrue([
         for asset in lookup(config, "assets", []) : contains([
           "LIGHT", "DARK", "DYNAMIC"
-        ], asset.color_mode)
+        ], upper(asset.color_mode))
       ])
     ])
-    error_message = "Invalid color_mode. Must be one of: LIGHT, DARK, DYNAMIC"
+    error_message = "Invalid color_mode. Must be one of: LIGHT, DARK, DYNAMIC. Input is case-insensitive."
   }
 
   validation {
