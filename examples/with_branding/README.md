@@ -73,7 +73,7 @@ The example includes comprehensive branding configuration:
 
 Cognito supports various asset categories:
 
-Category input is case-insensitive; the module normalizes valid category values to AWS's uppercase enum values before sending them to Cognito.
+Category and color mode inputs are case-insensitive; the module normalizes valid values to AWS's uppercase enum values before sending them to Cognito.
 
 | Category | Description | Color Modes |
 |----------|-------------|-------------|
@@ -115,7 +115,7 @@ After deployment, you can test the branding by:
 
 - **File Size**: Maximum 2MB per asset
 - **Formats**: PNG, JPEG/JPG, SVG, ICO, WEBP. JPG input is normalized to AWS's JPEG enum value.
-- **Categories**: Case-insensitive; valid values are normalized to AWS's uppercase enum values.
+- **Categories and color modes**: Case-insensitive; valid values are normalized to AWS's uppercase enum values.
 - **Encoding**: Base64 (handled automatically by `filebase64()`)
 
 ## Important Notes
