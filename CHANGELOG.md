@@ -5,6 +5,13 @@
 
 * Phase 3 - Modernize client configs with dynamic block bug fixes ([#359](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/359)) ([3c42a1f](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/3c42a1fa862ab7d666bd0a5f5ac322dc8993ec26))
 
+## [5.1.4](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/5.1.3...5.1.4) (2026-09-20)
+
+
+### Bug Fixes
+
+* normalize managed login branding enum values ([#448](https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/448)) ([7cb90ea](https://github.com/lgallard/terraform-aws-cognito-user-pool/commit/7cb90ea1fb1dff2552067d622ad415d15bee4586))
+
 ## [5.1.3](https://github.com/lgallard/terraform-aws-cognito-user-pool/compare/5.1.2...5.1.3) (2026-09-19)
 
 
