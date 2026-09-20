@@ -15,7 +15,7 @@ resource "aws_cognito_managed_login_branding" "branding" {
 
     content {
       bytes       = asset.value.bytes
-      category    = asset.value.category
+      category    = upper(asset.value.category)
       color_mode  = asset.value.color_mode
       extension   = upper(asset.value.extension) == "JPG" ? "JPEG" : upper(asset.value.extension)
       resource_id = asset.value.resource_id
