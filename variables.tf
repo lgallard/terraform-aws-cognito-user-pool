@@ -819,6 +819,22 @@ variable "clients" {
     ])
     error_message = "Legacy clients[*].explicit_auth_flows values (ADMIN_NO_SRP_AUTH, CUSTOM_AUTH_FLOW_ONLY, USER_SRP_AUTH, USER_PASSWORD_AUTH) cannot be mixed with ALLOW_* explicit auth flows."
   }
+
+  validation {
+    condition = alltrue([
+      for client in var.clients :
+      try(client.analytics_configuration, null) == null || try(client.analytics_configuration.application_arn, null) != null || try(client.analytics_configuration.application_id, null) != null
+    ])
+    error_message = "Each clients[*].analytics_configuration block must set either application_arn or application_id."
+  }
+
+  validation {
+    condition = alltrue([
+      for client in var.clients :
+      try(client.analytics_configuration, null) == null || try(client.analytics_configuration.application_arn, null) == null || (try(client.analytics_configuration.external_id, null) == null && try(client.analytics_configuration.role_arn, null) == null)
+    ])
+    error_message = "Each clients[*].analytics_configuration.application_arn conflicts with external_id and role_arn."
+  }
 }
 
 variable "client_allowed_oauth_flows" {
@@ -837,6 +853,28 @@ variable "client_allowed_oauth_scopes" {
   description = "List of allowed OAuth scopes (phone, email, openid, profile, and aws.cognito.signin.user.admin)"
   type        = list(string)
   default     = []
+}
+
+variable "client_analytics_configuration" {
+  description = "Analytics configuration for the default Cognito user pool client. Either application_arn or application_id is required when configured. application_arn conflicts with external_id and role_arn."
+  type = object({
+    application_arn  = optional(string)
+    application_id   = optional(string)
+    external_id      = optional(string)
+    role_arn         = optional(string)
+    user_data_shared = optional(bool)
+  })
+  default = null
+
+  validation {
+    condition     = var.client_analytics_configuration == null || try(var.client_analytics_configuration.application_arn, null) != null || try(var.client_analytics_configuration.application_id, null) != null
+    error_message = "client_analytics_configuration must set either application_arn or application_id when configured."
+  }
+
+  validation {
+    condition     = var.client_analytics_configuration == null || try(var.client_analytics_configuration.application_arn, null) == null || (try(var.client_analytics_configuration.external_id, null) == null && try(var.client_analytics_configuration.role_arn, null) == null)
+    error_message = "client_analytics_configuration.application_arn conflicts with external_id and role_arn."
+  }
 }
 
 variable "client_auth_session_validity" {

@@ -25,6 +25,18 @@ resource "aws_cognito_user_pool_client" "client" {
   enable_token_revocation = try(each.value.enable_token_revocation, null)
   user_pool_id            = local.user_pool_id
 
+  # analytics_configuration
+  dynamic "analytics_configuration" {
+    for_each = try(each.value.analytics_configuration, null) != null ? [each.value.analytics_configuration] : []
+    content {
+      application_arn  = try(analytics_configuration.value.application_arn, null)
+      application_id   = try(analytics_configuration.value.application_id, null)
+      external_id      = try(analytics_configuration.value.external_id, null)
+      role_arn         = try(analytics_configuration.value.role_arn, null)
+      user_data_shared = try(analytics_configuration.value.user_data_shared, null)
+    }
+  }
+
   # token_validity_units
   dynamic "token_validity_units" {
     for_each = can(each.value.token_validity_units) && length(keys(each.value.token_validity_units)) > 0 ? [each.value.token_validity_units] : []
@@ -56,6 +68,7 @@ locals {
       allowed_oauth_flows                           = var.client_allowed_oauth_flows
       allowed_oauth_flows_user_pool_client          = var.client_allowed_oauth_flows_user_pool_client
       allowed_oauth_scopes                          = var.client_allowed_oauth_scopes
+      analytics_configuration                       = var.client_analytics_configuration
       auth_session_validity                         = var.client_auth_session_validity
       callback_urls                                 = var.client_callback_urls
       default_redirect_uri                          = var.client_default_redirect_uri
@@ -84,6 +97,7 @@ locals {
     allowed_oauth_flows                           = try(e.allowed_oauth_flows, null)
     allowed_oauth_flows_user_pool_client          = try(e.allowed_oauth_flows_user_pool_client, null)
     allowed_oauth_scopes                          = try(e.allowed_oauth_scopes, null)
+    analytics_configuration                       = try(e.analytics_configuration, null)
     auth_session_validity                         = try(e.auth_session_validity, null)
     callback_urls                                 = try(e.callback_urls, null)
     default_redirect_uri                          = try(e.default_redirect_uri, null)
