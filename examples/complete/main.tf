@@ -177,6 +177,12 @@ module "aws_cognito_user_pool_complete_example" {
       id_token_validity                    = 1
       refresh_token_validity               = 60
       client_prevent_user_existence_errors = "ENABLED"
+      analytics_configuration = {
+        application_id   = "00000000000000000000000000000000"
+        external_id      = "cognito-analytics-external-id"
+        role_arn         = "arn:aws:iam::123456789012:role/cognito-pinpoint-analytics"
+        user_data_shared = true
+      }
       token_validity_units = {
         access_token  = "hours"
         id_token      = "hours"
