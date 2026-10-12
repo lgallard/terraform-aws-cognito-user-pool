@@ -1184,7 +1184,7 @@ variable "web_authn_configuration" {
 # Managed Login Branding
 #
 variable "managed_login_branding_enabled" {
-  description = "Whether to enable managed login branding using the native AWS provider (requires hashicorp/aws >= 6.12.0)."
+  description = "Whether to enable managed login branding using the native AWS provider (requires hashicorp/aws >= 6.13.0 to avoid a multi-client branding read bug in 6.12.0)."
 
   type    = bool
   default = false
