@@ -71,7 +71,7 @@ Review your Terraform plan and pin these inputs explicitly if your intended beha
 
 ## ⚠️ Managed login branding moved from AWSCC to native AWS provider
 
-Managed login branding now uses the native `hashicorp/aws` provider resource, introduced in AWS provider **6.12.0**. This raises the module's AWS provider floor and changes the shape of the managed login branding `assets` output, so consumers should treat this as a breaking migration and follow the steps below before applying:
+Managed login branding now uses the native `hashicorp/aws` provider resource, introduced in AWS provider **6.12.0**. The module requires AWS provider **6.13.0 or later** because 6.13.0 fixes managed-login branding read errors when a user pool contains multiple app clients. This raises the module's AWS provider floor and changes the shape of the managed login branding `assets` output, so consumers should treat this as a breaking migration and follow the steps below before applying:
 
 - old resource address: `awscc_cognito_managed_login_branding.branding`
 - new resource address: `aws_cognito_managed_login_branding.branding`
@@ -154,14 +154,14 @@ The deprecated `managed_login_branding` output also keeps its `id` key, but the 
 
 #### 1. Update Your Provider Version
 
-Update your Terraform configuration to require AWS provider 6.12.0 or later:
+Update your Terraform configuration to require AWS provider 6.13.0 or later:
 
 ```hcl
 terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 6.12.0"
+      version = ">= 6.13.0"
     }
   }
 }
@@ -233,7 +233,7 @@ module "cognito_user_pool" {
 
 #### Error: "Module requires newer AWS provider"
 ```
-Error: Module requires aws provider version >= 6.12.0
+Error: Module requires aws provider version >= 6.13.0
 ```
 
 **Solution**: Update your provider constraint and run `terraform init -upgrade`.
@@ -253,7 +253,7 @@ This indicates you're still using AWS provider 5.x.
 
 | Module Version | AWS Provider | Terraform |
 |----------------|-------------|-----------|
-| 5.0.0+         | >= 6.12.0   | >= 1.3.0  |
+| 5.0.0+         | >= 6.13.0   | >= 1.3.0  |
 | 4.1.2          | >= 6.0      | >= 1.3.0  |
 | < 4.1.2        | >= 5.0      | >= 1.0    |
 
