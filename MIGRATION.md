@@ -202,7 +202,7 @@ terraform apply
 #### For Most Users
 - **No configuration changes required** - your module usage remains identical
 - **No resource changes** - existing user pools will not be modified
-- **Provider update only** - just need to upgrade AWS provider to 6.x
+- **Provider update only** - just need to upgrade AWS provider to 6.13.0 or later
 
 #### For Advanced Security Users
 If you use `user_pool_add_ons_advanced_security_additional_flows`:
@@ -253,7 +253,8 @@ This indicates you're still using AWS provider 5.x.
 
 | Module Version | AWS Provider | Terraform |
 |----------------|-------------|-----------|
-| 5.0.0+         | >= 6.13.0   | >= 1.3.0  |
+| Next release   | >= 6.13.0   | >= 1.3.0  |
+| 5.0.0 - 5.1.4 | >= 6.12.0   | >= 1.3.0  |
 | 4.1.2          | >= 6.0      | >= 1.3.0  |
 | < 4.1.2        | >= 5.0      | >= 1.0    |
 
